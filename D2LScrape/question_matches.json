@@ -1,0 +1,1349 @@
+{
+  "matches": [
+    {
+      "question": "The “snap” felt just before entering the epidural space represents passage through which ligament?",
+      "options": [
+        "Posterior longitudinal ligament",
+        "Supraspinous ligament",
+        "Ligamentum flavum",
+        "Interspinous ligament"
+      ],
+      "confidence_score": 1.0227484558669313,
+      "weeks": [
+        12
+      ],
+      "question_number": null,
+      "explanation": "The structures that are traversed by a needle placed in the midline before the epidural space are as follows: skin, subcutaneous tissue, supraspinous ligament, interspinous ligament, and ligamentum flavum. The ligamentum flavum is tough and dense, and a change in the resistance to advancing the needle is often perceived and, to many, feels like a “snap.” The anterior and posterior longitudinal ligaments bind the vertebral bodies together.\nPardo, Chapter 17."
+    },
+    {
+      "question": "Ketamine interacts with all of the following receptors EXCEPT:",
+      "options": [
+        "Gamma-aminobutyric acid (GABA)",
+        "N-methyl-D-aspartate (NMDA)",
+        "Opioid",
+        "Muscarinic",
+        "Monoaminergic"
+      ],
+      "confidence_score": 1.00648265056378,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "Ketamine interacts with N-methyl-D-aspartate (NMDA), opioid, muscarinic, and monoaminergic receptors, but does not interact with gamma-aminobutyric acid (GABA) receptors. This contrasts with most intravenous anesthetics, which exert their primary effect through GABA receptors."
+    },
+    {
+      "question": "How does the phenomenon of tachyphylaxis differ from drug tolerance?",
+      "options": [
+        "Tachyphylaxis develops slowly over time, while tolerance is rapid.",
+        "Tachyphylaxis is rapid and short-term, while tolerance develops gradually.",
+        "Tachyphylaxis is irreversible, while tolerance is reversible.",
+        "Tachyphylaxis affects only the central nervous system, while tolerance affects the whole body."
+      ],
+      "confidence_score": 0.976229497437159,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "Tachyphylaxis occurs rapidly and is often short-term, whereas drug tolerance develops more gradually over a more extended period. Both phenomena result in decreased drug effectiveness, but their time courses and underlying mechanisms differ."
+    },
+    {
+      "question": "Which of the following intravenous agents has intrinsic analgesic properties? (select all that apply)",
+      "options": [
+        "Ketamine",
+        "Dexmedetomidine",
+        "Clonidine",
+        "Thiopental"
+      ],
+      "confidence_score": 0.9694445896559747,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "Ketamine, Dexmedetomidine, and Clonidine (an alpha2 agonist) possess analgesic properties. \nIn contrast, Thiopental appears to have a mild antianalgesic effect."
+    },
+    {
+      "question": "Which of the following has the lowest hepatic extraction ratio?",
+      "options": [
+        "Midazolam",
+        "Thiopental",
+        "Propofol",
+        "Etomidate",
+        "Ketamine"
+      ],
+      "confidence_score": 0.9671603846549987,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "The hepatic extraction ratio measures the rate at which the liver clears anesthetics from the systemic circulation. \nThe hepatic clearance of intravenous anesthetics can be categorized into three groups:\na)    High – Propofol, Etomidate, Ketamineb)    Intermediate – Methohexital, Midazolamc)    Low – Thiopental, Diazepam, Lorazepam"
+    },
+    {
+      "question": "The correct formula for determination of mean arterial pressure (MAP) based on systolic pressure (SP) and diastolic pressure (DP) is:",
+      "options": [
+        "DP + 1/3(SP – DP)",
+        "SP – 1/3(SP – DP)",
+        "DP + 1/2(SP – DP)",
+        "(SP – DP) X 3",
+        "(SP + DP)/3"
+      ],
+      "confidence_score": 0.9518148925256027,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "The formula for mean arterial pressure (MAP) is the diastolic pressure (DP) plus one-third of the difference between DP and systolic pressure (SP).\nPardo, Chapter 20."
+    },
+    {
+      "question": "Which section of the brachial plexus is blocked with a supraclavicular block?",
+      "options": [
+        "Roots/trunks",
+        "Trunks/divisions",
+        "Cords",
+        "Branches"
+      ],
+      "confidence_score": 0.9404008161680388,
+      "weeks": [
+        12
+      ],
+      "question_number": null,
+      "explanation": "The brachial plexus starts at the root level from the ventral rami of C5-T1 with a small amount from C4 and T2. These roots at the level of the scalene muscle become the three trunks: superior, middle, and inferior. The trunks then divide into the dorsal and ventral divisions at the lateral edge of the first rib. When the divisions enter the axilla, they become the cords: posterior, lateral, and medial. At the lateral border of the pectoralis muscle, they become the five peripheral nerves: radial, musculocutaneous, median, ulnar, and axillary. \nThe interscalene block is at the level of the roots/trunks (but spares the inferior trunk); the supraclavicular block is at the level of the trunks/divisions; the infraclavicular block is at the level of the cords; and the axillary block is at the level of the branches.\nPardo, Chapter 18."
+    },
+    {
+      "question": "Which of the following monitors is the most accurate indicator of left ventricular preload?",
+      "options": [
+        "Central venous pressure trends",
+        "Pulmonary capillary wedge pressure",
+        "Transesophageal echocardiogram",
+        "Mixed venous oxygen saturation",
+        "Urine output"
+      ],
+      "confidence_score": 0.9353755015956374,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "The most accurate preload indicator for the left ventricle (LV) is the transesophageal echocardiogram (TEE) probe, because it can assess actual intracardiac chamber size and thus preload. \nCentral venous pressure trends can be altered by abnormalities within the right ventricle, pulmonary circulation, and the left side of the heart.\nPulmonary capillary wedge pressure is accurate only if there are no complicating matters within the lungs (excessive positive end-expiratory pressure), left atrial abnormalities (mitral stenosis), and LV abnormalities (ischemia).\nMixed venous oxygen saturation accurately indicates total body oxygen balance but does not directly measure LV preload. It may be normal despite inadequate LV preload if the heart rate is increased to maintain cardiac output.\nIn healthy people with inadequate LV preload, urine output may be maintained. Conversely, urine output can be inadequate despite adequate LV preload.\nPardo, Chapter 20; Ehrenwerth et al., Chapter 12."
+    },
+    {
+      "question": "Which plasma protein is mainly responsible for drug binding?",
+      "options": [
+        "Albumin",
+        "Alpha1-acid glycoprotein",
+        "Fibrinogen",
+        "Globulins"
+      ],
+      "confidence_score": 0.9223044729262588,
+      "weeks": [
+        2
+      ],
+      "question_number": null,
+      "explanation": "[This is a multiple-answer type of question. I believe the note “You can have multiple answers” is not apparent enough. Maybe I will add the note to the question next time🤔]\nTwo main plasma proteins are responsible for drug binding: albumin and Alpha1-acid glycoprotein (AAG).\n\nAlbumin is the major binding protein for acidic drugs (Penicillin, aspirin) and some bases.\nAAG is the major binding protein for many basic drugs such as opioids, amide local anesthetics, and Propranolol.\n\nFibrinogen is essential for blood clotting. It is converted into fibrin during the clotting process. Globulin plays a role in immune function and transport."
+    },
+    {
+      "question": "According to the Canadian Anesthesiologists’ Society guidelines, what is the recommended air exchange rate to minimize waste anesthetic gas concentrations in the operating room?",
+      "options": [
+        "10 air exchanges per hour",
+        "15 air exchanges per hour",
+        "20 air exchanges per hour",
+        "25 air exchanges per hour"
+      ],
+      "confidence_score": 0.9212995697675245,
+      "weeks": [
+        13
+      ],
+      "question_number": null,
+      "explanation": "According to the Canadian Anesthesiologists’ Society guidelines, the recommended air exchange rate to minimize waste anesthetic gas concentrations in the operating room is a minimum rate of 20 air exchanges per hour. Moreover, exhaust air recirculation is not permitted during operational hours and is not recommended at any other time.\nThe air exchange rate helps dilute and remove waste gases that may escape into the operating room environment. This is essential to protect healthcare workers from the potential health effects of chronic exposure to these gases.\nCAS Guidelines to the Practice of Anesthesia 2024.Guidelines to the Practice of Anesthesia—Revised Edition 2024opens in a new window/tab"
+    },
+    {
+      "question": "5% dextrose in water (D5W) is distributed throughout the total body water.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "confidence_score": 0.9060878439731663,
+      "weeks": [
+        9
+      ],
+      "question_number": null,
+      "explanation": "The answer is true.\nSince 5% dextrose in water (D5W) is essentially free water, once the dextrose is metabolized, it is distributed throughout the entire body water compartments, both intracellular and extracellular fluids. \nIn contrast, other crystalloids, such as normal saline, Ringer’s Lactate, and Plasma-Lyte, are distributed primarily within the extracellular fluid, including intravascular and interstitial fluids.\nPardo, Chapter 24."
+    },
+    {
+      "question": "Recovery of cognitive function following general anesthesia is slowest when which of the following agents is used for induction?",
+      "options": [
+        "Midazolam",
+        "Thiopental",
+        "Propofol",
+        "Etomidate",
+        "Ketamine"
+      ],
+      "confidence_score": 0.8981216475497121,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "In general, benzodiazepines (ex., Midazolam) are associated with a relatively prolonged time to the recovery of cognitive function compared with the other intravenous anesthetics.\nIn contrast, recovery from Propofol is usually relatively rapid, making it an ideal induction agent for outpatient procedures.\nRecovery from Ketamine, Etomidate, and Thiopental is somewhere intermediate between the benzodiazepines and Propofol."
+    },
+    {
+      "question": "Which of the following agents augments neuromuscular blockade? (select all that apply)",
+      "options": [
+        "Isoflurane",
+        "Anti-seizure medications",
+        "Lidocaine",
+        "Gentamicin",
+        "Metronidazole"
+      ],
+      "confidence_score": 0.8927291025400511,
+      "weeks": [
+        5
+      ],
+      "question_number": null,
+      "explanation": "Several agents potentiate the effect of neuromuscular blockade (NMB). These include volatile inhaled anesthetic agents (ex. Isoflurane, Sevoflurane) and large dose of local anesthetics (ex. Lidocaine). \nSome antibiotics, such as aminoglycosides (ex. Gentamicin) and lincosamides (ex. Clindamycin), enhance NMB. However, penicillins (ex. Ampicillin), cephalosporins (ex. Cefazolin), and nitroimidazoles (ex. Metronidazole) do not produce this effect.\nIn contrast, anti-seizure medications can make patients resistant to nondepolarizing blockade agents.\nPardo, Chapter 11; Flood et al., Chapter 12."
+    },
+    {
+      "question": "Which neurotransmitter is released by postganglionic fibers of the sympathetic nervous system? (select all that apply)",
+      "options": [
+        "Gamma-aminobutyric acid (GABA)",
+        "Acetylcholine",
+        "Glutamate",
+        "Norepinephrine"
+      ],
+      "confidence_score": 0.8878566672756151,
+      "weeks": [
+        2
+      ],
+      "question_number": null,
+      "explanation": "In the sympathetic nervous system (SNS), norepinephrine is the neurotransmitter at most postganglionic sites. However, postganglionic fibers innervating sweat glands release acetylcholine."
+    },
+    {
+      "question": "If a patient has 4 of 4 twitches on a train-of-four (TOF) monitoring, there would be no need to administer muscle relaxant reversal agents.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "confidence_score": 0.8869243004635033,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "The answer is false.\nIf a patient has 4 of 4 twitches on a train-of-four (TOF) monitoring, some neuromuscular blockade has worn off, and the patient has regained some muscle function. However, the TOF count cannot differentiate the level of blockade < 75%. For example, the patient can have 4 of 4 twitches, whether there is 0% to 75% blockade. \nIn this case, since some residual neuromuscular blockade might still be present, affecting the patient’s ability to breathe adequately, we should administer a reversal agent like Neostigmine to ensure complete recovery of muscle function and prevent complications.\nPardo, Chapter 11, Chapter 20."
+    },
+    {
+      "question": "The best premedication regimen for a known active narcotic addict would include:",
+      "options": [
+        "Thiopental",
+        "Diazepam",
+        "Nalbuphine",
+        "Morphine",
+        "Naloxone"
+      ],
+      "confidence_score": 0.8813361843074522,
+      "weeks": [
+        5
+      ],
+      "question_number": null,
+      "explanation": "Opioid withdrawal from acute drug cessation is an important preoperative concern for patients with narcotic addiction or dependency. \nMorphine is an opioid agonist that is suitable for the maintenance of a patient’s usual narcotic dose and provides prophylaxis against opioid withdrawal symptoms.\nAdministration of opioid antagonist, Naloxone, should be avoided. Also, Nalbuphine is an opioid agonist-antagonist and can precipitate acute opioid withdrawal.\nThiopental, a barbiturate, and Diazepam, a benzodiazepine, act at the gamma-aminobutyric acid (GABA) receptor and would not be helpful for withdrawal prophylaxis in an opioid addict.\nFlood et al., Chapter 7."
+    },
+    {
+      "question": "End-tidal carbon dioxide (ETCO2) values can be altered because of changes in which of the following? (select all that apply)",
+      "options": [
+        "Ventilation",
+        "Pulmonary blood flow",
+        "Cardiac output",
+        "Metabolic activity"
+      ],
+      "confidence_score": 0.8764081536799909,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "The production of end-tidal carbon dioxide (ETCO2) is dependent on its generation (i.e., metabolic rate), transportation from the cells to the lungs (i.e., cardiac output and pulmonary blood flow), and excretion from the lungs from ventilation.\nPardo, Chapter 20."
+    },
+    {
+      "question": "According to the American Society of Anesthesiologists (ASA) Difficult Airway Algorithm, what should be done if initial intubation attempts fail?",
+      "options": [
+        "Immediately perform a surgical airway",
+        "Wake the patient and postpone the procedure",
+        "Reassess and consider alternative non-invasive techniques",
+        "Increase the dose of anesthetic agents"
+      ],
+      "confidence_score": 0.8744891819887778,
+      "weeks": [
+        8
+      ],
+      "question_number": null,
+      "explanation": "If initial intubation attempts fail, the American Society of Anesthesiologists (ASA) Difficult Airway Algorithm recommends reassessing the situation and considering alternative non-invasive techniques, such as using a video laryngoscope, fiberoptic bronchoscope, or supraglottic airway device. The goal is to secure the airway without immediately resorting to invasive procedures.\nPardo, Chapter 16."
+    },
+    {
+      "question": "What is nociceptive sensitization?",
+      "options": [
+        "The process by which pain signals are amplified in the brain.",
+        "The process by which pain signals are amplified in the brain.",
+        "The increased responsiveness of neurons to their normal input.",
+        "The complete absence of pain sensation."
+      ],
+      "confidence_score": 0.8671624617163776,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "Nociceptive sensitization refers to the increased responsiveness of neurons to their normal input and/or recruitment of a response to normally subthreshold inputs. This can result in heightened pain sensitivity and is a key feature in conditions like chronic pain."
+    },
+    {
+      "question": "Regarding the circle breathing system, what statement is FALSE:",
+      "options": [
+        "Variations of the circle arrangement are possible",
+        "Circle breathing systems prevent the rebreathing of carbon dioxide.",
+        "Circle breathing systems prevent the rebreathing of all exhaled gases.",
+        "A circle breathing system can be semi-open.",
+        "The semi-closed system is the most commonly used application of the circle breathing system."
+      ],
+      "confidence_score": 0.8456102467850336,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "The circle breathing system prevents rebreathing of carbon dioxide by the use of carbon dioxide absorbents, but allows partial rebreathing of other gases. Variations of the circle arrangement are possible, depending on the relative positions of the components.\nA circle breathing system can be semi-open, semi-closed, or closed, depending on the fresh gas flow (FGF). A semi-closed system is associated with some rebreathing of exhaled gases and is the most commonly used application. \nPardo, Chapter 15; Ehrenwerth et al., Chapter 4."
+    },
+    {
+      "question": "If an equivalent analgesic dose of Ketorolac is substituted for Meperidine after an outpatient inguinal herniorrhaphy, the patient will experience less: (select all that apply)",
+      "options": [
+        "Bleeding",
+        "Respiratory depression",
+        "Sedation",
+        "Nausea and vomiting"
+      ],
+      "confidence_score": 0.8377740976778998,
+      "weeks": [
+        5
+      ],
+      "question_number": null,
+      "explanation": "Ketorolac is a nonsteroidal anti-inflammatory drug that blocks prostaglandin synthesis for short-term acute pain management. \nKetorolac primarily acts peripherally and causes minimal, if any, central side effects associated with opioids (ex., Meperidine), such as nausea and vomiting, sedation, and respiratory depression.\nKetorolac produces more bleeding when compared with opioids because it inhibits platelet aggregation. Ketorolac inhibits cyclooxygenase, preventing thromboxane synthesis, which is necessary for platelet aggregation.\nFlood et al., Chapter 9."
+    },
+    {
+      "question": "Which statement about the sympathetic nervous system (SNS) is FALSE?",
+      "options": [
+        "Epinephrine and norepinephrine are mediators of the peripheral SNS.",
+        "In the adrenal medulla, the preganglionic neurotransmitter is acetylcholine.",
+        "Equal amounts of epinephrine and norepinephrine are released during stimulation of the adrenal medulla.",
+        "The massive release of norepinephrine and epinephrine is the “fight or flight” response and lasts approximately 10 times as long as local direct stimulation.",
+        "Chromaffin cells in the adrenal medulla are responsible for releasing epinephrine and norepinephrine."
+      ],
+      "confidence_score": 0.8223969522826192,
+      "weeks": [
+        2
+      ],
+      "question_number": null,
+      "explanation": "In the sympathetic nervous system (SNS), norepinephrine is the neurotransmitter at most postganglionic sites. However, postganglionic fibers innervating sweat glands release acetylcholine."
+    },
+    {
+      "question": "Which of the following can trigger malignant hyperthermia? (select all that apply)",
+      "options": [
+        "Nitrous oxide",
+        "Succinylcholine",
+        "Halothane",
+        "Rocuronium"
+      ],
+      "confidence_score": 0.8214359054768229,
+      "weeks": [
+        5
+      ],
+      "question_number": null,
+      "explanation": "It is established that volatile inhaled anesthetic agents, such as Halothane, Isoflurane, Desflurane, and Sevoflurane, trigger malignant hyperthermia (MH). The gaseous inhaled anesthetic agent, nitrous oxide, does not trigger MH. \nThe intravenous trigger is Succinylcholine.\nPardo, Chapter 7."
+    },
+    {
+      "question": "The cause(s) of a sudden rise in nitrogen level in exhaled gases during the maintenance phase of anesthesia with Sevoflurane and nitrous oxide. (select all that apply)",
+      "options": [
+        "Failure of low oxygen pressure alarm",
+        "Leak in the patient breathing circuit",
+        "Failed inspiratory unidirectional valve",
+        "Air embolism"
+      ],
+      "confidence_score": 0.8092958921431957,
+      "weeks": [
+        13
+      ],
+      "question_number": null,
+      "explanation": "During anesthetic with Sevoflurane and nitrous oxide, nitrogen should not be detected in the system. Any nitrogen in the circuit must come from the air surrounding the patient or the breathing circuit. Thus, the possible causes include venous air embolism and leaks in the breathing circuit or sampling line.\nFailure of the low oxygen pressure alarm will prevent us from detecting a loss in sufficient pipeline oxygen pressure. A failure in the inspiratory unidirectional valve will cause the patient to rebreathe expired gases containing CO2. However, if the breathing circuit has no leaks, it will not contain nitrogen.\nPardo, Chapter 15, Chapter 20."
+    },
+    {
+      "question": "What alterations are seen in the arterial waveform measurement as we move from the aorta to a distal artery? (select all that apply)",
+      "options": [
+        "Later occurrence of the dicrotic notch",
+        "Increase in diastolic pressure",
+        "Increase in systolic pressure",
+        "Reduced slope of the initial systolic upstroke"
+      ],
+      "confidence_score": 0.8010221498724386,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "Distal pulse amplification refers to the phenomenon where the arterial waveform changes as we move from the large central to the peripheral arteries. This occurs because of the narrowing of the vascular tree, which results in different impedance and harmonic resonances compared with the larger arteries. This amplification manifests in higher systolic but lower diastolic blood pressure readings, widened pulse pressure, steeper systolic upstroke, and a later occurrence of the dicrotic notch. Mean arterial pressure is slightly lower in a peripheral artery compared to the aorta.\nEhrenwerth et al., Chapter 12."
+    },
+    {
+      "question": "Which of the following intravenous anesthetic agents has the highest degree of plasma protein binding?",
+      "options": [
+        "Thiopental",
+        "Propofol",
+        "Ketamine",
+        "Methohexital",
+        "Etomidate"
+      ],
+      "confidence_score": 0.7957367696464062,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "Approximately 98% of Propofol is protein-bound, whereas about 85% of the barbiturates (Thiopental and Methohexital) and 75% of Etomidate are protein-bound. In contrast, only about 12% of Ketamine is protein-bound."
+    },
+    {
+      "question": "Which of the following is/are true when considering the Bain breathing circuit? (select all that apply)",
+      "options": [
+        "It is a modification of the Mapleson D circuit.",
+        "Fresh gas enters the breathing circuit near the reservoir bag.",
+        "The fresh gas flow rate necessary to prevent rebreathing is 2.5 times the minute ventilation.",
+        "The major hazard of the Bain breathing circuit is the kinking or disconnection of the inner fresh gas hose."
+      ],
+      "confidence_score": 0.7944116669042203,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "The Bain breathing circuit is a modification of the Mapleson D circuit. It is a coaxial circuit where fresh gas flows through a narrow hose within the outer corrugated breathing circuit. The central fresh gas hose originates near the reservoir bag, but the fresh gas actually enters the circuit at the patient end. Exhaled gas enters the corrugated circuit and is vented through the adjustable pressure limiting (APL) valve near the reservoir bag during spontaneous or manual ventilation. \nThe Bain breathing circuit may be used for both spontaneous and controlled ventilation. The fresh gas flow rate necessary to prevent the rebreathing of carbon dioxide is 2.5 times the minute ventilation. \nThe main hazard of the Bain breathing circuit is unrecognized disconnection or kinking of the inner fresh gas hose.\nPardo, Chapter 15; Ehrenwerth et al., Chapter 4."
+    },
+    {
+      "question": "Context-sensitive half-time describes:",
+      "options": [
+        "The rate of fall of drug concentration in the bloodstream following discontinuation of continuous infusion",
+        "The rate of fall of drug concentration in the body following discontinuation of continuous infusion",
+        "The rate of fall of drug concentration in its volume of distribution following discontinuation of continuous infusion",
+        "The rate of fall of drug concentration at the effect site following discontinuation of continuous infusion",
+        "The rate of fall of drug concentration in the liver following discontinuation of continuous infusion"
+      ],
+      "confidence_score": 0.7876841206751951,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "Context-sensitive half-time is defined as the time necessary for the effect-compartment concentration of the drug to decrease by 50% following discontinuation of continuous infusion."
+    },
+    {
+      "question": "Which route of administration has the least first-pass effect?",
+      "options": [
+        "Oral",
+        "Sublingual",
+        "Rectal"
+      ],
+      "confidence_score": 0.785992334685018,
+      "weeks": [
+        2
+      ],
+      "question_number": null,
+      "explanation": "Sublingual has the least first-pass effect. However, it is limited by the small surface area for absorption. Therefore, it is only efficacious for nonionized, highly lipid-soluble drugs.\nRectal has a moderate first-pass effect because 50-75% of the drug bypasses the liver, reducing the first-pass effect compared to oral administration. However, rectal administration is often irregular and incomplete."
+    },
+    {
+      "question": "Where is the oxygen analyzer located?",
+      "options": [
+        "Oxygen pipeline supply",
+        "Second-stage oxygen pressure regulator",
+        "Expiratory limb",
+        "Inspiratory limb",
+        "Fail-safe valve"
+      ],
+      "confidence_score": 0.7757875052010753,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "The oxygen analyzer is located on the inspiratory limb of the breathing circuit. Beyond this point, the only alteration to the delivered anesthetic mixture would be the entrainment of room air, which would not produce a hypoxic mixture. \nThe expiratory limb is downstream to the patient, thus not protecting what is delivered to the patient. \nThe other possible answers are all upstream sites in the anesthesia gas machine. If the oxygen analyzer is located at those sites, although they would ensure that the mixture was not hypoxic at that site, they could not guarantee that downstream contamination would not occur.\nPardo, Chapter 15."
+    },
+    {
+      "question": "What physical law is the oxygen saturation determination by a pulse oximeter based on?",
+      "options": [
+        "Charles’ law",
+        "Bohr law",
+        "Beer-Lambert law",
+        "Boyle law",
+        "Bernoulli principle"
+      ],
+      "confidence_score": 0.7675256921242062,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "Oxygen saturation detection by a pulse oximeter uses the physical principle described by the Beer-Lambert law. Beer law states that a parallel beam of light transmitted through a clear solution with a solute dissolved within it will fall exponentially as the solute level increases. Lambert law states that a parallel beam of light will have its intensity fall exponentially as the distance it must shine increases.\nPardo, Chapter 20."
+    },
+    {
+      "question": "Which of the following anesthetic techniques is/are associated with increased operating room contamination? (select all that apply)",
+      "options": [
+        "Failure to turn off gas flow at the end of an anesthetic",
+        "Use of low fresh gas flow",
+        "Filling of vaporizers",
+        "Use of uncuffed endotracheal tubes",
+        "Use of Mapleson circuits"
+      ],
+      "confidence_score": 0.7639962895179522,
+      "weeks": [
+        13
+      ],
+      "question_number": null,
+      "explanation": "The two major causes of waste gas contamination in the operating room are equipment leaks and the anesthetic technique used. Regarding the anesthetic technique, the following factors cause operating room contamination: failure to turn off gas flow control valves at the end of anesthetic, turn on nitrous oxide and/or vaporizer when not connected to the patient, poorly fitting mask, use of high fresh gas flow, flushing of the circuit, filling anesthetic vaporizers, use of uncuffed endotracheal tubes, and use of Mapleson circuits which are difficult to scavenge. \nPardo, Chapter 15; Ehrenwerth et al., Chapter 5."
+    },
+    {
+      "question": "What is the primary function of the oxygen flush valve on an anesthesia machine?",
+      "options": [
+        "To deliver a high flow of oxygen directly to the breathing circuit",
+        "To control the concentration of anesthetic gas",
+        "To absorb carbon dioxide from exhaled gases",
+        "To monitor the patient’s oxygen saturation"
+      ],
+      "confidence_score": 0.7572993373733417,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "The oxygen flush valve allows for the rapid delivery of a high flow of oxygen (35-75 L/min) directly to the breathing circuit, bypassing the flowmeters and vaporizer. \nThis can be used in emergencies to quickly increase the oxygen concentration in the circuit. It does not control anesthetic gas concentration, absorb carbon dioxide, or monitor oxygen saturation.\nPardo, Chapter 15."
+    },
+    {
+      "question": "Bispectral index (BIS) monitoring of patients during anesthesia allows for which of the following: (select all that apply)",
+      "options": [
+        "It improves the speed of emergence and recovery from general anesthesia.",
+        "It predicts movement in response to noxious stimulation.",
+        "A BIS value < 60 predicts a lack of recall.",
+        "BIS value varies according to the type of anesthetic used.",
+        "It cannot be used if the patient takes antiepileptic medications."
+      ],
+      "confidence_score": 0.7496747432386393,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "Bispectral index (BIS) monitoring integrates different processed EEGs. It displays its results as a number from 0 (isoelectric EEG) to 100 (awake). BIS values < 60 predict the absence of consciousness. Using a BIS monitor allows for tighter control of anesthetic delivery and can facilitate faster emergence. BIS values do not reliably predict the lack of movement when noxiously stimulated. \nPardo, Chapter 20."
+    },
+    {
+      "question": "Which of the following is the most common type of transfusion reaction?",
+      "options": [
+        "Acute hemolytic reaction",
+        "Febrile non-hemolytic reaction",
+        "Anaphylactic reaction",
+        "Transfusion-related acute lung injury (TRALI)"
+      ],
+      "confidence_score": 0.7420173850128644,
+      "weeks": [
+        9
+      ],
+      "question_number": null,
+      "explanation": "Febrile non-hemolytic reactions are the most common type of transfusion reaction. They are typically caused by antibodies reacting to donor white blood cells or cytokines in the transfused blood.\nPardo, Chapter 25."
+    },
+    {
+      "question": "Saturated vapor pressure:",
+      "options": [
+        "Is independent of temperature",
+        "Is dependent on atmospheric pressure",
+        "Is the same for all volatile anesthetics",
+        "Is equal to atmospheric pressure at the boiling point of a liquid"
+      ],
+      "confidence_score": 0.7356921604355464,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "Saturated vapor pressure is the pressure created by the molecules in the vapor phase of a volatile liquid. As more molecules enter the vapor phase from the volatile liquid, the vapor pressure increases. Vapor pressure is dependent on the temperature and physical characteristics of the liquid. It is independent of the atmospheric pressure. The boiling point of a liquid is the temperature at which the vapor pressure equals the atmospheric pressure. All volatile anesthetics have a unique saturated vapor pressure.\nPardo, Chapter 15."
+    },
+    {
+      "question": "Which of the following would have the greatest effect on the level of sensory blockade after a spinal block with a subarachnoid injection of hyperbaric 0.75% Bupivacaine?",
+      "options": [
+        "Patient age",
+        "Additional of Epinephrine to the local anesthetic solution",
+        "Patient weight",
+        "Patient position"
+      ],
+      "confidence_score": 0.731596040606145,
+      "weeks": [
+        12
+      ],
+      "question_number": null,
+      "explanation": "Many factors affect the sensory level after a subarachnoid spinal block injection. The baricity of the solution and the patient position (e.g., lateral, sitting, prone) are the most important determinants of sensory level. Other important factors are the site of injection and the shape of the spinal canal.\nThe other listed options have little to no effect on sensory level. Patient height also has little effect on sensory level. \nPardo, Chapter 17."
+    },
+    {
+      "question": "What is the advantage of a turbine anesthesia ventilator?",
+      "options": [
+        "It requires no electrical power.",
+        "It can deliver high-frequency ventilation.",
+        "It is quieter and more compact.",
+        "It uses a bellows system."
+      ],
+      "confidence_score": 0.7255781006591442,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "Turbine anesthesia ventilators are known for being quieter and more compact than other ventilators. They use a turbine that spins at very high speeds to create airflow and driving pressure. They can generate inspiratory flow quickly and efficiently to respond to patient triggers and provide greater trigger sensitivity. \nPardo, Chapter 15; Ehrenwerth et al., Chapter 6."
+    },
+    {
+      "question": "Compared with the right internal jugular (IJ) vein, the left IJ vein is used less often for central venous access because of which of the following? (select all that apply)",
+      "options": [
+        "Closer proximity to the carotid artery",
+        "Potential for damage to the thoracic duct",
+        "Difficulty passing through the jugular-subclavian junction",
+        "Increased risk of injury to the phrenic nerve"
+      ],
+      "confidence_score": 0.715771508112116,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "The right internal jugular (IJ) vein is the jugular vein of choice. It tends to be larger than the left IJ vein and travels in a more direct line path into the superior vena cava. The left IJ vein is less desirable because the thoracic duct at the left IJ vein-subclavian junction can lead to thoracic duct injury. Both the right and left IJ veins are in similarly close approximation with the carotid artery and the phrenic nerve.\nPardo, Chapter 20."
+    },
+    {
+      "question": "Which of the following benefits does using monitoring devices on patients provide? (select all that apply)",
+      "options": [
+        "Monitoring devices always enhance patient safety.",
+        "Monitoring devices can allow for the correction of abnormalities before irreversible injury occurs.",
+        "Monitoring devices are not subject to fatigue or distraction.",
+        "Monitoring devices make measurements at higher frequencies than is humanly possible."
+      ],
+      "confidence_score": 0.7146860861475688,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "Because monitors are mechanical devices, they do not become distracted. They also can make repetitive measurements more often than humans because they do not fatigue. Monitoring the patient’s vital signs allows early detection of abnormalities, allowing for timely interventions to prevent serious harm. However, monitoring only improves patient safety if the detected issues are promptly addressed with appropriate actions."
+    },
+    {
+      "question": "Which statement about drug elimination is FALSE?",
+      "options": [
+        "Elimination can occur by the excretion of unchanged drug.",
+        "Metabolism is a step in some drug elimination.",
+        "The liver and kidney are the most important organs in drug elimination.",
+        "The liver eliminates drugs primarily by excretion.",
+        "The kidney primarily excretes water-soluble, polar compounds."
+      ],
+      "confidence_score": 0.7092784389866691,
+      "weeks": [
+        2
+      ],
+      "question_number": null,
+      "explanation": "Drug elimination is an inclusive term referring to all the processes that remove drugs from the body. It occurs either by excretion of unchanged drug or metabolism (biotransformation) and subsequent excretions of metabolites. \nThe liver eliminates drugs primarily by metabolism to less active compounds and, to a lesser extent, by hepatobiliary excretion of drugs or their metabolites."
+    },
+    {
+      "question": "What first step should you take if a patient exhibits signs of a transfusion reaction?",
+      "options": [
+        "Administer antihistamines",
+        "Slow the transfusion rate",
+        "Stop the transfusion immediately",
+        "Notify the blood bank"
+      ],
+      "confidence_score": 0.7070427815306697,
+      "weeks": [
+        9
+      ],
+      "question_number": null,
+      "explanation": "The first and most critical step when a transfusion reaction is suspected is to stop the transfusion immediately to prevent further exposure to the potentially harmful blood product.\nPardo, Chapter 25."
+    },
+    {
+      "question": "The rapid onset of the central nervous system (CNS) effects of most intravenous anesthetics is best explained by their:",
+      "options": [
+        "Low hepatic extraction ratio",
+        "Small volume of distribution",
+        "Large ratio of ionized to unionized drug",
+        "High lipid solubility",
+        "Slow elimination half-life"
+      ],
+      "confidence_score": 0.7053232021883006,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "The rapid onset of intravenous anesthetics is primarily due to their high lipid solubility and the relatively high proportion of the cardiac output that perfuses the brain. \nOnly the unionized fraction of a drug can cross the blood-brain barrier, and therefore, onset is also affected by the pKa of the drug relative to the pH of body fluids. Onset is more rapid when the ratio of unionized to ionized drugs is high.\nAlthough the volume of distribution, elimination half-life, and hepatic extraction ratio contribute to drug pharmacokinetics, these factors are not primarily responsible for the rapid onset of anesthetic effects."
+    },
+    {
+      "question": "Problems associated with the ventilator bellows assembly include all of the following EXCEPT:",
+      "options": [
+        "A bellows leak can lead to a change in the delivered FiO2.",
+        "A bellows leak can cause barotrauma if ventilators use high-pressure driving gas.",
+        "Hypoventilation may occur if the ventilator relief valve is stuck in the closed position.",
+        "Hypoventilation may occur if the ventilator relief valve is leaky."
+      ],
+      "confidence_score": 0.7033670397640361,
+      "weeks": [
+        13
+      ],
+      "question_number": null,
+      "explanation": "Many problems can occur with the ventilator bellows assembly. Leaks can occur from improper seating of the plastic bellows, resulting in inadequate ventilation because some driving gas is vented into the atmosphere. \nA hole in the bellows can lead to alveolar hyperventilation and possibly barotrauma when using high-pressure driving gas. The value of delivered oxygen may increase when the driving gas is 100% oxygen, but it also may decrease if it is composed of an air-oxygen mixture. \nThe ventilator relief valve can cause problems as well. Hypoventilation occurs if the valve is leaky because the anesthetic gas is delivered to the scavenging system during the inspiratory phase instead of the patient. If the ventilator relief valve is stuck in the closed position, it can produce barotrauma.\nPardo, Chapter 15; Ehrenwerth et al., Chapter 6."
+    },
+    {
+      "question": "Which of the following statements about Xenon as an anesthetic agent is TRUE?",
+      "options": [
+        "Xenon is a potent greenhouse gas and is not environmentally friendly.",
+        "Xenon has a high blood-gas partition coefficient, leading to slow induction and recovery times.",
+        "Xenon is non-flammable and has minimal cardiovascular side effects.",
+        "Xenon has a high incidence of postoperative cognitive dysfunction."
+      ],
+      "confidence_score": 0.6965322009529793,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "Xenon is a noble gas with unique properties, making it an attractive anesthetic agent. \n\nIt is environmentally friendly because it does not contribute to ozone depletion or global warming.\nIt is non-flammable and does not trigger malignant hyperthermia, which enhances its safety profile in the operating room. \nIt has a low blood-gas partition coefficient (~ 0.14). It is poorly soluble in blood, leading to extremely rapid induction and recovery. \nIt has minimal cardiovascular side effects, making it a safer option for patients with cardiovascular concerns. It does not significantly depress cardiac function or cause arrhythmias.\nIt has neuroprotective properties and a lower incidence of postoperative cognitive dysfunction"
+    },
+    {
+      "question": "What is the role of a supraglottic airway device in a “Cannot Intubate, Cannot Ventilate” (CICV) situation according to the ASA Difficult Airway Algorithm?",
+      "options": [
+        "It is the first-line intervention.",
+        "It is used after multiple failed intubation attempts.",
+        "It is the last-line intervention.",
+        "It is not recommended in CICV situations."
+      ],
+      "confidence_score": 0.6951917026817417,
+      "weeks": [
+        8
+      ],
+      "question_number": null,
+      "explanation": "In a “Cannot Intubate, Cannot Ventilate” situation, a supraglottic airway device is considered a potential intervention before proceeding to invasive airway access, like cricothyroidotomy. These devices can sometimes provide adequate ventilation when intubation and mask ventilation have failed.\nPardo, Chapter 16."
+    },
+    {
+      "question": "Which adjunct device is specifically designed to facilitate intubation in patients with a difficult airway?",
+      "options": [
+        "Face mask",
+        "Bougie",
+        "Nasal cannula",
+        "Supraglottic airway"
+      ],
+      "confidence_score": 0.6933659727129071,
+      "weeks": [
+        8
+      ],
+      "question_number": null,
+      "explanation": "If initial intubation attempts fail, the American Society of Anesthesiologists (ASA) Difficult Airway Algorithm recommends reassessing the situation and considering alternative non-invasive techniques, such as using a video laryngoscope, fiberoptic bronchoscope, or supraglottic airway device. The goal is to secure the airway without immediately resorting to invasive procedures.\nPardo, Chapter 16."
+    },
+    {
+      "question": "The structure MOST likely to be blocked during placement of an interscalene block in addition to the brachial plexus is the:",
+      "options": [
+        "Vertebral artery",
+        "Phrenic nerve",
+        "Recurrent laryngeal nerve",
+        "Vagus nerve"
+      ],
+      "confidence_score": 0.6919220391934737,
+      "weeks": [
+        12
+      ],
+      "question_number": null,
+      "explanation": "The phrenic nerve is routinely blocked (100% of the time) during the placement of an interscalene block. This can lead to diaphragmatic paralysis on the side of the block. In healthy patients, it rarely leads to symptoms. However, in patients with borderline respiratory insufficiency, respiratory compromise can result. \nOccasionally, the recurrent laryngeal nerve is blocked. Unilateral paralysis is rarely clinically significant, but if contralateral recurrent paralysis existed preoperatively, then complete airway obstruction may develop. The vagus nerve can also be blocked but is rarely clinically significant.\nPardo, Chapter 18."
+    },
+    {
+      "question": "The epidural test dose:",
+      "options": [
+        "Must be administered before giving a therapeutic dose",
+        "May be omitted if aspiration of the catheter is negative for blood of cerebrospinal fluid.",
+        "Should have an increased concentration of Epinephrine if the patient is taking beta-adrenergic blockers",
+        "Contains Epinephrine, which, if given intravenously, typically produces an immediate increase in heart rate within 10 seconds."
+      ],
+      "confidence_score": 0.6900896267491454,
+      "weeks": [
+        12
+      ],
+      "question_number": null,
+      "explanation": "Because of the risk of undetected intravenous or subarachnoid migration of the epidural catheter, additional test doses must be administered before a therapeutic dose is given through the catheter.\nAspiration of the catheter or needle to check for blood or cerebrospinal fluid is helpful if positive, but the incidence of false-negative aspirations is too high to rely on this technique alone.\nThe most common test dose for an epidural catheter typically includes 3 mL of 1.5% lidocaine with 1:200,000 (5 mcg/mL) Epinephrine. \nIntravascular injection of this dose of Epinephrine typically produces an average heart rate increase of 30 beats/minute between 20 and 40 seconds after the injection. Heart rate increases may not be as evident in some patients taking beta-adrenergic blockers. In beta-blocked patients, a systolic blood pressure increase of greater than 20 mmHg may be a more reliable indicator of intravascular injection.\nPardo, Chapter 17."
+    },
+    {
+      "question": "In an emergency when there is a limited supply of type O-negative packed red blood cells (RBCs), type O-positive RBCs are reasonable for transfusion for each of the following patients EXCEPT:",
+      "options": [
+        "A 60-year-old woman with diabetes who was involved in an MVA",
+        "A 23-year-old man who sustained a gunshot wound to the upper abdomen",
+        "An 84-year-old man with a ruptured abdominal aortic aneurysm",
+        "A 21-year-old, gravida 2, para 1 woman with placenta previa who is bleeding profusely"
+      ],
+      "confidence_score": 0.6848570687622885,
+      "weeks": [
+        9
+      ],
+      "question_number": null,
+      "explanation": "In an emergency, when massive amounts of blood are immediately required and the supply of O-negative packed red blood cells (RBCs) in the blood bank is low, it is acceptable to transfuse O-positive RBCs into male patients or female patients past the age of childbirth before the patient’s blood type is known. This is because delaying blood transfusion for blood typing may be more hazardous to the patient than the risk of a significant transfusion reaction based on Rh type for these patients. However, for the female patient who has the potential for pregnancy, administration of Rh-positive RBCs is not recommended (unless no Rh-negative RBCs are available). This is because an Rh-negative patient who receives Rh-positive RBCs would experience alloimmunization. For these women, future pregnancies with Rh-positive fetuses could be associated with hemolytic disease of the newborn.\nPardo, Chapter 25."
+    },
+    {
+      "question": "Which of the following characteristics of Remifentanil is FALSE?",
+      "options": [
+        "Remifentanil is about 200 times more potent than Morphine.",
+        "Remifentanil lacks muscle rigidity side effects because of its rapid metabolism.",
+        "Remifentanil has a less depressant effect on motor-evoked potentials compared with other opioids.",
+        "Remifentanil is associated with poor postoperative pain control if it is used intraoperatively because of its rapid metabolism.",
+        "Shivering is more common with Remifentanil than with Morphine."
+      ],
+      "confidence_score": 0.6824746730422041,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "A high incidence of muscle rigidity and purposeless movement was seen with Remifentanil. This side effect is related to the dose and speed of administration. Rapid intravenous bolus doses are particularly associated with this risk. However, muscle rigidity typically resolves within minutes after discontinuation of the drug."
+    },
+    {
+      "question": "Total body water is approximately _____ % of total body weight.",
+      "options": [],
+      "confidence_score": 0.6817131557760477,
+      "weeks": [
+        9
+      ],
+      "question_number": null,
+      "explanation": "Total body water is equal to approximately 60% of total body weight. Intracellular volume (ICV) constitutes 40% of total body weight, and extracellular volume (ECV) constitutes 20% of body weight.\nPardo, Chapter 24."
+    },
+    {
+      "question": "Which form of a drug commonly crosses the cell membrane?",
+      "options": [
+        "Ionized, water-soluble",
+        "Ionized, lipid-soluble",
+        "Nonionized, water-soluble",
+        "Nonionized, lipid-soluble"
+      ],
+      "confidence_score": 0.6793431990684362,
+      "weeks": [
+        2
+      ],
+      "question_number": null,
+      "explanation": "The nonionized form of a drug commonly crosses the cell membrane because it is more lipid-soluble, allowing it to diffuse easily through the lipid bilayer of the cell membrane. In contrast, water-soluble drugs easily penetrate most blood vessels."
+    },
+    {
+      "question": "Volatile anesthetics produce what effects on the electroencephalogram (EEG)?",
+      "options": [
+        "Increase amplitude and latency",
+        "Decrease amplitude and increase latency",
+        "Increase latency with no effect on amplitude",
+        "Decrease latency with no effect on amplitude",
+        "Decrease amplitude with no effect on latency"
+      ],
+      "confidence_score": 0.6778952369739402,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "In general, volatile anesthetics produce a dose-dependent increase in latency and a decrease in amplitude. Isoflurane, Sevoflurane, and Desflurane can produce an isoelectric electroencephalogram (EEG). Enflurane is associated with an epileptic waveform at high levels.\nEhrenwerth et al., Chapter 4."
+    },
+    {
+      "question": "Which of the following fluids is most appropriate for initial resuscitation in a patient with hypovolemic shock?",
+      "options": [
+        "D5W (5% dextrose in water)",
+        "Normal Saline (0.9% sodium chloride)",
+        "Half Normal Saline (0.45% sodium chloride)",
+        "D10W (10% dextrose in water)"
+      ],
+      "confidence_score": 0.6573675594460133,
+      "weeks": [
+        9
+      ],
+      "question_number": null,
+      "explanation": "Normal saline is commonly used for initial fluid resuscitation in hypovolemic shock because it is isotonic and has the same osmolarity as blood plasma. This helps expand the intravascular volume without causing significant fluid shifts into or out of cells. It is also compatible with most medications and blood products, reducing the risk of adverse reactions when used in conjunction with other treatments. Lastly, it is widely available and relatively inexpensive compared to other fluids.\nPardo, Chapter 24."
+    },
+    {
+      "question": "Which of the following is true regarding intravenous regional anesthesia (Bier block)? (select all that apply)",
+      "options": [
+        "The tourniquet should be inflated to 300 mmHg or at least 100 mmHg above the patient’s systolic blood pressure",
+        "Useful for postoperative pain in extremity surgery",
+        "Can be used for extremity surgeries lasting 2 to 3 hours",
+        "Bupivacaine is the drug of choice for prolonged blocks",
+        "Lidocaine is most commonly used"
+      ],
+      "confidence_score": 0.6487093675209796,
+      "weeks": [
+        12
+      ],
+      "question_number": null,
+      "explanation": "Intravenous regional anesthesia (Bier block) is a peripheral nerve block in which local anesthetic is injected into the upper extremity distal to an occluding tourniquet. The tourniquet is inflated to about 300 mmHg or at least 100 mmHg above the patient’s systolic blood pressure. The radial pulse must be tested for occlusion. This can be done by palpation or by placement of the pulse oximeter on the extremity.\nPostoperative analgesia is lost once the tourniquet is deflated and the local anesthetic diffuses from the nerves. Tourniquet times less than 60 to 90 minutes are used to prevent pain and nerve damage from the tourniquet. \nLidocaine 0.5% at a dose of 1.5 to 3 mg/kg is the most commonly administered local anesthetic because of its relative safety and effectiveness. Bupivacaine is not recommended for Bier blocks because of reports of cardiovascular toxicity and death that have occurred after the tourniquet was released.\nPardo, Chapter 18."
+    },
+    {
+      "question": "Which of the following statements is/are true when considering carbon dioxide absorption? (select all that apply)",
+      "options": [
+        "The absorption of carbon dioxide by the absorbent is a chemical process, not a physical one.",
+        "The absorbent can absorb approximately 26 L of carbon dioxide per 100 g.",
+        "The size of the absorptive granules considers both resistance to airflow and absorptive efficiency.",
+        "It is not necessary for all closed and semi-closed circle breathing systems."
+      ],
+      "confidence_score": 0.6473472081717979,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "Both closed and semi-closed circle breathing systems require carbon dioxide to be absorbed from exhaled gases. The size of the absorptive granules represents a compromise between resistance to airflow and absorptive efficiency. \nThe absorption of carbon dioxide by absorbent is a chemical process. 100 g of absorbent can chemically neutralize approximately 26 L of carbon dioxide. However, the channeling of gas through the granules may substantially decrease the absorptive efficiency.\nPardo, Chapter 15; Ehrenwerth et al., Chapter 4."
+    },
+    {
+      "question": "Which of the following statements about inhaled anesthetic agents is FALSE?",
+      "options": [
+        "Inhaled anesthetic agents have muscle relaxant properties of their own.",
+        "Of the volatile anesthetics, Halothane is the most potent trigger of caffeine-induced contractions.",
+        "Volatile anesthetics cause a dose-dependent decrease in uterine smooth muscle contractility.",
+        "No inhalational anesthetic is teratogenic in animals."
+      ],
+      "confidence_score": 0.646305471700723,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "In animal studies, virtually every volatile anesthetic agent is teratogenic.\nAlso, the potent inhaled anesthetic agents not only potentiate the action of neuromuscular blocking drugs but also have their own muscle relaxant properties."
+    },
+    {
+      "question": "Which of the following conditions will give falsely high blood pressure estimations determined by a non-invasive cuff? (select all that apply)",
+      "options": [
+        "Cuff too small",
+        "Loosely applied cuff",
+        "Even compression applied to the arm",
+        "Extremity below the heart"
+      ],
+      "confidence_score": 0.6427913573279826,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "For a non-invasive blood pressure cuff to give accurate blood pressure readings, the cuff must be appropriately sized, with the width of the cuff bladder being 40% of the arm’s circumference. Excessively large or small cuffs will result in falsely low and falsely high pressures, respectively. \nThe cuff must be applied with appropriate tightness because a loose cuff will result in an artificially high reading. Also, uneven compression can cause artifacts or false readings.\nThe position of the cuff must be at the same level as the heart to ensure readings reflect the actual arterial pressure without the influence of gravity. Falsely high readings can result if the cuff is positioned below the level of the heart. This is because the hydrostatic pressure increases when the cuff is below heart level, leading to higher readings.\nPardo, Chapter 20"
+    },
+    {
+      "question": "Which of the following statements regarding the intracranial pressure (ICP) waveform is/are TRUE? (select all that apply)",
+      "options": [
+        "The waveform is pulsatile.",
+        "It varies with the respiratory cycle.",
+        "The normal value is < 15 mmHg.",
+        "A normal pressure indicates normal neurologic function."
+      ],
+      "confidence_score": 0.6356505366841924,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "Intracranial pressure (ICP) is a pulsatile waveform oscillating with the cardiac and respiratory cycles. The cranial cavity is a closed cavity filled with noncompliant substances. Therefore, introducing additional substances into the cranial cavity or reducing venous outflow increases ICP. The cardiac cycle affects ICP in that the pulse volume adds additional volume into the intracranial cavity and thus raises pressure. Thoracic pressure will also be transmitted into the venous system and restrict the outflow of cerebral venous blood. \nThe normal value of ICP is 7-15 mmHg. Normal ICP does not translate to normal function, nor does abnormal ICP translate into abnormal function.\nPardo, Chapter 20."
+    },
+    {
+      "question": "What is a common complication associated with cricothyroidotomy?",
+      "options": [
+        "Hypotension",
+        "Hypertension",
+        "Hyperglycemia",
+        "Subcutaneous emphysema"
+      ],
+      "confidence_score": 0.6342520564437099,
+      "weeks": [
+        8
+      ],
+      "question_number": null,
+      "explanation": "Cricothyroidotomy is primarily indicated in emergencies where there is a severe airway obstruction, and other methods of securing the airway have failed. It is a life-saving procedure used when immediate airway access is necessary.\nThe first step in performing a cricothyroidotomy is making a skin incision over the cricothyroid membrane. This incision allows access to the cricothyroid membrane, which is then punctured to establish an airway.\nA common complication of cricothyroidotomy is subcutaneous emphysema, which is the presence of air in the subcutaneous tissue. It can occur if air leaks from the trachea into the surrounding tissues. Other complications include bleeding, infection, and damage to nearby structures.\nPardo, Chapter 16, Week 8 Additional Resources."
+    },
+    {
+      "question": "Which of the following statements concerning intravenous anesthetic agents in elderly patients compared with younger patients is TRUE? (select all that apply)",
+      "options": [
+        "The steady-state volume of distribution is reduced.",
+        "Redistribution from vessel-rich tissue compartments is slower.",
+        "The rate of hepatic clearance is reduced.",
+        "The volume of the central compartment is decreased.",
+        "A higher dosage is required."
+      ],
+      "confidence_score": 0.6302702745227633,
+      "weeks": [
+        5
+      ],
+      "question_number": null,
+      "explanation": "Elderly patients have a reduction in the steady-state volume of distribution of most intravenous anesthetics. This reduction is due to decreased muscle mass and body water, as well as increased body fat, which can affect how drugs are distributed in the body.\nElderly patients also have decreased hepatic clearance, reduced central compartment volume, and slower redistribution from vessel-rich tissue to intermediate compartments.\nAs a result, the dose of anesthetic agents required to achieve the desired effect is lower, and the time to recovery is longer in elderly patients than in younger patients.\nPardo, Chapter 4."
+    },
+    {
+      "question": "Which of the following statements is FALSE, considering the pneumatic flowmeter assembly?",
+      "options": [
+        "The oxygen flow control knob is physically distinguishable from other flow control knobs.",
+        "There is a high-flow alarm to prevent turbulent flow.",
+        "Flowmeter scales are individually calibrated.",
+        "The space between the float and the wall of the flow tube varies with different flow rates.",
+        "The flowmeters are referred to as constant-pressure flowmeters."
+      ],
+      "confidence_score": 0.6283098429991605,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "The pneumatic flowmeter assembly precisely controls gas flow to the common gas outlet. \nCompared to the flow control knobs of the other gases, the oxygen flow control knob is physically distinctively fluted. \nThe flow control valve regulates the amount of gas that enters the tapered transparent tube known as the Thorpe tube. A mobile float inside the flow tube indicated the amount of gas passing through the flow control valve. Flowmeter scales are individually calibrated using a reference float. \nThe flowmeters are referred to as constant-pressure flowmeters because the pressure decrease across the float remains constant for all positions in the tube. The term “variable orifice” is used because the annular space between the float in the Thorpe tube varies with the position of the float. Flow through the constriction created by the float can be laminar or turbulent, depending on the flow rate. There is no high-flow alarm to prevent turbulent flow. \nPardo, Chapter 15; Ehrenwerth et al., Chapter 2."
+    },
+    {
+      "question": "A hypoxic mixture can be delivered even with a proportioning system if: (select all that apply)",
+      "options": [
+        "An inert gas (helium, carbon dioxide) is being delivered.",
+        "There is a leak downstream from the flow valves.",
+        "There are defective pneumatics or mechanics in the system.",
+        "The wrong gas is in the oxygen pipeline."
+      ],
+      "confidence_score": 0.6277160735978734,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "All of the conditions can lead to hypoxic mixture delivery even with a proportioning system. The proportioning system will be fooled if a gas other than oxygen is present in the oxygen pipeline. \nNormal operation of the proportioning system is contingent upon the pneumatic and mechanical integrity. A leak downstream from these devices, such as a broken oxygen flow tube, can cause the delivery of a hypoxic mixture. In this case, the oxygen analyzer is the only machine safety device to detect the problem. \nThe administration of a third inert gas, such as helium, nitrogen, or carbon dioxide, can cause a hypoxic mixture because contemporary proportioning systems link only nitrous oxide and oxygen.\nPardo, Chapter 15; Ehrenwerth et al., Chapter 2."
+    },
+    {
+      "question": "Which of the following steps is NOT part of the retrograde intubation procedure?",
+      "options": [
+        "Puncturing the cricothyroid membrane",
+        "Inserting a guidewire",
+        "Using a laryngoscope to visualize the vocal cords",
+        "Advancing the endotracheal tube over the guidewire"
+      ],
+      "confidence_score": 0.6245957439814046,
+      "weeks": [
+        8
+      ],
+      "question_number": null,
+      "explanation": "The main advantage of retrograde intubation is that it does not involve the use of a laryngoscope to visualize the vocal cords, making it useful when the airway is difficult to access or visualize. This can be particularly beneficial in cases of severe facial trauma or anatomical abnormalities.\nRetrograde intubation involves several key steps. First, a needle is inserted through the cricothyroid membrane. A guidewire is passed through this needle into the trachea and retrieved through the mouth or nose. The endotracheal tube is threaded over the guidewire and advanced into the trachea. Finally, the correct tube placement is confirmed by checking for breath sounds and using capnography. \nPardo, Chapter 16, Week 8 Additional Resources."
+    },
+    {
+      "question": "Which of the following statements concerning a decrease in blood pressure of 20% during spinal anesthesia is true?",
+      "options": [
+        "It is primarily the result of arterial dilation.",
+        "It is primarily the result of venodilation.",
+        "It should be treated with a modest head-up position to prevent further cephalad spread of the local anesthetic.",
+        "It must be treated aggressively in all patients.",
+        "It indicates that the patient was hypovolemic before induction of spinal anesthesia."
+      ],
+      "confidence_score": 0.6192402445850245,
+      "weeks": [
+        12
+      ],
+      "question_number": null,
+      "explanation": "Hypotension during spinal anesthesia is primarily caused by venodilation, leading to pooling and decreased cardiac output. It is also caused by decreased systemic vascular resistance resulting from arterial dilation. The amount of hypotension is related to the level of sympathectomy.\nAlthough the cephalad spread of a hyperbaric solution may be limited by placing the patient in a head-up position, this should not be done to treat existing hypotension because it will further decrease venous return.\nA decrease in blood pressure of 20 to 30% is usually well tolerated, but selected patients with cardiac, renal, or cerebrovascular disease may require treatment. Potential treatments include vasoconstrictors, fluid administration, and a modest head-down position.\nPardo, Chapter 17."
+    },
+    {
+      "question": "Patients suffering from which condition are at increased risk of developing complete heart block during the insertion of a pulmonary artery catheter?",
+      "options": [
+        "Right bundle branch block",
+        "Left bundle branch block",
+        "Atrial fibrillation",
+        "Anterior fascicular block",
+        "Posterior fascicular block"
+      ],
+      "confidence_score": 0.6171955573187307,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "explanation": "Patients with a left bundle branch block rely on their right bundle branch to transmit the impulses from their atrioventricular node to the ventricular mass. In patients with a left bundle branch block, passing a pulmonary artery catheter through the right side of the heart could injure the right bundle and produce a complete heart block.\nEhrenwerth et al., Chapter 12."
+    },
+    {
+      "question": "If the anesthesia gas machine is discovered Monday morning to have run with 5 L/min of oxygen all weekend long, the most reasonable course of action before using it on a patient would be:",
+      "options": [
+        "Administer 100% oxygen for the first hour of the following case",
+        "Place the humidifier in line with the expiratory limb",
+        "Avoid use of Sevoflurane",
+        "Change the carbon dioxide absorbent"
+      ],
+      "confidence_score": 0.6088271601016129,
+      "weeks": [
+        13
+      ],
+      "question_number": null,
+      "explanation": "According to the Canadian Anesthesiologists’ Society guidelines, the recommended air exchange rate to minimize waste anesthetic gas concentrations in the operating room is a minimum rate of 20 air exchanges per hour. Moreover, exhaust air recirculation is not permitted during operational hours and is not recommended at any other time.\nThe air exchange rate helps dilute and remove waste gases that may escape into the operating room environment. This is essential to protect healthcare workers from the potential health effects of chronic exposure to these gases.\nCAS Guidelines to the Practice of Anesthesia 2024.Guidelines to the Practice of Anesthesia—Revised Edition 2024opens in a new window/tab"
+    },
+    {
+      "question": "Which of the following is/are true when considering the scavenging systems? (select all that apply)",
+      "options": [
+        "Neither a positive-pressure nor a negative-pressure relief valve is necessary if an active system with an open interface is used.",
+        "A negative-pressure but not a positive-pressure relief valve is necessary when an active system with a closed interface is used.",
+        "A positive-pressure but not a negative-pressure relief valve is necessary when an active system with a closed interface is used.",
+        "Positive-pressure and negative-pressure relief valves are mandatory when an active system with a closed interface is used.",
+        "Positive-pressure and negative-pressure relief valves are mandatory when a passive system with a closed interface is used."
+      ],
+      "confidence_score": 0.5960376968182193,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "No pressure relief valves are needed in an active scavenging system with an open interface because the open vent relieves both positive and negative pressures.\nA positive-pressure relief valve is mandatory in both active and passive systems with a closed interface to vent excess gas in case of occlusion downstream from the scavenging interface.\nA negative-pressure relief valve is also necessary if it is an active system with a closed interface. It protects the breathing circuit or ventilator from excess sub-atmospheric pressure.\nPardo, Chapter 15."
+    },
+    {
+      "question": "Which of the following statements is/are true when considering the oxygen and nitrous oxide pipeline supply source? (select all that apply)",
+      "options": [
+        "The oxygen cylinder supply source should not be downregulated from the cylinder pressure upon entering the anesthesia gas machine (AGM).",
+        "The hospital piping system supplies gases to the AGM at 50 psi.",
+        "The fail-safe valve links the oxygen and nitrous oxide flow control valves.",
+        "The second-stage oxygen regulator supplies a constant pressure to the oxygen flow control valve regardless of the fluctuating pipeline pressure."
+      ],
+      "confidence_score": 0.5959690047210262,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "The hospital piping system provides gases to the anesthesia gas machine (AGM) at approximately 50 psi, which is the normal working pressure of most AGMs. The cylinder supplies are the backup source if the pipeline fails. The oxygen cylinder source is regulated from 2200 psi to approximately 45 psi. Most AGMs have a second-stage oxygen regulator downstream from the supply source. This regulator supplies a constant pressure to the oxygen flow control valve regardless of fluctuating oxygen pipeline pressures. \nA safety device, a fail-safe valve, is located downstream from the nitrous oxide supply source. It serves as an interface between the oxygen and nitrous oxide supply source. This valve shuts off or proportionally decreases the supply of nitrous oxide if the oxygen supply pressure decreases. \nA proportioning system,  traditionally called the hypoxic guard system, is a safety feature that links oxygen and nitrous oxide flow control valves mechanically, pneumatically, or electrically, so the minimum oxygen concentration at the common outlet is 25%.\nPardo, Chapter 15; Ehrenwerth et al., Chapter 2."
+    },
+    {
+      "question": "When considering patient breathing circuits, which of the following statements is true?",
+      "options": [
+        "Absorbent canister leaks are the leading cause of critical incidents in anesthesia.",
+        "The most common site of disconnection is the inspiratory limb.",
+        "Leaks in the disposable anesthesia circuits can be detected through the high-pressure system leak test.",
+        "The effectiveness of electronic pressure monitors in diagnosing a disconnection is independent of the threshold pressure alarm limit.",
+        "The oxygen analyzer is the best device for revealing patient disconnections."
+      ],
+      "confidence_score": 0.5713728702896053,
+      "weeks": [
+        13
+      ],
+      "question_number": null,
+      "explanation": "Patient breathing circuit disconnections are the leading cause of critical incidents in anesthesia. The most common disconnection site is the Y-piece. \nAll connections of the disposable anesthesia circuit must be tight and secure before checking for leaks in the high-pressure system. Pneumatic and electronic pressure monitors help diagnose disconnections. The effectiveness of these monitors depends on the disconnection site, pressure sensor location, threshold pressure alarm limit, inspiratory flow rate, and resistance of the disconnected breathing circuit. \nDisconnections can be complete or partial and can be detected by capnography with a drop in CO2 level. Capnography is probably the best device for revealing patient disconnections. An oxygen analyzer can detect disconnections through a low oxygen level alarm, although there may be a delay depending on the oxygen percentage of the fresh gas flow. \nPardo, Chapter 15."
+    },
+    {
+      "question": "What is the significance of the thyromental distance in airway assessment?",
+      "options": [
+        "It predicts the likelihood of airway obstruction.",
+        "It assesses the patient’s neck mobility.",
+        "It helps estimate the ease of intubation.",
+        "It measures the patient’s respiratory rate."
+      ],
+      "confidence_score": 0.5684714911464006,
+      "weeks": [
+        8
+      ],
+      "question_number": null,
+      "explanation": "The thyromental distance is between the thyroid notch and the mentum (chin). A distance of less than 6 cm (or three finger breadths) can indicate a potentially difficult intubation. It suggests a more acute between the oral and pharyngeal axes, limiting the ability to align them. Also, it suggests limited space for the tongue to be displaced during laryngoscopy.\nPardo, Chapter 16."
+    },
+    {
+      "question": "Which of the following blood products is used to treat a patient with a deficiency in clotting factors?",
+      "options": [
+        "Packed Red Blood Cells (PRBCs)",
+        "Fresh Frozen Plasma (FFP)",
+        "Platelets",
+        "Cryoprecipitate"
+      ],
+      "confidence_score": 0.5546889329806707,
+      "weeks": [
+        9
+      ],
+      "question_number": null,
+      "explanation": "Fresh frozen plasma (FFP) contains all the clotting factors. It is used to treat patients with deficiencies in these factors, such as in cases of liver disease, disseminated intravascular coagulation (DIC), or massive transfusion protocols.\nPardo, Chapter 25."
+    },
+    {
+      "question": "Which of the following characteristics of local anesthetics is associated with a long duration of action?",
+      "options": [
+        "High molecular weight",
+        "High degree of lipid solubility",
+        "High degree of protein binding",
+        "High pKa",
+        "Presence of ester linkage"
+      ],
+      "confidence_score": 0.5482848022283876,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "The duration of action of local anesthetics is determined primarily by the degree of protein binding of the drug.\nThe degree of lipid solubility determines the potency of local anesthetics because lipid-soluble drugs cross more easily into nerve cell membranes.\nMolecular weight does not affect the duration of action.\nThe pKa of the drug relates to its speed of onset, not its duration of action.\nEster linkages are found in ester-type local anesthetics such as Procaine, Tetracaine, and Chlorprocaine. These drugs are metabolized by plasma pseudocholinesterases and have a shorter duration of action than amide-type local anesthetics."
+    },
+    {
+      "question": "Which of the following statements is true when considering fresh gas decoupling?",
+      "options": [
+        "Nitrous oxide and oxygen are decoupled at the fresh gas flow site.",
+        "The inspiratory and expiratory limbs of the breathing circuit are no longer connected at the Y-piece.",
+        "The oxygen flush valve is eliminated.",
+        "The fresh gas flow is no longer added to the volume of gas delivered to the patient during inspiration."
+      ],
+      "confidence_score": 0.5354950649939025,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "Fresh gas decoupling ensures that the fresh gas flow (FGF) does not affect the delivered tidal volume during mechanical ventilation. In traditional breathing systems, changes in FGF could alter the tidal volume, potentially leading to inconsistent ventilation. Fresh gas decoupling addresses this by diverting the fresh gas into a reservoir bag during the inspiratory phase, ensuring that the tidal volume remains constant regardless of FGF changes.\nPardo, Chapter 15."
+    },
+    {
+      "question": "If 10 mg of drug is present and the plasma concentration is 2 mg/L, then the volume of distribution is ________ L.",
+      "options": [
+        "0.2"
+      ],
+      "confidence_score": 0.5187197001856094,
+      "weeks": [
+        2
+      ],
+      "question_number": null,
+      "explanation": "The volume of distribution is 5L. Vd = total amount of drug/concentration.\nThe volume of distribution is a numeric index of the extent of drug distribution. It does not have any relationship to the actual volume of any tissues. For example, if one drug has a larger volume of distribution than another with similar pharmacologic activity, it will take a larger loading dose to achieve the same concentration. Various pathologic conditions alter the volume of distribution, requiring dosage adjustments. For example, hypovolemia requires a smaller dosage of the drug."
+    },
+    {
+      "question": "Which of the following regarding the treatment of malignant hyperthermia is TRUE? (select all that apply)",
+      "options": [
+        "An initial dose of Dantrolene is 2.5 mg/kg",
+        "Calcium channel blockers are useful in acute-phase treatment.",
+        "Lidocaine is effective in managing dysrhythmias.",
+        "The recommended maximum dose of Dantrolene is 7.5 mg/kg."
+      ],
+      "confidence_score": 0.48042311521706393,
+      "weeks": [
+        5
+      ],
+      "question_number": null,
+      "explanation": "It is established that volatile inhaled anesthetic agents, such as Halothane, Isoflurane, Desflurane, and Sevoflurane, trigger malignant hyperthermia (MH). The gaseous inhaled anesthetic agent, nitrous oxide, does not trigger MH. \nThe intravenous trigger is Succinylcholine.\nPardo, Chapter 7."
+    },
+    {
+      "question": "Possible causes for a sudden loss of end-tidal CO2 waveform can indicate which of the following? (select all that apply)",
+      "options": [
+        "Extubation",
+        "Hyperventilation",
+        "Cardiac arrest",
+        "Disrupted sample line"
+      ],
+      "confidence_score": 0.4802989940898035,
+      "weeks": [
+        13
+      ],
+      "question_number": null,
+      "explanation": "For end-tidal CO2 to be detected, there must be adequate pulmonary blood flow to deliver the CO2 to the lungs for excretion, ventilation, and an intact sampling system. Cardiac arrest will cease pulmonary blood flow. Extubation in a mechanically ventilated patient would result in cessation of ventilation. A disrupted sampling line in a sidestream sampling system would result in a sudden loss of CO2 waveform. Hyperventilation would result in a gradual lowering of end-tidal CO2, but not a sudden decrease.\nPardo, Chapter 20."
+    },
+    {
+      "question": "Which of the following statements is true considering the oxygen cylinder supply source?",
+      "options": [
+        "The cylinder should be left open when the anesthesia gas machine (AGM) is in use in case of a pipeline failure.",
+        "The cylinder supply source is the primary gas source for the AGM.",
+        "A cylinder exchange cannot occur while gas flows from another cylinder into the machine.",
+        "The hanger yoke assemblies that attach the cylinders to the AGM are equipped with a Pin-Index-Safety-System to eliminate cylinder interchange.",
+        "The AGM holds reserve D cylinders."
+      ],
+      "confidence_score": 0.46642931822744027,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "The hospital piping system provides gases to the anesthesia gas machine (AGM) at approximately 50 psi, which is the normal working pressure of most AGMs. The cylinder supplies are the backup source if the pipeline fails. The oxygen cylinder source is regulated from 2200 psi to approximately 45 psi. Most AGMs have a second-stage oxygen regulator downstream from the supply source. This regulator supplies a constant pressure to the oxygen flow control valve regardless of fluctuating oxygen pipeline pressures. \nA safety device, a fail-safe valve, is located downstream from the nitrous oxide supply source. It serves as an interface between the oxygen and nitrous oxide supply source. This valve shuts off or proportionally decreases the supply of nitrous oxide if the oxygen supply pressure decreases. \nA proportioning system,  traditionally called the hypoxic guard system, is a safety feature that links oxygen and nitrous oxide flow control valves mechanically, pneumatically, or electrically, so the minimum oxygen concentration at the common outlet is 25%.\nPardo, Chapter 15; Ehrenwerth et al., Chapter 2."
+    },
+    {
+      "question": "Which of the following is/are the safest configuration(s) for the flowmeter orientation? (select all that apply)",
+      "options": [
+        "Nitrous oxide → Air → Oxygen",
+        "Oxygen → Nitrous oxide → Air",
+        "Air → Nitrous oxide → Oxygen",
+        "Oxygen → Air → Nitrous oxide"
+      ],
+      "confidence_score": 0.4272253233474833,
+      "weeks": [
+        10,
+        11
+      ],
+      "question_number": null,
+      "explanation": "The pneumatic flowmeter assembly precisely controls gas flow to the common gas outlet. \nCompared to the flow control knobs of the other gases, the oxygen flow control knob is physically distinctively fluted. \nThe flow control valve regulates the amount of gas that enters the tapered transparent tube known as the Thorpe tube. A mobile float inside the flow tube indicated the amount of gas passing through the flow control valve. Flowmeter scales are individually calibrated using a reference float. \nThe flowmeters are referred to as constant-pressure flowmeters because the pressure decrease across the float remains constant for all positions in the tube. The term “variable orifice” is used because the annular space between the float in the Thorpe tube varies with the position of the float. Flow through the constriction created by the float can be laminar or turbulent, depending on the flow rate. There is no high-flow alarm to prevent turbulent flow. \nPardo, Chapter 15; Ehrenwerth et al., Chapter 2."
+    },
+    {
+      "question": "Which of the following statements regarding the structure and metabolism of intravenous induction agents is TRUE? (select all that apply)",
+      "options": [
+        "Pentobarbital is a potential metabolite of Thiopental that can cause long-lasting central nervous system depressant activity.",
+        "Thiopental solution (2.5%) is highly acidic.",
+        "The hydroxyl derivative of Methohexital is inactive.",
+        "The analgesic and anesthetic potency of the S(+) isomer of Ketamine is less than that of the racemic mixture."
+      ],
+      "confidence_score": 0.4186888658844993,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "explanation": "Thiopental, at high doses, undergoes a desulfuration reaction that produces pentobarbital, a compound associated with long-lasting central nervous system depression.\nMethohexital is metabolized in the liver to inactive hydroxyderivates.\nThiopental used to be available in a 2.5% solution that is highly alkaline (pH > 9); therefore, inadvertent extravenous injection causes tissue irritation.\nThe anesthetic and analgesic potency of the S(+) isomer of Ketamine is greater than that of the racemic mixture."
+    }
+  ],
+  "unmatched": [
+    {
+      "question": "Which of the following statements regarding the Sellick maneuver is FALSE?",
+      "options": [
+        "It can obliterate the esophageal lumen while maintaining the tracheal opening.",
+        "It is indicated for rapid sequence induction in patients with laryngeal fracture.",
+        "It is contraindicated when there is active vomiting.",
+        "It can be used with gentle positive-pressure ventilation"
+      ],
+      "confidence_score": 0.3630102304931667,
+      "weeks": [
+        8
+      ],
+      "question_number": null,
+      "best_score": 0.3630102304931667
+    },
+    {
+      "question": "Which of the following statements is/are TRUE? (select all that apply)",
+      "options": [
+        "Convection is heat loss resulting from contact with surfaces.",
+        "Conduction is heat loss resulting from the movement of air.",
+        "Radiation is heat loss resulting from infrared irradiation.",
+        "Evaporation is heat loss resulting from the energy required to vaporize water."
+      ],
+      "confidence_score": 0.2678283713070517,
+      "weeks": [
+        6,
+        7
+      ],
+      "question_number": null,
+      "best_score": 0.2678283713070517
+    },
+    {
+      "question": "Choose the FALSE statement.",
+      "options": [
+        "A pharmacodynamic interaction is when the dose-response curve for one drug is shifted by another.",
+        "Additive interactions are most likely when combining drugs with identical mechanisms.",
+        "Synergistic interactions are characterized by small doses of two or more drugs that produce substantial effects.",
+        "There is usually an additive effect between Succinylcholine and non-depolarizing neuromuscular relaxants.",
+        "A pharmacodynamic interaction occurs when one drug alters the sensitivity of a target receptor or tissue to the effects of a second drug."
+      ],
+      "confidence_score": 0.15203375150586712,
+      "weeks": [
+        3,
+        4
+      ],
+      "question_number": null,
+      "best_score": 0.15203375150586712
+    },
+    {
+      "question": "How are you feeling about beginning IAAN111?",
+      "options": [
+        "Give your rating",
+        "😩",
+        "😧",
+        "☹️",
+        "😐",
+        "😊",
+        "😀",
+        "😍"
+      ],
+      "confidence_score": 0.06081818582999746,
+      "weeks": [
+        8
+      ],
+      "question_number": null,
+      "best_score": 0.06081818582999746
+    }
+  ],
+  "statistics": {
+    "total_questions": 85,
+    "matched_questions": 81,
+    "unmatched_questions": 4
+  }
+}

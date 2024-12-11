@@ -1,0 +1,40 @@
+{
+  "name": "resume-job-matcher",
+  "version": "1.0.0",
+  "description": "Match resumes with job postings using OpenAI embeddings",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "json-schema-to-ts": "^3.1.1",
+    "openai": "^4.28.0",
+    "pdf-parse": "^1.1.1",
+    "puppeteer": "^23.10.2",
+    "puppeteer-core": "^19.7.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-real-browser": "^1.3.20",
+    "rebrowser-puppeteer-core": "^23.10.1",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^20.11.19",
+    "@types/puppeteer": "^7.0.4",
+    "@types/yargs": "^17.0.33",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.5",
+    "prisma": "^5.22.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

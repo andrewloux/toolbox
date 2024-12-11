@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../jobs.db"
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String
+  website   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  roles     Role[]
+
+  @@unique([name, website], name: "name_website")
+  @@map("companies")
+}
+
+model Role {
+  id              Int       @id @default(autoincrement())
+  company         Company   @relation(fields: [company_id], references: [id])
+  company_id      Int
+  title           String
+  link            String
+  location        String?
+  pay_range       String?
+  similarity_score Float
+  status          String    @default("new")
+  disliked        Boolean   @default(false)
+  created_at      DateTime  @default(now())
+  section_scores  String?   @map("section_scores")
+  analysis_json   String?   @map("analysis_json")
+  resume_checksum String?
+
+  @@map("roles")
+  @@index([link])
+  @@index([resume_checksum])
+}
+
+model ResumeCache {
+  fileChecksum  String   @id
+  processedText String
+  createdAt     DateTime @default(now())
+
+  @@map("resume_cache")
+} 

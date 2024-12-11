@@ -1,0 +1,56 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../jobs.db"
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String
+  website   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  roles     Role[]
+
+  @@unique([name, website], name: "name_website")
+  @@map("companies")
+}
+
+model Role {
+  id              Int       @id @default(autoincrement())
+  company         Company   @relation(fields: [company_id], references: [id])
+  company_id      Int
+  title          String
+  link           String
+  location       String?
+  pay_range      String?
+  similarity_score Float
+  status         String    @default("new")
+  disliked       Boolean   @default(false)
+  created_at     DateTime  @default(now())
+  section_scores String?
+  analysis_json  String?   // Full job match analysis JSON
+
+  @@map("roles")
+}
+
+model ResumeCache {
+  fileChecksum  String   @id
+  processedText String
+  createdAt    DateTime @default(now())
+
+  @@map("resume_cache")
+}
+
+model ProcessedJobLink {
+  id            Int      @id @default(autoincrement())
+  resumeChecksum String
+  jobLink       String
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([resumeChecksum, jobLink], name: "resume_link")
+  @@map("processed_job_links")
+} 
