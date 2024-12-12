@@ -1,1 +1,3 @@
 *.pdf
+*.js
+!node_modules/*.js
