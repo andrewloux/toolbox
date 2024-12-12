@@ -299,7 +299,24 @@ class ScraperService {
             const config = this.getSiteConfig(url);
             await new Promise(resolve => setTimeout(resolve, config.waitTime));
             // Get the page content after it's fully loaded
-            const pageContent = await page.content();
+            await page.waitForSelector('body');
+            const pageContent = await page.evaluate(() => {
+                const clone = document.body.cloneNode(true);
+                const div = document.createElement('div');
+                div.appendChild(clone);
+                // Remove scripts, styles, and SVGs
+                const scripts = div.querySelectorAll('script');
+                scripts.forEach(script => script.remove());
+                const styles = div.querySelectorAll('[style]');
+                styles.forEach(element => element.removeAttribute('style'));
+                const styleElements = div.querySelectorAll('style');
+                styleElements.forEach(style => style.remove());
+                const svgs = div.querySelectorAll('svg');
+                svgs.forEach(svg => svg.remove());
+                return div.innerHTML;
+            });
+            console.log(pageContent);
+            // return [];
             // Ask the LLM to identify the best selectors
             const { jobTitleSelector, jobLinkSelector } = await jobAnalyzer_1.jobAnalyzer.suggestSelectors(pageContent);
             // Get all career links with titles using the suggested selectors

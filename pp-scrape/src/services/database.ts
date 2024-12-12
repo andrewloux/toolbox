@@ -52,7 +52,7 @@ class DatabaseService {
     try {
       return JSON.parse(jsonString) as T;
     } catch (e) {
-      console.warn('Failed to parse JSON:', e);
+      console.warn("Failed to parse JSON:", e);
       return null;
     }
   }
@@ -131,11 +131,11 @@ class DatabaseService {
       orderBy: { similarity_score: "desc" },
       include: { company: true },
     });
-    
-    return roles.map(role => ({
+
+    return roles.map((role) => ({
       ...role,
       section_scores: this.parseJSON(role.section_scores),
-      analysis_json: this.parseJSON(role.analysis_json)
+      analysis_json: this.parseJSON(role.analysis_json),
     }));
   }
 
@@ -146,10 +146,10 @@ class DatabaseService {
       include: { company: true },
     });
 
-    return roles.map(role => ({
+    return roles.map((role) => ({
       ...role,
       section_scores: this.parseJSON(role.section_scores),
-      analysis_json: this.parseJSON(role.analysis_json)
+      analysis_json: this.parseJSON(role.analysis_json),
     }));
   }
 
@@ -166,19 +166,22 @@ class DatabaseService {
       include: { company: true },
     });
 
-    return roles.map(role => ({
+    return roles.map((role) => ({
       ...role,
       section_scores: this.parseJSON(role.section_scores),
-      analysis_json: this.parseJSON(role.analysis_json)
+      analysis_json: this.parseJSON(role.analysis_json),
     }));
   }
 
-  public async isJobProcessed(resumeChecksum: string, jobLink: string): Promise<boolean> {
+  public async isJobProcessed(
+    resumeChecksum: string,
+    jobLink: string,
+  ): Promise<boolean> {
     const role = await this.prisma.role.findFirst({
       where: {
         link: jobLink,
         resume_checksum: resumeChecksum,
-      }
+      },
     });
     return !!role;
   }
@@ -190,8 +193,13 @@ class DatabaseService {
   public async saveJobAnalysis(params: SaveJobAnalysisParams): Promise<void> {
     console.log("Saving job analysis", params);
     // Validate similarity score is a number
-    if (typeof params.similarityScore !== 'number' || isNaN(params.similarityScore)) {
-      throw new Error(`Invalid similarity score: ${params.similarityScore}. Must be a number.`);
+    if (
+      typeof params.similarityScore !== "number" ||
+      isNaN(params.similarityScore)
+    ) {
+      throw new Error(
+        `Invalid similarity score: ${params.similarityScore}. Must be a number.`,
+      );
     }
 
     // First upsert the company
@@ -199,19 +207,19 @@ class DatabaseService {
       where: {
         name_website: {
           name: params.company || "Unknown",
-          website: new URL(params.url).origin
-        }
+          website: new URL(params.url).origin,
+        },
       },
       update: {}, // No updates needed if exists
       create: {
         name: params.company || "Unknown",
-        website: new URL(params.url).origin
-      }
+        website: new URL(params.url).origin,
+      },
     });
 
     // Then try to find existing role
     const existingRole = await this.prisma.role.findFirst({
-      where: { link: params.url }
+      where: { link: params.url },
     });
 
     // Base role data without the link field
@@ -223,7 +231,7 @@ class DatabaseService {
       status: params.status,
       title: params.title,
       location: params.location,
-      pay_range: params.salary
+      pay_range: params.salary,
     };
 
     if (existingRole) {
@@ -235,16 +243,16 @@ class DatabaseService {
           // Only update these if they were null before
           title: existingRole.title || roleData.title,
           location: existingRole.location || roleData.location,
-          pay_range: existingRole.pay_range || roleData.pay_range
-        }
+          pay_range: existingRole.pay_range || roleData.pay_range,
+        },
       });
     } else {
       // Create new role with company reference and link
       await this.prisma.role.create({
         data: {
           ...roleData,
-          link: params.url  // Required for new roles
-        }
+          link: params.url, // Required for new roles
+        },
       });
     }
   }

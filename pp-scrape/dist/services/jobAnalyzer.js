@@ -279,7 +279,7 @@ Your task is to analyze job titles and determine if they are likely to be a good
                     content: `Job Title: ${jobTitle}
 
 Resume Summary:
-${this.resumeContext}`
+${this.resumeContext.slice(0, 500) + "..."}`
                 }
             ],
             functions: [{
