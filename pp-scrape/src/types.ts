@@ -1,9 +1,9 @@
 export interface JobDetails {
-    url: string;
-    description: string;
+    url: string | null;
     title: string | null;
     company: string | null;
     location: string | null;
+    description: string | null;
     salary: string | null;
 }
 

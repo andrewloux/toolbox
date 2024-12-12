@@ -59,7 +59,7 @@ export class ScraperService {
   private browser: Browser | null = null;
   private isHeadless: boolean;
 
-  constructor(isHeadless: boolean = false) {
+  constructor(isHeadless: boolean = true) {
     this.isHeadless = isHeadless;
   }
 
@@ -87,7 +87,8 @@ export class ScraperService {
 
   private async navigateToJobDescription(
     page: Page,
-    startUrl: string
+    startUrl: string,
+    jobTitle: string
   ): Promise<{ url: string; content: JobDetails | null }> {
     let currentUrl = startUrl;
     let navigationStep = 0;
@@ -112,8 +113,8 @@ export class ScraperService {
 
       const currentPageDetails: JobDetails = {
         url: currentUrl,
-        description: pageContent,  // Now using clean text instead of HTML
-        title: null,
+        description: pageContent,
+        title: jobTitle,
         company: null,
         location: null,
         salary: null
@@ -206,7 +207,9 @@ export class ScraperService {
         } else {
           Logger.info(SERVICE_NAME, "❌ Title filtered", {
             title: screening.title,
-            link: job.link
+            link: job.link,
+            // Add reason for filtering if available
+            // reason: screening.reason // Assuming the LLM could provide a reason
           });
           filteredOut.push({
             title: job.title,
@@ -240,42 +243,44 @@ export class ScraperService {
   }
 
   private async processJobWithRetries(
-    link: string,
+    job: { title: string; link: string },
     resumePath: string
   ): Promise<JobMatch | null> {
     let retries = 0;
-    const config = this.getSiteConfig(link);
+    const config = this.getSiteConfig(job.link);
 
     while (retries < MAX_RETRIES) {
       try {
         const resumeChecksum = await textExtractor.getResumeChecksum(resumePath);
-        const isProcessed = await dbService.isJobProcessed(resumeChecksum, link);
+        const isProcessed = await dbService.isJobProcessed(resumeChecksum, job.link);
         
         if (isProcessed) {
-          Logger.info(SERVICE_NAME, "Job already processed", { link });
+          Logger.info(SERVICE_NAME, "Job already processed", { link: job.link });
           return null;
         }
 
         await rateLimiter.waitForAvailability(config.needsExtraWait);
-        const page = await this.initializePage(link);
+        const page = await this.initializePage(job.link);
 
         try {
-          await page.goto(link, { 
+          await page.goto(job.link, { 
             waitUntil: "networkidle0",
             timeout: config.timeout
           });
 
-          const { url, content } = await this.navigateToJobDescription(page, link);
+          const { url, content } = await this.navigateToJobDescription(page, job.link, job.title);
 
-          if (!content) {
-            Logger.warn(SERVICE_NAME, "No job description found after navigation", { 
+          if (!content || !content.description) {
+            Logger.warn(SERVICE_NAME, "No job description found after navigation", {
               finalUrl: url,
               attempts: retries + 1
             });
             return null;
           }
 
-          const result = await jobAnalyzer.analyzeJobMatch(content);
+          const result = await jobAnalyzer.analyzeJobMatch({
+            ...content,
+          });
           
           // The analysis is already saved in jobAnalyzer.analyzeJobMatch
           return result;
@@ -290,7 +295,7 @@ export class ScraperService {
         
         if (error instanceof DOMException || (error as any)?.name === 'DOMException') {
           Logger.warn(SERVICE_NAME, `DOMException occurred (attempt ${retries}/${MAX_RETRIES})`, { 
-            link,
+            link: job.link,
             error: error instanceof Error ? error.message : 'Unknown error'
           });
           
@@ -301,7 +306,7 @@ export class ScraperService {
         }
         
         Logger.error(SERVICE_NAME, `Error processing job${isLastRetry ? ' (final attempt)' : ''}`, { 
-          link, 
+          link: job.link, 
           error: error instanceof Error ? error.message : 'Unknown error',
           attempt: retries
         });
@@ -377,12 +382,22 @@ export class ScraperService {
 
       Logger.debug(SERVICE_NAME, "Navigating to URL...");
       await page.goto(url, {
-        waitUntil: "networkidle0",
+        waitUntil: "networkidle2",
         timeout: NAVIGATION_TIMEOUT,
       });
 
-      // Get all career links with titles
-      const careerLinks = await this.findCareerLinks(page);
+      // Add a delay to ensure the page is fully loaded
+      const config = this.getSiteConfig(url);
+      await new Promise(resolve => setTimeout(resolve, config.waitTime));
+
+      // Get the page content after it's fully loaded
+      const pageContent = await page.content();
+
+      // Ask the LLM to identify the best selectors
+      const { jobTitleSelector, jobLinkSelector } = await jobAnalyzer.suggestSelectors(pageContent);
+
+      // Get all career links with titles using the suggested selectors
+      const careerLinks = await this.findCareerLinks(page, jobTitleSelector, jobLinkSelector);
       Logger.info(SERVICE_NAME, `Found ${careerLinks.length} career links`);
 
       // Screen titles first with config
@@ -390,7 +405,7 @@ export class ScraperService {
       Logger.info(SERVICE_NAME, `${filteredJobs.length} jobs passed title screening`);
 
       // Process only the jobs that passed screening
-      results.push(...(await this.processBatch(filteredJobs, resumeText, resumePath)));
+      results.push(...(await this.processBatch(filteredJobs, resumePath)));
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : "Unknown error";
       Logger.error(SERVICE_NAME, "Error during job analysis", {
@@ -411,52 +426,71 @@ export class ScraperService {
     return this.processResults(results, topN);
   }
 
-  private async findCareerLinks(page: Page): Promise<Array<{ title: string; link: string }>> {
+  private async findCareerLinks(
+    page: Page,
+    jobTitleSelector: string,
+    jobLinkSelector: string
+  ): Promise<Array<{ title: string; link: string }>> {
     Logger.debug(SERVICE_NAME, "Searching for career links...");
-    
-    return await page.evaluate(() => {
-      const results = new Set<{ title: string; link: string }>();
-      
-      // Get all links
-      document.querySelectorAll("a").forEach((link) => {
-        if (link.href) {
-          results.add({
-            title: link.textContent?.trim() || "Untitled Position",
-            link: link.href
-          });
-        }
-      });
 
-      // Get elements with role="link"
-      document.querySelectorAll('[role="link"]').forEach((elem) => {
-        const href = elem.getAttribute("href");
-        if (href) {
-          results.add({
-            title: elem.textContent?.trim() || "Untitled Position",
-            link: new URL(href, window.location.origin).href
-          });
-        }
-      });
+    return await page.evaluate(
+      ({ jobTitleSelector, jobLinkSelector }) => {
+        const results = new Set<{ title: string; link: string }>();
 
-      const careerKeywords = [
-        "career", "careers", "jobs", "positions", 
-        "opportunities", "openings", "work"
-      ];
+        // Select potential job title elements using the provided selector
+        const titleElements = document.querySelectorAll(jobTitleSelector);
 
-      return Array.from(results).filter((item) => {
-        const url = item.link.toLowerCase();
-        return !url.includes("application") && 
-               !url.includes("search") && 
-               !url.includes("#") &&
-               careerKeywords.some(keyword => url.includes(keyword)) &&
-               url.startsWith("http");
-      });
-    });
+        titleElements.forEach(titleElement => {
+          const title = titleElement.textContent?.trim() || "";
+          let link: string | null = null;
+
+          // 1. Check if the title element itself is an anchor
+          if (titleElement.tagName === "A") {
+            link = (titleElement as HTMLAnchorElement).href;
+          }
+
+          // 2. Look for a link within the title element
+          if (!link) {
+            const linkElement = titleElement.querySelector("a") as HTMLAnchorElement;
+            if (linkElement) {
+              link = linkElement.href;
+            }
+          }
+
+          // 3. Traverse up to find a common parent with a link
+          if (!link) {
+            let parent = titleElement.parentElement;
+            while (parent && !link) {
+              const linkElement = parent.querySelector("a") as HTMLAnchorElement;
+              if (linkElement) {
+                link = linkElement.href;
+                break;
+              }
+              parent = parent.parentElement;
+            }
+          }
+
+          // 4. Use jobLinkSelector to find a link near the title (less reliable)
+          if (!link) {
+            const linkElement = titleElement.closest(jobLinkSelector) as HTMLAnchorElement;
+            if (linkElement) {
+              link = linkElement.href;
+            }
+          }
+
+          if (title && link) {
+            results.add({ title, link });
+          }
+        });
+
+        return Array.from(results);
+      },
+      { jobTitleSelector, jobLinkSelector }
+    );
   }
 
   private async processBatch(
     jobs: Array<{ title: string; link: string }>,
-    resumeText: string,
     resumePath: string
   ): Promise<JobMatch[]> {
     const results: JobMatch[] = [];
@@ -469,7 +503,7 @@ export class ScraperService {
 
       const batch = jobs.slice(i, i + batchSize);
       const batchResults = await Promise.all(
-        batch.map(job => this.processJobWithRetries(job.link, resumePath))
+        batch.map(job => this.processJobWithRetries(job, resumePath))
       );
 
       const validResults = batchResults.filter((result): result is JobMatch => result !== null);
