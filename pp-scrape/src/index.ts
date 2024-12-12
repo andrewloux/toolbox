@@ -40,6 +40,7 @@ async function main() {
     .alias("h", "help").argv;
 
   try {
+
     const scraper = new ScraperService(argv.headless);
     await scraper.analyzeJobs(argv.url, argv.resume, { topN: argv.topN });
   } catch (error) {

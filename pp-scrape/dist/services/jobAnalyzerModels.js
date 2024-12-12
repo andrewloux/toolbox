@@ -10,10 +10,15 @@ const jobMatchSchema = {
                 technicalAlignment: { type: "number", minimum: 0, maximum: 1 },
                 experienceLevel: { type: "number", minimum: 0, maximum: 1 },
                 domainExpertise: { type: "number", minimum: 0, maximum: 1 },
-                roleResponsibility: { type: "number", minimum: 0, maximum: 1 }
+                roleResponsibility: { type: "number", minimum: 0, maximum: 1 },
             },
-            required: ["technicalAlignment", "experienceLevel", "domainExpertise", "roleResponsibility"],
-            additionalProperties: false
+            required: [
+                "technicalAlignment",
+                "experienceLevel",
+                "domainExpertise",
+                "roleResponsibility",
+            ],
+            additionalProperties: false,
         },
         detailedAnalysis: {
             type: "object",
@@ -27,18 +32,18 @@ const jobMatchSchema = {
                             properties: {
                                 usersServed: { type: "string" },
                                 dataProcessed: { type: "string" },
-                                transactionVolume: { type: "string" }
-                            }
+                                transactionVolume: { type: "string" },
+                            },
                         },
                         technicalLeadership: {
                             type: "object",
                             properties: {
                                 teamSize: { type: "number" },
                                 projectScope: { type: "string" },
-                                architectureOwnership: { type: "boolean" }
-                            }
-                        }
-                    }
+                                architectureOwnership: { type: "boolean" },
+                            },
+                        },
+                    },
                 },
                 skillAnalysis: {
                     type: "object",
@@ -46,8 +51,8 @@ const jobMatchSchema = {
                         criticalMatches: { type: "array", items: { type: "string" } },
                         missingCritical: { type: "array", items: { type: "string" } },
                         additionalStrengths: { type: "array", items: { type: "string" } },
-                        growthAreas: { type: "array", items: { type: "string" } }
-                    }
+                        growthAreas: { type: "array", items: { type: "string" } },
+                    },
                 },
                 careerTrajectory: {
                     type: "object",
@@ -61,11 +66,11 @@ const jobMatchSchema = {
                                 properties: {
                                     metric: { type: "string" },
                                     value: { type: "string" },
-                                    timeFrame: { type: "string" }
-                                }
-                            }
-                        }
-                    }
+                                    timeFrame: { type: "string" },
+                                },
+                            },
+                        },
+                    },
                 },
                 applicationStrategy: {
                     type: "object",
@@ -73,15 +78,15 @@ const jobMatchSchema = {
                         keyHighlights: { type: "array", items: { type: "string" } },
                         differentiators: { type: "array", items: { type: "string" } },
                         riskMitigations: { type: "array", items: { type: "string" } },
-                        talkingPoints: { type: "array", items: { type: "string" } }
-                    }
-                }
+                        talkingPoints: { type: "array", items: { type: "string" } },
+                    },
+                },
             },
-            required: ["technicalDepth", "skillAnalysis", "applicationStrategy"]
-        }
+            required: ["technicalDepth", "skillAnalysis", "applicationStrategy"],
+        },
     },
     required: ["matchScore", "detailedAnalysis"],
-    additionalProperties: false
+    additionalProperties: false,
 };
 const pageAnalysisSchema = {
     type: "object",
@@ -94,9 +99,9 @@ const pageAnalysisSchema = {
                 description: { type: "string", nullable: true },
                 company: { type: "string", nullable: true },
                 location: { type: "string", nullable: true },
-                salary: { type: "string", nullable: true }
+                salary: { type: "string", nullable: true },
             },
-            required: ["title", "description", "company", "location", "salary"]
+            required: ["title", "description", "company", "location", "salary"],
         },
         nextAction: {
             type: "object",
@@ -104,29 +109,30 @@ const pageAnalysisSchema = {
             properties: {
                 type: { type: "string", enum: ["click", "href"] },
                 target: { type: "string" },
-                reason: { type: "string" }
+                reason: { type: "string" },
             },
-            required: ["type", "target", "reason"]
-        }
+            required: ["type", "target", "reason"],
+        },
     },
-    required: ["isJobDescription", "content"]
+    required: ["isJobDescription", "content"],
 };
 const jobPreviewSchema = {
     type: "object",
     properties: {
         scores: {
             type: "array",
-            items: { type: "number", minimum: 0, maximum: 1 }
+            items: { type: "number", minimum: 0, maximum: 1 },
         },
         explanations: {
             type: "array",
-            items: { type: "string" }
-        }
+            items: { type: "string" },
+        },
     },
-    required: ["scores", "explanations"]
+    required: ["scores", "explanations"],
 };
 // Tool Definitions
-exports.jobMatchTools = [{
+exports.jobMatchTools = [
+    {
         type: "function",
         function: {
             name: "analyze_job_match",
@@ -144,22 +150,27 @@ Apply this scale:
 • domainExpertise: Examine domain challenges, patterns, scaling, data models, and system design. Consider transferable insights from related fields.
 • roleResponsibility: Map ownership, initiative, mentoring, end-to-end delivery, autonomy, and influence on outcomes.
 `,
-            parameters: jobMatchSchema
-        }
-    }];
-exports.pageAnalysisTools = [{
+            parameters: jobMatchSchema,
+        },
+    },
+];
+exports.pageAnalysisTools = [
+    {
         type: "function",
         function: {
             name: "analyze_job_page",
             description: "For matches with overall score < 0.8, only provide basic match score. For scores >= 0.8, populate additional properties.",
-            parameters: pageAnalysisSchema
-        }
-    }];
-exports.jobPreviewTools = [{
+            parameters: pageAnalysisSchema,
+        },
+    },
+];
+exports.jobPreviewTools = [
+    {
         type: "function",
         function: {
             name: "score_job_previews",
             description: "Score job titles based on relevance to candidate's background",
-            parameters: jobPreviewSchema
-        }
-    }];
+            parameters: jobPreviewSchema,
+        },
+    },
+];

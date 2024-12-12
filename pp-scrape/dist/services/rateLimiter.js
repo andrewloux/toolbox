@@ -39,24 +39,26 @@ class RateLimiter {
             requestsPerMin: this.requestsPerMin,
             queue: this.queue,
             processing: this.processing,
-            lastRequestTime: this.lastRequestTime
+            lastRequestTime: this.lastRequestTime,
         };
     }
     async waitForAvailability(isOpenAIRequest = false) {
         const now = Date.now();
-        const meanDelay = isOpenAIRequest ? this.openAIMeanDelay : this.defaultMeanDelay;
+        const meanDelay = isOpenAIRequest
+            ? this.openAIMeanDelay
+            : this.defaultMeanDelay;
         const timeSinceLastRequest = now - this.lastRequestTime;
         const poissonDelay = this.getPoissonDelay(meanDelay / 1000);
         if (timeSinceLastRequest < poissonDelay) {
             const waitTime = poissonDelay - timeSinceLastRequest;
-            logger_1.default.debug(SERVICE_NAME, `Waiting ${waitTime}ms before next request${isOpenAIRequest ? ' (OpenAI)' : ''}`);
-            await new Promise(resolve => setTimeout(resolve, waitTime));
+            logger_1.default.debug(SERVICE_NAME, `Waiting ${waitTime}ms before next request${isOpenAIRequest ? " (OpenAI)" : ""}`);
+            await new Promise((resolve) => setTimeout(resolve, waitTime));
         }
         this.lastRequestTime = Date.now();
     }
     updateLimits(headers) {
-        const remaining = headers?.['x-ratelimit-remaining'];
-        const reset = headers?.['x-ratelimit-reset'];
+        const remaining = headers?.["x-ratelimit-remaining"];
+        const reset = headers?.["x-ratelimit-reset"];
         if (remaining !== undefined && reset !== undefined) {
             logger_1.default.debug(SERVICE_NAME, "Rate limit info", { remaining, reset });
             if (remaining < 10) {
@@ -65,7 +67,7 @@ class RateLimiter {
                 logger_1.default.warn(SERVICE_NAME, "Rate limit running low, increasing delays", {
                     remaining,
                     defaultMeanDelay: this.defaultMeanDelay,
-                    openAIMeanDelay: this.openAIMeanDelay
+                    openAIMeanDelay: this.openAIMeanDelay,
                 });
             }
         }

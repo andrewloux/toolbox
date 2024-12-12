@@ -28,16 +28,16 @@ class JobAnalyzer {
             messages: [
                 {
                     role: "system",
-                    content: "You are an expert at analyzing job posting pages."
+                    content: "You are an expert at analyzing job posting pages.",
                 },
                 {
                     role: "user",
-                    content: `Analyze this job page content:\n${pageContent}`
-                }
+                    content: `Analyze this job page content:\n${pageContent}`,
+                },
             ],
             tools: [...jobAnalyzerModels_1.pageAnalysisTools],
             tool_choice: { type: "function", function: { name: "analyze_job_page" } },
-            temperature: 0.1
+            temperature: 0.1,
         });
         const toolCall = response.choices[0].message?.tool_calls?.[0];
         if (!toolCall?.function) {
@@ -51,9 +51,9 @@ class JobAnalyzer {
                 description: analysis.content.description,
                 company: analysis.content.company,
                 location: analysis.content.location,
-                salary: analysis.content.salary
+                salary: analysis.content.salary,
             },
-            nextAction: analysis.nextAction || undefined
+            nextAction: analysis.nextAction || undefined,
         };
     }
     async analyzeJobMatch(jobDetails) {
@@ -64,15 +64,17 @@ class JobAnalyzer {
             jobTitle: jobDetails.title,
             descriptionLength: jobDetails.description?.length ?? 0,
             resumeLength: this.resumeContext.length,
-            descriptionPreview: jobDetails.description ? jobDetails.description.slice(0, 200) + "..." : "No description available",
-            resumePreview: this.resumeContext.slice(0, 200) + "..."
+            descriptionPreview: jobDetails.description
+                ? jobDetails.description.slice(0, 200) + "..."
+                : "No description available",
+            resumePreview: this.resumeContext.slice(0, 200) + "...",
         });
         const response = await this.openai.chat.completions.create({
             model: GPT_MODEL,
             messages: [
                 {
                     role: "system",
-                    content: `You are a legendary technical recruiter with an extraordinary ability to identify perfect role-candidate matches. With 20+ years of experience placing engineers at top tech companies, you've developed an uncanny intuition for technical talent assessment, for reading the subtle nuances of the job description, the story between the lines of a resume, and a gift for finding the right place for the right people.`
+                    content: `You are a legendary technical recruiter with an extraordinary ability to identify perfect role-candidate matches. With 20+ years of experience placing engineers at top tech companies, you've developed an uncanny intuition for technical talent assessment, for reading the subtle nuances of the job description, the story between the lines of a resume, and a gift for finding the right place for the right people.`,
                 },
                 {
                     role: "user",
@@ -112,11 +114,14 @@ Red Flags & Differentiators:
   17. Critical missing requirements
   18. Unique technical strengths
   19. Pattern of innovation/improvement
-  20. Potential culture fit signals`
-                }
+  20. Potential culture fit signals`,
+                },
             ],
             tools: [...jobAnalyzerModels_1.jobMatchTools],
-            tool_choice: { type: "function", function: { name: "analyze_job_match" } },
+            tool_choice: {
+                type: "function",
+                function: { name: "analyze_job_match" },
+            },
             temperature: 0.3,
         });
         logger_1.default.debug(SERVICE_NAME, "Raw OpenAI Response", {
@@ -128,32 +133,38 @@ Red Flags & Differentiators:
         const toolCall = response.choices[0].message?.tool_calls?.[0];
         if (!toolCall?.function) {
             logger_1.default.error(SERVICE_NAME, "No tool call found in response", {
-                response: JSON.stringify(response)
+                response: JSON.stringify(response),
             });
             throw new Error("No tool call found in response");
         }
         logger_1.default.debug(SERVICE_NAME, "Tool Call Arguments", {
             functionName: toolCall.function.name,
             rawArguments: toolCall.function.arguments,
-            parsedArguments: JSON.parse(toolCall.function.arguments)
+            parsedArguments: JSON.parse(toolCall.function.arguments),
         });
         let analysis;
         try {
             const parsedResponse = JSON.parse(toolCall.function.arguments);
             // Validate the response has the expected structure
-            if (!parsedResponse?.matchScore || typeof parsedResponse.matchScore !== 'object') {
+            if (!parsedResponse?.matchScore ||
+                typeof parsedResponse.matchScore !== "object") {
                 throw new Error("Invalid analysis result: missing match score object");
             }
             // Calculate overall score based on other dimensions
             let overallScore;
             try {
-                const dimensions = ['technicalAlignment', 'experienceLevel', 'domainExpertise', 'roleResponsibility'];
+                const dimensions = [
+                    "technicalAlignment",
+                    "experienceLevel",
+                    "domainExpertise",
+                    "roleResponsibility",
+                ];
                 const scores = dimensions
-                    .map(d => parsedResponse.matchScore[d])
-                    .filter((score) => typeof score === 'number');
+                    .map((d) => parsedResponse.matchScore[d])
+                    .filter((score) => typeof score === "number");
                 overallScore = calculateOverallScore(scores);
                 if (isNaN(overallScore)) {
-                    throw new Error('Overall score calculation resulted in NaN');
+                    throw new Error("Overall score calculation resulted in NaN");
                 }
                 // Set the overall score in the matchScore object
                 parsedResponse.matchScore.overall = overallScore;
@@ -161,7 +172,7 @@ Red Flags & Differentiators:
             catch (error) {
                 logger_1.default.error(SERVICE_NAME, "Failed to calculate overall score", {
                     matchScore: parsedResponse.matchScore,
-                    error: error instanceof Error ? error.message : 'Unknown error'
+                    error: error instanceof Error ? error.message : "Unknown error",
                 });
                 throw error;
             }
@@ -179,14 +190,14 @@ Red Flags & Differentiators:
                     similarityScore: overallScore,
                     sectionScores: JSON.stringify(analysis.matchScore),
                     analysisJson: JSON.stringify(analysis),
-                    status: 'analyzed'
+                    status: "analyzed",
                 });
             }
             catch (error) {
                 logger_1.default.error(SERVICE_NAME, "Failed to save job analysis", {
                     url: jobDetails.url,
-                    error: error instanceof Error ? error.message : 'Unknown error',
-                    analysis: JSON.stringify(analysis)
+                    error: error instanceof Error ? error.message : "Unknown error",
+                    analysis: JSON.stringify(analysis),
                 });
                 throw error;
             }
@@ -198,20 +209,21 @@ Red Flags & Differentiators:
                 location: jobDetails.location ?? null,
                 salary: jobDetails.salary ?? null,
                 analysis: {
-                    reasoning: analysis.detailedAnalysis?.applicationStrategy?.differentiators ?? [],
+                    reasoning: analysis.detailedAnalysis?.applicationStrategy?.differentiators ??
+                        [],
                     requirements: {
                         met: analysis.detailedAnalysis?.skillAnalysis?.criticalMatches ?? [],
-                        missing: analysis.detailedAnalysis?.skillAnalysis?.missingCritical ?? []
+                        missing: analysis.detailedAnalysis?.skillAnalysis?.missingCritical ?? [],
                     },
                     improvements: [],
-                    fullAnalysis: analysis
-                }
+                    fullAnalysis: analysis,
+                },
             };
         }
         catch (error) {
             logger_1.default.error(SERVICE_NAME, "Failed to parse analysis result", {
-                error: error instanceof Error ? error.message : 'Unknown error',
-                arguments: toolCall.function.arguments
+                error: error instanceof Error ? error.message : "Unknown error",
+                arguments: toolCall.function.arguments,
             });
             throw error;
         }
@@ -272,17 +284,18 @@ Your task is to analyze job titles and determine if they are likely to be a good
 *   Frontend Developer
 *   Frontend Engineer
 
-**Remember**: This is a quick initial screening based on the job title only. The full job description will be analyzed later to determine the actual fit. When in doubt, it's better to include a title than to exclude it.`
+**Remember**: This is a quick initial screening based on the job title only. The full job description will be analyzed later to determine the actual fit. When in doubt, it's better to include a title than to exclude it.`,
                 },
                 {
                     role: "user",
                     content: `Job Title: ${jobTitle}
 
 Resume Summary:
-${this.resumeContext.slice(0, 500) + "..."}`
-                }
+${this.resumeContext.slice(0, 500) + "..."}`,
+                },
             ],
-            functions: [{
+            functions: [
+                {
                     name: "screen_job_title",
                     description: "Quickly assess if we should look into this job based on title",
                     parameters: {
@@ -290,25 +303,27 @@ ${this.resumeContext.slice(0, 500) + "..."}`
                         properties: {
                             shouldProceed: {
                                 type: "boolean",
-                                description: "Whether we should click through to read more about this job"
+                                description: "Whether we should click through to read more about this job",
                             },
                             reason: {
                                 type: "string",
-                                description: "If shouldProceed is false, provide a brief reason why the title was filtered out."
-                            }
+                                description: "If shouldProceed is false, provide a brief reason why the title was filtered out.",
+                            },
                         },
-                        required: ["shouldProceed"]
-                    }
-                }],
+                        required: ["shouldProceed"],
+                    },
+                },
+            ],
             function_call: { name: "screen_job_title" },
             temperature: 0.5,
         });
         console.log("Raw OpenAI response for quickJobScreening:", response);
-        const result = JSON.parse(response.choices[0].message?.function_call?.arguments || '{"shouldProceed":true}');
+        const result = JSON.parse(response.choices[0].message?.function_call?.arguments ||
+            '{"shouldProceed":true}');
         return {
             shouldProceed: result.shouldProceed,
             title: jobTitle,
-            reason: result.reason
+            reason: result.reason,
         };
     }
     async suggestSelectors(pageContent) {
@@ -331,14 +346,15 @@ Provide the selectors in a JSON format as follows:
   "jobTitleSelector": "your_job_title_selector",
   "jobLinkSelector": "your_job_link_selector"
 }
-\`\`\``
+\`\`\``,
                 },
                 {
                     role: "user",
-                    content: `Here is the HTML content of the page:\n\n${pageContent}`
-                }
+                    content: `Here is the HTML content of the page:\n\n${pageContent}`,
+                },
             ],
-            functions: [{
+            functions: [
+                {
                     name: "return_selectors",
                     description: "Returns the suggested CSS selectors for job titles and job links.",
                     parameters: {
@@ -346,35 +362,36 @@ Provide the selectors in a JSON format as follows:
                         properties: {
                             jobTitleSelector: {
                                 type: "string",
-                                description: "CSS selector for job titles"
+                                description: "CSS selector for job titles",
                             },
                             jobLinkSelector: {
                                 type: "string",
-                                description: "CSS selector for job links"
-                            }
+                                description: "CSS selector for job links",
+                            },
                         },
-                        required: ["jobTitleSelector", "jobLinkSelector"]
-                    }
-                }],
+                        required: ["jobTitleSelector", "jobLinkSelector"],
+                    },
+                },
+            ],
             function_call: { name: "return_selectors" },
             temperature: 0.1,
         });
-        const result = JSON.parse(response.choices[0].message?.function_call?.arguments || '{}');
+        const result = JSON.parse(response.choices[0].message?.function_call?.arguments || "{}");
         return {
             jobTitleSelector: result.jobTitleSelector,
-            jobLinkSelector: result.jobLinkSelector
+            jobLinkSelector: result.jobLinkSelector,
         };
     }
 }
 exports.JobAnalyzer = JobAnalyzer;
 function calculateOverallScore(scores) {
     if (scores.length === 0) {
-        throw new Error('No valid dimension scores found');
+        throw new Error("No valid dimension scores found");
     }
     // Calculate mean
     const mean = scores.reduce((sum, score) => sum + score, 0) / scores.length;
     // Calculate standard deviation
-    const squareDiffs = scores.map(score => Math.pow(score - mean, 2));
+    const squareDiffs = scores.map((score) => Math.pow(score - mean, 2));
     const avgSquareDiff = squareDiffs.reduce((sum, diff) => sum + diff, 0) / scores.length;
     const standardDev = Math.sqrt(avgSquareDiff);
     // Calculate overall: 0.7 * mean + 0.3 * (1 - SD/0.5)

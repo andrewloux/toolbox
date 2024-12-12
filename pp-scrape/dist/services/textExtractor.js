@@ -14,20 +14,20 @@ class TextExtractorService {
     constructor() { }
     async getResumeChecksum(filePath) {
         const fileBuffer = (0, fs_1.readFileSync)(filePath);
-        const hashSum = (0, crypto_1.createHash)('sha256');
+        const hashSum = (0, crypto_1.createHash)("sha256");
         hashSum.update(fileBuffer);
-        return hashSum.digest('hex');
+        return hashSum.digest("hex");
     }
-    async getResumeText(resumePath = 'resume.pdf') {
+    async getResumeText(resumePath = "resume.pdf") {
         try {
             // Calculate checksum of the resume file
             const checksum = await this.getResumeChecksum(resumePath);
             // Check cache first
             const cachedResult = await prisma_1.prisma.resumeCache.findUnique({
-                where: { fileChecksum: checksum }
+                where: { fileChecksum: checksum },
             });
             if (cachedResult) {
-                logger_1.default.info(SERVICE_NAME, 'Using cached resume text');
+                logger_1.default.info(SERVICE_NAME, "Using cached resume text");
                 return cachedResult.processedText;
             }
             // If not in cache, process the resume
@@ -39,13 +39,13 @@ class TextExtractorService {
                 data: {
                     fileChecksum: checksum,
                     processedText: processedText,
-                }
+                },
             });
-            logger_1.default.info(SERVICE_NAME, 'Cached new resume text');
+            logger_1.default.info(SERVICE_NAME, "Cached new resume text");
             return processedText;
         }
         catch (error) {
-            logger_1.default.error(SERVICE_NAME, 'Error processing resume', { error });
+            logger_1.default.error(SERVICE_NAME, "Error processing resume", { error });
             throw error;
         }
     }
@@ -56,17 +56,20 @@ class TextExtractorService {
             return data.text;
         }
         catch (error) {
-            logger_1.default.error(SERVICE_NAME, 'Error extracting PDF text', { error, filePath });
+            logger_1.default.error(SERVICE_NAME, "Error extracting PDF text", {
+                error,
+                filePath,
+            });
             throw error;
         }
     }
     async clearCache() {
         try {
             await prisma_1.prisma.resumeCache.deleteMany({});
-            logger_1.default.info(SERVICE_NAME, 'Resume cache cleared');
+            logger_1.default.info(SERVICE_NAME, "Resume cache cleared");
         }
         catch (error) {
-            logger_1.default.error(SERVICE_NAME, 'Error clearing cache', { error });
+            logger_1.default.error(SERVICE_NAME, "Error clearing cache", { error });
             throw error;
         }
     }

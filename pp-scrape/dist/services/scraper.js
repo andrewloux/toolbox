@@ -19,7 +19,7 @@ const DEFAULT_SITE_CONFIG = {
     timeout: NAVIGATION_TIMEOUT,
     waitTime: 1000,
     retryDelay: 2000,
-    needsExtraWait: false
+    needsExtraWait: false,
 };
 const SITE_CONFIGS = {
 // 'openai.com': {
@@ -48,7 +48,7 @@ class ScraperService {
         this.isHeadless = isHeadless;
     }
     getSiteConfig(url) {
-        const domain = new URL(url).hostname.replace('www.', '');
+        const domain = new URL(url).hostname.replace("www.", "");
         const siteConfig = SITE_CONFIGS[domain] || {};
         return { ...DEFAULT_SITE_CONFIG, ...siteConfig };
     }
@@ -67,17 +67,17 @@ class ScraperService {
         let navigationStep = 0;
         const config = this.getSiteConfig(startUrl);
         while (navigationStep < MAX_NAVIGATION_STEPS) {
-            await new Promise(resolve => setTimeout(resolve, config.waitTime));
+            await new Promise((resolve) => setTimeout(resolve, config.waitTime));
             // Extract text content instead of raw HTML
             const pageContent = await page.evaluate(() => {
                 // Remove script and style elements
-                const scripts = document.querySelectorAll('script, style');
-                scripts.forEach(s => s.remove());
+                const scripts = document.querySelectorAll("script, style");
+                scripts.forEach((s) => s.remove());
                 // Try to find the main job description container
-                const mainContent = document.querySelector('main') || document.body;
+                const mainContent = document.querySelector("main") || document.body;
                 return mainContent.innerText
-                    .replace(/\s+/g, ' ')
-                    .replace(/\n\s*\n/g, '\n')
+                    .replace(/\s+/g, " ")
+                    .replace(/\n\s*\n/g, "\n")
                     .trim();
             });
             const currentPageDetails = {
@@ -86,7 +86,7 @@ class ScraperService {
                 title: jobTitle,
                 company: null,
                 location: null,
-                salary: null
+                salary: null,
             };
             // Analyze the page content
             const pageAnalysis = await jobAnalyzer_1.jobAnalyzer.analyzeJobMatch(currentPageDetails);
@@ -94,14 +94,14 @@ class ScraperService {
             if (pageAnalysis.analysis.fullAnalysis?.matchScore) {
                 return {
                     url: currentUrl,
-                    content: currentPageDetails
+                    content: currentPageDetails,
                 };
             }
             // No more navigation actions available
             if (navigationStep >= MAX_NAVIGATION_STEPS - 1) {
                 logger_1.default.warn(SERVICE_NAME, "Max navigation steps reached", {
                     url: currentUrl,
-                    step: navigationStep
+                    step: navigationStep,
                 });
                 break;
             }
@@ -116,7 +116,7 @@ class ScraperService {
             description: content.description || "",
             company: content.company,
             location: content.location,
-            salary: content.salary
+            salary: content.salary,
         };
     }
     async screenJobTitles(titles, config) {
@@ -126,12 +126,12 @@ class ScraperService {
         // Log all roles at start
         logger_1.default.info(SERVICE_NAME, "Starting job title screening", {
             totalRoles: titles.length,
-            allTitles: titles.map(t => t.title),
+            allTitles: titles.map((t) => t.title),
             config: {
                 includePatterns: config?.includePatterns,
                 excludePatterns: config?.excludePatterns,
-                batchSize
-            }
+                batchSize,
+            },
         });
         // Process in batches
         for (let i = 0; i < titles.length; i += batchSize) {
@@ -149,7 +149,7 @@ class ScraperService {
                 if (screening.shouldProceed) {
                     logger_1.default.info(SERVICE_NAME, "✅ Title passed", {
                         title: screening.title,
-                        link: job.link
+                        link: job.link,
                     });
                     results.push(job);
                 }
@@ -162,15 +162,15 @@ class ScraperService {
                     });
                     filteredOut.push({
                         title: job.title,
-                        link: job.link
+                        link: job.link,
                     });
                 }
             }
             // Log batch statistics
             logger_1.default.info(SERVICE_NAME, `Batch ${batchNumber} complete`, {
                 batchSize: batch.length,
-                passed: batchResults.filter(r => r.screening.shouldProceed).length,
-                filtered: batchResults.filter(r => !r.screening.shouldProceed).length
+                passed: batchResults.filter((r) => r.screening.shouldProceed).length,
+                filtered: batchResults.filter((r) => !r.screening.shouldProceed).length,
             });
         }
         // Log final summary statistics
@@ -178,12 +178,12 @@ class ScraperService {
             totalRoles: titles.length,
             passed: {
                 count: results.length,
-                titles: results.map(r => r.title)
+                titles: results.map((r) => r.title),
             },
             filtered: {
                 count: filteredOut.length,
-                titles: filteredOut.map(f => f.title)
-            }
+                titles: filteredOut.map((f) => f.title),
+            },
         });
         return results;
     }
@@ -195,7 +195,9 @@ class ScraperService {
                 const resumeChecksum = await textExtractor_1.textExtractor.getResumeChecksum(resumePath);
                 const isProcessed = await database_1.dbService.isJobProcessed(resumeChecksum, job.link);
                 if (isProcessed) {
-                    logger_1.default.info(SERVICE_NAME, "Job already processed", { link: job.link });
+                    logger_1.default.info(SERVICE_NAME, "Job already processed", {
+                        link: job.link,
+                    });
                     return null;
                 }
                 await rateLimiter_1.rateLimiter.waitForAvailability(config.needsExtraWait);
@@ -203,13 +205,13 @@ class ScraperService {
                 try {
                     await page.goto(job.link, {
                         waitUntil: "networkidle0",
-                        timeout: config.timeout
+                        timeout: config.timeout,
                     });
                     const { url, content } = await this.navigateToJobDescription(page, job.link, job.title);
                     if (!content || !content.description) {
                         logger_1.default.warn(SERVICE_NAME, "No job description found after navigation", {
                             finalUrl: url,
-                            attempts: retries + 1
+                            attempts: retries + 1,
                         });
                         return null;
                     }
@@ -226,20 +228,21 @@ class ScraperService {
             catch (error) {
                 retries++;
                 const isLastRetry = retries === MAX_RETRIES;
-                if (error instanceof DOMException || error?.name === 'DOMException') {
+                if (error instanceof DOMException ||
+                    error?.name === "DOMException") {
                     logger_1.default.warn(SERVICE_NAME, `DOMException occurred (attempt ${retries}/${MAX_RETRIES})`, {
                         link: job.link,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : "Unknown error",
                     });
                     if (!isLastRetry) {
-                        await new Promise(resolve => setTimeout(resolve, config.retryDelay));
+                        await new Promise((resolve) => setTimeout(resolve, config.retryDelay));
                         continue;
                     }
                 }
-                logger_1.default.error(SERVICE_NAME, `Error processing job${isLastRetry ? ' (final attempt)' : ''}`, {
+                logger_1.default.error(SERVICE_NAME, `Error processing job${isLastRetry ? " (final attempt)" : ""}`, {
                     link: job.link,
-                    error: error instanceof Error ? error.message : 'Unknown error',
-                    attempt: retries
+                    error: error instanceof Error ? error.message : "Unknown error",
+                    attempt: retries,
                 });
                 if (isLastRetry)
                     return null;
@@ -277,7 +280,7 @@ class ScraperService {
             url,
             resumePath,
             topN,
-            screeningConfig
+            screeningConfig,
         });
         // Initialize job analyzer with resume
         await jobAnalyzer_1.jobAnalyzer.initializeWithResume(resumePath);
@@ -297,25 +300,25 @@ class ScraperService {
             });
             // Add a delay to ensure the page is fully loaded
             const config = this.getSiteConfig(url);
-            await new Promise(resolve => setTimeout(resolve, config.waitTime));
+            await new Promise((resolve) => setTimeout(resolve, config.waitTime));
             // Get the page content after it's fully loaded
-            await page.waitForSelector('body');
+            await page.waitForSelector("body");
             const pageContent = await page.evaluate(() => {
                 const clone = document.body.cloneNode(true);
-                const div = document.createElement('div');
+                const div = document.createElement("div");
                 div.appendChild(clone);
                 // Remove scripts, styles, and SVGs
-                const scripts = div.querySelectorAll('script');
-                scripts.forEach(script => script.remove());
-                const styles = div.querySelectorAll('[style]');
-                styles.forEach(element => element.removeAttribute('style'));
-                const styleElements = div.querySelectorAll('style');
-                styleElements.forEach(style => style.remove());
-                const svgs = div.querySelectorAll('svg');
-                svgs.forEach(svg => svg.remove());
+                const scripts = div.querySelectorAll("script");
+                scripts.forEach((script) => script.remove());
+                const styles = div.querySelectorAll("[style]");
+                styles.forEach((element) => element.removeAttribute("style"));
+                const styleElements = div.querySelectorAll("style");
+                styleElements.forEach((style) => style.remove());
+                const svgs = div.querySelectorAll("svg");
+                svgs.forEach((svg) => svg.remove());
                 return div.innerHTML;
             });
-            console.log(pageContent);
+            // console.log(pageContent);
             // return [];
             // Ask the LLM to identify the best selectors
             const { jobTitleSelector, jobLinkSelector } = await jobAnalyzer_1.jobAnalyzer.suggestSelectors(pageContent);
@@ -354,7 +357,7 @@ class ScraperService {
             const results = new Set();
             // Select potential job title elements using the provided selector
             const titleElements = document.querySelectorAll(jobTitleSelector);
-            titleElements.forEach(titleElement => {
+            titleElements.forEach((titleElement) => {
                 const title = titleElement.textContent?.trim() || "";
                 let link = null;
                 // 1. Check if the title element itself is an anchor
@@ -402,7 +405,7 @@ class ScraperService {
             const batchNumber = Math.floor(i / batchSize) + 1;
             logger_1.default.info(SERVICE_NAME, `Processing batch ${batchNumber}/${totalBatches}`);
             const batch = jobs.slice(i, i + batchSize);
-            const batchResults = await Promise.all(batch.map(job => this.processJobWithRetries(job, resumePath)));
+            const batchResults = await Promise.all(batch.map((job) => this.processJobWithRetries(job, resumePath)));
             const validResults = batchResults.filter((result) => result !== null);
             logger_1.default.info(SERVICE_NAME, `Batch ${batchNumber} complete`, {
                 processed: batch.length,

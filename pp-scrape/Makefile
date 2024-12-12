@@ -1,4 +1,4 @@
-.PHONY: install build start dev clean
+.PHONY: install build start dev clean migrate
 
 install:
 	npm install
@@ -17,7 +17,9 @@ clean:
 # Combined commands
 setup: clean install build
 
+	migrate: npx prisma migrate deploy
+
 # Example usage:
 # make setup
 # make start url="https://openai.com/careers/search/"
-# make dev url="https://openai.com/careers/search/" 
+# make dev url="https://openai.com/careers/search/"

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultOpenAIProvider = void 0;
 const logger_1 = __importDefault(require("../../utils/logger"));
-const SERVICE_NAME = 'OpenAIProvider';
+const SERVICE_NAME = "OpenAIProvider";
 const jobAnalysisTools = [
     {
         type: "function",
@@ -19,12 +19,12 @@ const jobAnalysisTools = [
                         type: "number",
                         description: "Match score between 0 and 1",
                         minimum: 0,
-                        maximum: 1
+                        maximum: 1,
                     },
                     reasoning: {
                         type: "array",
                         items: { type: "string" },
-                        description: "List of reasons for the match score"
+                        description: "List of reasons for the match score",
                     },
                     requirements: {
                         type: "object",
@@ -32,21 +32,21 @@ const jobAnalysisTools = [
                             met: {
                                 type: "array",
                                 items: { type: "string" },
-                                description: "List of requirements met by the candidate"
+                                description: "List of requirements met by the candidate",
                             },
                             missing: {
                                 type: "array",
                                 items: { type: "string" },
-                                description: "List of requirements not met by the candidate"
-                            }
+                                description: "List of requirements not met by the candidate",
+                            },
                         },
-                        required: ["met", "missing"]
-                    }
+                        required: ["met", "missing"],
+                    },
                 },
-                required: ["score", "reasoning", "requirements"]
-            }
-        }
-    }
+                required: ["score", "reasoning", "requirements"],
+            },
+        },
+    },
 ];
 class DefaultOpenAIProvider {
     constructor(apiKey, rateLimiter) {
@@ -56,18 +56,18 @@ class DefaultOpenAIProvider {
     async analyze(jobDescription, resumeText) {
         try {
             await this.rateLimiter.waitForAvailability();
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.apiKey}`
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.apiKey}`,
                 },
                 body: JSON.stringify({
                     model: "gpt-4",
                     messages: [
                         {
                             role: "system",
-                            content: "You are an expert at analyzing job descriptions and resumes for compatibility."
+                            content: "You are an expert at analyzing job descriptions and resumes for compatibility.",
                         },
                         {
                             role: "user",
@@ -84,13 +84,16 @@ Consider:
 2. Experience level
 3. Domain expertise
 4. Technical requirements
-5. Cultural fit indicators`
-                        }
+5. Cultural fit indicators`,
+                        },
                     ],
                     tools: [...jobAnalysisTools],
-                    tool_choice: { type: "function", function: { name: "analyze_job_fit" } },
-                    temperature: 0.3
-                })
+                    tool_choice: {
+                        type: "function",
+                        function: { name: "analyze_job_fit" },
+                    },
+                    temperature: 0.3,
+                }),
             });
             const headers = {};
             response.headers.forEach((value, key) => {
@@ -105,21 +108,23 @@ Consider:
                     return {
                         score: analysis.score,
                         reasoning: analysis.reasoning,
-                        requirements: analysis.requirements
+                        requirements: analysis.requirements,
                     };
                 }
                 catch (error) {
-                    logger_1.default.error(SERVICE_NAME, 'Failed to parse analysis result', { error });
+                    logger_1.default.error(SERVICE_NAME, "Failed to parse analysis result", {
+                        error,
+                    });
                     throw error;
                 }
             }
             else {
-                logger_1.default.error(SERVICE_NAME, 'No tool call found in response');
-                throw new Error('Invalid response format from OpenAI');
+                logger_1.default.error(SERVICE_NAME, "No tool call found in response");
+                throw new Error("Invalid response format from OpenAI");
             }
         }
         catch (error) {
-            logger_1.default.error(SERVICE_NAME, 'Error analyzing with OpenAI', { error });
+            logger_1.default.error(SERVICE_NAME, "Error analyzing with OpenAI", { error });
             throw error;
         }
     }
