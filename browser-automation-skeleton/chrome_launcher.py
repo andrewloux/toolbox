@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Launch and connect to real Chrome session with remote debugging.
-This script launches Chrome with your actual profile and debugging enabled.
+Chrome Launcher - Launch Chrome with remote debugging for browser automation.
 
-Usage:
-    python real_chrome_session.py --restart --copy-profile --profile "Profile 2"
+Makes Chrome controllable via Chrome DevTools Protocol (CDP) for automation tools
+like Selenium, Puppeteer, Playwright, or zendriver.
 """
 
 import subprocess
@@ -227,11 +226,23 @@ def launch_chrome_with_debugging(profile_name="Profile 2", port=9222, use_copy=F
 
 def main():
     """Main function."""
-    parser = argparse.ArgumentParser(description='Launch Chrome with remote debugging')
+    parser = argparse.ArgumentParser(
+        description='Launch Chrome with remote debugging for automation',
+        epilog='''
+Examples:
+  %(prog)s --reset                                    # Fix Chrome lock issues
+  %(prog)s --list-profiles                            # Show available profiles
+  %(prog)s                                            # Launch with defaults (Profile 2, port 9222)
+  %(prog)s --restart --copy-profile                   # Safe launch (recommended)
+  %(prog)s --profile "Profile 3" --port 9223          # Custom profile and port
+  %(prog)s --restart --copy-profile --profile "Work"  # Launch work profile safely
+        ''',
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument('--profile', default='Profile 2', help='Chrome profile to use (default: Profile 2)')
     parser.add_argument('--port', type=int, default=9222, help='Debug port to use (default: 9222)')
     parser.add_argument('--restart', action='store_true', help='Kill existing Chrome before starting')
-    parser.add_argument('--copy-profile', action='store_true', help='Use a copy of the profile instead of the original')
+    parser.add_argument('--copy-profile', action='store_true', help='Use a copy of the profile (safer)')
     parser.add_argument('--list-profiles', action='store_true', help='List available Chrome profiles')
     parser.add_argument('--reset', action='store_true', help='Reset Chrome state by removing all lock files')
     

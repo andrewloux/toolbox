@@ -2,26 +2,28 @@
 
 Chrome automation toolkit for web scraping and form filling. Battle-tested on Google Sheets and complex web apps.
 
+**→ See [QUICKSTART.md](QUICKSTART.md) for the actual developer workflow**
+
 ## Core Scripts
 
-### `real_chrome_session.py`
+### `chrome_launcher.py`
 Launches Chrome with remote debugging for automation takeover.
 
 ```bash
 # Basic launch
-python real_chrome_session.py
+python chrome_launcher.py
 
 # With specific profile
-python real_chrome_session.py --profile "Profile 2"
+python chrome_launcher.py --profile "Profile 2"
 
 # Kill existing & copy profile (safer)
-python real_chrome_session.py --restart --copy-profile --profile "Profile 2"
+python chrome_launcher.py --restart --copy-profile --profile "Profile 2"
 
 # Custom port
-python real_chrome_session.py --port 9223
+python chrome_launcher.py --port 9223
 
 # List available profiles
-python real_chrome_session.py --list-profiles
+python chrome_launcher.py --list-profiles
 ```
 
 ### `universal_sheet_filler.py`
@@ -58,7 +60,7 @@ pip install zendriver requests
 
 1. Launch Chrome with debugging:
 ```bash
-python real_chrome_session.py --restart --copy-profile --profile "Profile 2"
+python chrome_launcher.py --restart --copy-profile --profile "Profile 2"
 ```
 
 2. In another terminal, run your automation:
