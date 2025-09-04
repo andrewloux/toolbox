@@ -34,7 +34,7 @@ chrome: .venv
 
 # Fix Chrome when it's broken (no dependencies on anything)
 chrome-reset:
-	@bash fix_chrome.sh
+	@bash reset_chrome.sh
 
 # Test if debugging is working
 test:

@@ -1,113 +1,64 @@
 # Browser Automation Skeleton
 
-Chrome automation toolkit for web scraping and form filling. Battle-tested on Google Sheets and complex web apps.
+Launch Chrome with debugging enabled for browser automation (Selenium, Puppeteer, zendriver, etc).
 
-**→ See [QUICKSTART.md](QUICKSTART.md) for the actual developer workflow**
-
-## Core Scripts
-
-### `chrome_launcher.py`
-Launches Chrome with remote debugging for automation takeover.
+## Quick Start
 
 ```bash
-# Basic launch
-python chrome_launcher.py
+make setup        # First time only
+make chrome       # Launch Chrome with debugging
+```
 
-# With specific profile
-python chrome_launcher.py --profile "Profile 2"
+## Common Tasks
 
-# Kill existing & copy profile (safer)
+```bash
+make chrome                                  # Launch Chrome (default: Profile 2, port 9222)
+make chrome PROFILE="Work"                  # Different profile
+make chrome PORT=9223                        # Different port
+make chrome-reset                            # Fix when Chrome won't open
+make test                                    # Check if Chrome debugging is running
+```
+
+## When Chrome is Broken
+
+**"The application Google Chrome.app is not open anymore"** or Chrome won't launch:
+
+```bash
+make chrome-reset  # or ./reset_chrome.sh
+```
+
+Then try opening Chrome from Applications. If it works, run `make chrome` again.
+
+Still broken? → `make clean && make setup`
+
+## Manual Usage (without Make)
+
+```bash
+# Setup
+uv venv
+uv pip install -r requirements.txt
+source .venv/bin/activate
+
+# Launch Chrome
 python chrome_launcher.py --restart --copy-profile --profile "Profile 2"
 
-# Custom port
-python chrome_launcher.py --port 9223
-
-# List available profiles
-python chrome_launcher.py --list-profiles
+# See all options
+python chrome_launcher.py --help
 ```
 
-### `universal_sheet_filler.py`
-Universal Google Sheets automation - fills cells with complex formatting.
-- Handles multi-line text with Alt+Enter
-- Bullet points and formatting
-- Works with any sheets structure
+## How It Works
 
-### CDP Scripts (Chrome DevTools Protocol)
-- `cdp_insert_text.py` - First working CDP text insertion
-- `fill_with_proper_breaks.py` - Advanced multi-line text filling  
-- `clear_cells.py` - Clear sheets cells utility
+1. **chrome_launcher.py** - Launches Chrome with `--remote-debugging-port` flag
+2. Chrome becomes controllable via Chrome DevTools Protocol (CDP) on port 9222
+3. Your automation tool connects to `http://localhost:9222` to control Chrome
 
-## Setup
+## Files
 
-```bash
-pip install zendriver requests
-```
+- `chrome_launcher.py` - Main Chrome launcher script
+- `reset_chrome.sh` - Fixes Chrome lock/zombie issues  
+- `Makefile` - Simple commands for common tasks
+- `examples/google_sheets_automation/` - Example automation for Google Sheets
 
-## Key Discoveries
+## Examples
 
-### What Works
-- **zendriver** library (not selenium/playwright)
-- CDP's `input_.insert_text()` for text entry
-- F2 to enter edit mode in sheets
-- Tab to save and move cells
-
-### What Doesn't Work
-- JavaScript DOM manipulation (`element.value = "text"`)
-- Regular keyboard events with characters
-- nodriver library (unreliable)
-
-## Usage Pattern
-
-1. Launch Chrome with debugging:
-```bash
-python chrome_launcher.py --restart --copy-profile --profile "Profile 2"
-```
-
-2. In another terminal, run your automation:
-```python
-import asyncio
-import zendriver as zd
-
-async def main():
-    browser = await zd.Browser.create(
-        host="127.0.0.1",
-        port=9222,
-        headless=False,
-        sandbox=False
-    )
-    # Your automation here
-
-asyncio.run(main())
-```
-
-## Google Sheets Specific
-
-```python
-# Navigate to cell
-await tab.evaluate(f'''
-    const nb = document.querySelector('.waffle-name-box');
-    if (nb) {{
-        nb.focus();
-        nb.value = 'C2';
-    }}
-''')
-
-# Enter edit mode
-await tab.send(input_.dispatch_key_event(
-    type_="keyDown",
-    key="F2",
-    code="F2", 
-    windows_virtual_key_code=113
-))
-
-# Insert text
-import zendriver.cdp.input_ as input_
-await tab.send(input_.insert_text(text="Your text here"))
-
-# Save with Tab
-await tab.send(input_.dispatch_key_event(
-    type_="keyDown",
-    key="Tab",
-    code="Tab",
-    windows_virtual_key_code=9
-))
+See [examples/google_sheets_automation/](examples/google_sheets_automation/) for a complete Google Sheets automation example using zendriver.
