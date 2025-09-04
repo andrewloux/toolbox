@@ -1,0 +1,31 @@
+{
+  "Information_Security": "• CEO: Mohammed Aziz (Executive Sponsor with ultimate accountability)\n\n• Security Officer: Andrew Louis, Head of Infrastructure (responsible for ISMS oversight, security performance reporting, and Data Privacy Officer duties)",
+  
+  "Governance_Structure": "• Executive Level: CEO (Mohammed Aziz) as Executive Sponsor, Security Officer (Andrew Louis, Head of Infrastructure)\n\n• External Support: Oneleet provides strategic guidance, risk assessments, security operations, and automated monitoring\n\n• Staff: All employees have signed security policies with mandatory security training",
+  
+  "Policies_and_Standards": "• Standards: ISO 27001:2022, ISO 27002:2022, Central Bank UAE regulations, DIFC frameworks, PCI-DSS standards (implementation in progress)\n\n• 26 Documented Policies including: Information Security, Change Management, SDLC, Vulnerability Management, Access Management, Incident Response, Risk Management, Vendor Management, Code of Conduct, Human Resource Security, Network Security, Data Management",
+  
+  "Software_Development_Lifecycle": "• People: Dedicated Security Officer, mandatory security training for all developers, clearly defined security responsibilities, code reviews required\n\n• Process: Change Management Policy with security review, risk assessment for new features, security testing in deployment pipeline, incident response procedures, regular vulnerability assessments\n\n• Technology: Automated monitoring via Oneleet, code security scanning, encryption for data in transit/rest, access controls, continuous monitoring and logging",
+  
+  "Security_Maturity": "Annual policy reviews, regular security assessments and audits, performance metrics and KPIs tracking, management reviews of security outcomes, lessons learned from incidents incorporated, stakeholder feedback integration, ISO 27001:2022 continuous improvement requirements, regular penetration tests, vulnerability management program",
+  
+  "Developer_Qualifications": "Background checks on all prospective employees, security clearance appropriate to role, verification of qualifications and experience, signed NDAs and confidentiality agreements before system access, understanding of secure coding practices, awareness of information security principles, commitment to following security policies",
+  
+  "Developer_Assessment": "• Pre-Employment: Background checks, reference verification, technical assessments including security knowledge, signed confidentiality agreements\n\n• During Employment: Mandatory security awareness training, performance reviews include security practices assessment, continuous monitoring of access and activities, disciplinary process for security violations",
+  
+  "API_Standards": "• PCI-DSS for payment card data handling\n\n• Central Bank of UAE regulations under Retail Payment Services and Card Scheme Regulations 2021\n\n• DIFC regulatory framework as technology services provider\n\n• ISO 27001:2022 for overall security management\n\n• Partnership with Nymcard Payment Services LLC (regulated by Central Bank UAE)\n\n• Client funds in segregated accounts at Mashreq Bank PSC",
+  
+  "Mobile_Application_Security": "Encryption for all data transmission, secure authentication mechanisms, regular security updates and patches, compliance with platform security guidelines, vulnerability testing before release, secure storage of sensitive data, session management controls",
+  
+  "Sensitive_Financial_Data_Security": "Data encryption in transit and at rest, role-based access control (RBAC), multi-factor authentication required, Key Management Policy with secure key rotation, data classification by sensitivity levels, segregated client fund accounts, continuous monitoring and audit logging, PCI-DSS compliance for card data",
+  
+  "Security_Measures": "Data localization compliance per regional requirements, GDPR compliance for EU operations, UAE Central Bank regulations and DIFC framework adherence, regional privacy law compliance, cross-border data transfer controls, local encryption standards compliance, regional incident response procedures",
+  
+  "Software_for_Highly_Developed_Regions": "• Current Operations: UAE/Dubai under DIFC framework, Central Bank of UAE compliance\n\n• Best Practices: ISO 27001:2022 certification, regular audits and compliance reviews, segregated client funds management, partnership with regulated entities (Nymcard), 26 comprehensive security policies, mandatory training for all staff, external security monitoring via Oneleet",
+  
+  "Risk_Assessment_Process_Methodology": "ISO 27001:2022 Risk Assessment Framework:\n\n1. Identification: Regular threat and vulnerability assessments\n\n2. Assessment: Impact and likelihood evaluation\n\n3. Treatment: Risk-based control implementation\n\n4. Monitoring: Automated continuous monitoring via Oneleet\n\n5. Review: Regular updates and improvements\n\n• Includes risk register maintenance, penetration testing, vulnerability scanning, code security reviews",
+  
+  "Third_Party_Secure_Measures": "Comprehensive vendor risk assessments, security requirements in all contracts, mandatory NDAs for all vendors, regular security audits of third parties, controlled and monitored third-party access, vendor activity monitoring, security-inclusive performance reviews, vendor-specific incident response procedures",
+  
+  "Employee_Assessment": "• Employees: Background checks (criminal, financial, employment history), reference and qualification verification, role-appropriate security clearance, signed NDAs and confidentiality agreements\n\n• Third Parties: Equivalent vendor vetting requirements, contractual vetting obligations, limited need-based access only, additional monitoring for third-party access, regular audits of vendor HR practices"
+}
