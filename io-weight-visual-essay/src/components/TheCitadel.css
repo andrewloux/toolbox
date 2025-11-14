@@ -1,0 +1,168 @@
+.the-citadel {
+  padding: 4rem 2rem;
+  min-height: 100vh;
+}
+
+.citadel-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.citadel-header h2 {
+  color: var(--accent-primary);
+  margin-bottom: 1rem;
+}
+
+.citadel-header p {
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 4rem;
+  flex-wrap: wrap;
+}
+
+.btree-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btree-visualization {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+.btree-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.btree-children {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btree-node {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(0, 255, 194, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 200px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.btree-node.target {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 40px rgba(0, 255, 194, 0.4);
+  background: rgba(0, 255, 194, 0.1);
+}
+
+.btree-node.locked {
+  border-color: var(--lock-red);
+  background: rgba(204, 0, 0, 0.2);
+  box-shadow: 0 0 40px rgba(204, 0, 0, 0.6);
+  animation: lockPulse 1s ease-in-out infinite;
+}
+
+.btree-node.overflowing {
+  border-color: var(--io-pulse);
+  background: rgba(255, 68, 68, 0.2);
+  animation: strainPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes lockPulse {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(204, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(204, 0, 0, 0.9);
+  }
+}
+
+@keyframes strainPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.node-label {
+  position: absolute;
+  top: -0.75rem;
+  left: 1rem;
+  background: var(--bg-dark);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  border-radius: 4px;
+}
+
+.node-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.key-chip {
+  background: linear-gradient(135deg, var(--accent-primary), rgba(0, 255, 194, 0.6));
+  color: var(--bg-dark);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 255, 194, 0.3);
+  transition: all 0.2s ease;
+}
+
+.key-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 255, 194, 0.4);
+}
+
+@media (max-width: 768px) {
+  .btree-container {
+    padding: 1rem;
+  }
+
+  .btree-children {
+    gap: 1rem;
+  }
+
+  .btree-node {
+    min-width: 150px;
+    padding: 1rem;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+}

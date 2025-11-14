@@ -1,0 +1,209 @@
+import { motion } from 'framer-motion';
+import type { BTreeState, LSMState } from '../types';
+import './TheDashboard.css';
+
+interface TheDashboardProps {
+  btreeState: BTreeState;
+  lsmState: LSMState;
+  onReset: () => void;
+}
+
+const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
+  // Calculate averages
+  const avgBTreeWrite =
+    btreeState.writeHistory.length > 0
+      ? (btreeState.writeHistory.reduce((a, b) => a + b, 0) / btreeState.writeHistory.length).toFixed(1)
+      : '0';
+
+  const avgLSMWrite =
+    lsmState.writeHistory.length > 0
+      ? (lsmState.writeHistory.reduce((a, b) => a + b, 0) / lsmState.writeHistory.length).toFixed(1)
+      : '0';
+
+  const avgBTreeRead =
+    btreeState.readHistory.length > 0
+      ? (btreeState.readHistory.reduce((a, b) => a + b, 0) / btreeState.readHistory.length).toFixed(1)
+      : 'N/A';
+
+  const avgLSMRead =
+    lsmState.readHistory.length > 0
+      ? (lsmState.readHistory.reduce((a, b) => a + b, 0) / lsmState.readHistory.length).toFixed(1)
+      : 'N/A';
+
+  return (
+    <motion.div
+      className="frame the-dashboard"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className="dashboard-content"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.8 }}
+      >
+        <h1 className="dashboard-title">
+          The Synthesis
+        </h1>
+
+        <blockquote className="dashboard-quote">
+          There is no best. There is only the weight of I/O.
+          <br />
+          Choose your trade-off.
+        </blockquote>
+
+        {/* Results Table */}
+        <div className="results-table">
+          <div className="table-header">
+            <div className="table-cell header-cell">Your Workload Results</div>
+            <div className="table-cell header-cell citadel-header">
+              The Citadel
+              <span className="tech-label">RDBMS • B-Tree</span>
+            </div>
+            <div className="table-cell header-cell frontier-header">
+              The Frontier
+              <span className="tech-label">NoSQL • LSM-Tree</span>
+            </div>
+          </div>
+
+          <div className="table-row">
+            <div className="table-cell metric-label">Avg. Write I/Os</div>
+            <div className="table-cell citadel-cell">
+              <motion.div
+                className="metric-value"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.6, type: 'spring', stiffness: 300 }}
+              >
+                {btreeState.writeIOCount > 0 ? avgBTreeWrite : 'N/A'}
+              </motion.div>
+              <div className="metric-description">
+                {parseFloat(avgBTreeWrite) > 3 ? 'Expensive but maintains order' : 'Precise writes'}
+              </div>
+            </div>
+            <div className="table-cell frontier-cell">
+              <motion.div
+                className="metric-value"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.7, type: 'spring', stiffness: 300 }}
+              >
+                {lsmState.writeIOCount > 0 ? avgLSMWrite : 'N/A'}
+              </motion.div>
+              <div className="metric-description">
+                {parseFloat(avgLSMWrite) < 2 ? 'Lightning fast appends' : 'Batched writes'}
+              </div>
+            </div>
+          </div>
+
+          <div className="table-row">
+            <div className="table-cell metric-label">Avg. Read I/Os</div>
+            <div className="table-cell citadel-cell">
+              <motion.div
+                className="metric-value"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.8, type: 'spring', stiffness: 300 }}
+              >
+                {avgBTreeRead}
+              </motion.div>
+              <div className="metric-description">Predictable • Logarithmic</div>
+            </div>
+            <div className="table-cell frontier-cell">
+              <motion.div
+                className="metric-value"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.9, type: 'spring', stiffness: 300 }}
+              >
+                {avgLSMRead}
+              </motion.div>
+              <div className="metric-description">
+                {parseFloat(avgLSMRead) > 5 ? 'The chaos of the hunt' : 'Variable performance'}
+              </div>
+            </div>
+          </div>
+
+          <div className="table-row">
+            <div className="table-cell metric-label">Total Writes</div>
+            <div className="table-cell citadel-cell">
+              <div className="metric-value small">{btreeState.writeHistory.length}</div>
+            </div>
+            <div className="table-cell frontier-cell">
+              <div className="metric-value small">{lsmState.writeHistory.length}</div>
+            </div>
+          </div>
+
+          <div className="table-row">
+            <div className="table-cell metric-label">Total Reads</div>
+            <div className="table-cell citadel-cell">
+              <div className="metric-value small">{btreeState.readHistory.length}</div>
+            </div>
+            <div className="table-cell frontier-cell">
+              <div className="metric-value small">{lsmState.readHistory.length}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Key Insights */}
+        <motion.div
+          className="insights"
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+        >
+          <h3>Key Insights</h3>
+          <div className="insights-grid">
+            <div className="insight-card citadel">
+              <h4>The Citadel (B-Tree)</h4>
+              <ul>
+                <li>Writes are <strong>expensive</strong> but maintain perfect order</li>
+                <li>Reads are <strong>fast</strong> and <strong>predictable</strong> (O(log n))</li>
+                <li>Ideal for: Read-heavy workloads, transactional systems</li>
+                <li>Trade-off: Write amplification for read performance</li>
+              </ul>
+            </div>
+            <div className="insight-card frontier">
+              <h4>The Frontier (LSM-Tree)</h4>
+              <ul>
+                <li>Writes are <strong>instant</strong> (append-only to memtable)</li>
+                <li>Reads are <strong>slow</strong> and <strong>unpredictable</strong></li>
+                <li>Ideal for: Write-heavy workloads, time-series data, logs</li>
+                <li>Trade-off: Read amplification for write performance</li>
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Actions */}
+        <motion.div
+          className="dashboard-actions"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
+        >
+          <button onClick={onReset} className="reset-btn">
+            Start Over
+          </button>
+        </motion.div>
+
+        {/* Final Thought */}
+        <motion.div
+          className="final-thought"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2, duration: 1 }}
+        >
+          <p>
+            Every database is a bet on the future shape of your queries.
+            <br />
+            <strong>Choose wisely.</strong>
+          </p>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default TheDashboard;

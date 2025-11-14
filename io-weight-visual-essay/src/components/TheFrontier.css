@@ -1,0 +1,191 @@
+.the-frontier {
+  padding: 4rem 2rem;
+  min-height: 100vh;
+}
+
+.frontier-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.frontier-header h2 {
+  color: var(--accent-secondary);
+  margin-bottom: 1rem;
+}
+
+.frontier-header p {
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.lsm-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Memtable */
+.memtable-section {
+  text-align: center;
+}
+
+.memtable-section h3 {
+  color: var(--accent-primary);
+  margin-bottom: 1.5rem;
+}
+
+.memtable {
+  background: rgba(255, 0, 110, 0.1);
+  border: 2px solid var(--accent-secondary);
+  border-radius: 16px;
+  padding: 2rem;
+  min-height: 150px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.memtable.full {
+  border-color: var(--io-pulse);
+  background: rgba(255, 68, 68, 0.2);
+  box-shadow: 0 0 40px rgba(255, 0, 110, 0.5);
+  animation: memtablePulse 1s ease-in-out infinite;
+}
+
+@keyframes memtablePulse {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(255, 0, 110, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(255, 0, 110, 0.8);
+  }
+}
+
+.memtable-label {
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-dark);
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--accent-secondary);
+}
+
+.memtable-data {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  min-height: 80px;
+  align-items: center;
+}
+
+/* SSTables */
+.sstables-section h3 {
+  color: var(--accent-primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.sstables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  min-height: 200px;
+}
+
+.sstable {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.sstable:hover {
+  border-color: var(--accent-secondary);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
+}
+
+.sstable.hunting {
+  border-color: var(--accent-primary);
+  background: rgba(0, 255, 194, 0.1);
+  box-shadow: 0 0 40px rgba(0, 255, 194, 0.5);
+  animation: huntPulse 0.8s ease-in-out infinite;
+}
+
+.sstable.checked {
+  border-color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+@keyframes huntPulse {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(0, 255, 194, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(0, 255, 194, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+.sstable-label {
+  position: absolute;
+  top: -0.75rem;
+  left: 1rem;
+  background: var(--bg-dark);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--accent-secondary);
+}
+
+.sstable-range {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.sstable-count {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 3rem;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .sstables-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .memtable {
+    padding: 1.5rem;
+  }
+}
