@@ -449,9 +449,14 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
       {state.wastedSpace > 0 && (
         <motion.div
           className="fragmentation-stats"
-          initial={{ scale: 0, x: 50 }}
-          animate={{ scale: 1, x: 0 }}
-          transition={{ type: 'spring', stiffness: 200 }}
+          initial={{ scale: 0, x: -150, opacity: 0, rotate: 25 }}
+          animate={{ scale: 1, x: 0, opacity: 1, rotate: 0 }}
+          transition={{
+            type: 'spring',
+            mass: 3.5, // Heavy warning - this is BAD
+            stiffness: 130,
+            damping: 15,
+          }}
         >
           <div className="frag-label">Fragmentation</div>
           <div className="frag-value">
@@ -520,12 +525,19 @@ const BTreeVisualization = ({ nodes, rootId, targetNodeId }: BTreeVisualizationP
         <motion.div
           className={className}
           layout
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.5, opacity: 0, y: -100, rotate: -10 }}
           animate={{
             scale: isTarget ? 1.1 : 1,
             opacity: 1,
+            y: 0,
+            rotate: 0,
           }}
-          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          transition={{
+            type: 'spring',
+            mass: 4.0, // Heavy pages - 4KB each!
+            stiffness: 120,
+            damping: 18, // Solid thunk on landing
+          }}
         >
           <div className="node-label">
             {node.level === 0 ? 'Leaf' : `Level ${node.level}`}
@@ -542,9 +554,15 @@ const BTreeVisualization = ({ nodes, rootId, targetNodeId }: BTreeVisualizationP
                 key={`${nodeId}-${key}-${idx}`}
                 className="key-chip"
                 layout
-                initial={{ x: -10, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: idx * 0.05 }}
+                initial={{ scale: 0, y: -80, opacity: 0, rotate: -20 }}
+                animate={{ scale: 1, y: 0, opacity: 1, rotate: 0 }}
+                transition={{
+                  type: 'spring',
+                  delay: idx * 0.08,
+                  mass: 2.0, // Data has weight
+                  stiffness: 180,
+                  damping: 12,
+                }}
               >
                 {key}
               </motion.div>

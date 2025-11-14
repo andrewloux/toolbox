@@ -389,9 +389,14 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
       {state.totalBytesWritten > 0 && (
         <motion.div
           className="cascade-amp-counter"
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', stiffness: 200 }}
+          initial={{ scale: 0, rotate: -180, x: 100, opacity: 0 }}
+          animate={{ scale: 1, rotate: 0, x: 0, opacity: 1 }}
+          transition={{
+            type: 'spring',
+            mass: 3.5, // Heavy warning counter
+            stiffness: 140,
+            damping: 14,
+          }}
         >
           <div className="amp-label">Write Amplification</div>
           <motion.div
@@ -414,9 +419,14 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
       {state.compressionSavings > 0 && (
         <motion.div
           className="cascade-storage-counter"
-          initial={{ scale: 0, x: -50 }}
-          animate={{ scale: 1, x: 0 }}
-          transition={{ type: 'spring', stiffness: 200 }}
+          initial={{ scale: 0, x: -100, opacity: 0, rotate: 20 }}
+          animate={{ scale: 1, x: 0, opacity: 1, rotate: 0 }}
+          transition={{
+            type: 'spring',
+            mass: 3.0, // Satisfying thunk
+            stiffness: 150,
+            damping: 13,
+          }}
         >
           <div className="storage-label">Compression Savings</div>
           <motion.div className="storage-value">
@@ -435,8 +445,14 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
           <motion.div
             className="io-value"
             key={state.writeIOCount}
-            initial={{ scale: 1.5, color: '#FF4444' }}
-            animate={{ scale: 1, color: '#00FFC2' }}
+            initial={{ scale: 2.5, color: '#FF4444', y: -40 }}
+            animate={{ scale: 1, color: '#00FFC2', y: 0 }}
+            transition={{
+              type: 'spring',
+              mass: 2.0, // Punchy impact
+              stiffness: 300,
+              damping: 10,
+            }}
           >
             {state.writeIOCount}
           </motion.div>
@@ -446,8 +462,14 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
           <motion.div
             className="io-value"
             key={state.readIOCount}
-            initial={{ scale: 1.5, color: '#FF4444' }}
-            animate={{ scale: 1, color: '#FF006E' }}
+            initial={{ scale: 2.5, color: '#FF4444', y: -40 }}
+            animate={{ scale: 1, color: '#FF006E', y: 0 }}
+            transition={{
+              type: 'spring',
+              mass: 2.0,
+              stiffness: 300,
+              damping: 10,
+            }}
           >
             {state.readIOCount}
           </motion.div>
@@ -472,10 +494,16 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
                   <motion.div
                     key={chip.id}
                     className="cascade-chip"
-                    initial={{ scale: 0, y: -50 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0, y: 100 }}
-                    transition={{ type: 'spring', delay: idx * 0.1 }}
+                    initial={{ scale: 0, y: -150, opacity: 0 }}
+                    animate={{ scale: 1, y: 0, opacity: 1 }}
+                    exit={{ scale: 0.8, y: 150, opacity: 0, rotate: 10 }}
+                    transition={{
+                      type: 'spring',
+                      delay: idx * 0.1,
+                      mass: 2.5, // Heavy data blocks
+                      stiffness: 120,
+                      damping: 10, // Bouncy landing
+                    }}
                   >
                     {chip.key}
                   </motion.div>
@@ -494,10 +522,26 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
                 <motion.div
                   key={sstable.id}
                   className={`cascade-sstable ${sstable.isCompacting ? 'compacting' : ''} ${sstable.level === 1 ? 'level1' : 'level0'}`}
-                  initial={{ scale: 0, y: -100 }}
-                  animate={{ scale: 1, y: 0 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  transition={{ type: 'spring', delay: idx * 0.15 }}
+                  initial={{ scale: 0, y: -200, opacity: 0, rotate: -15 }}
+                  animate={{
+                    scale: 1,
+                    y: 0,
+                    opacity: 1,
+                    rotate: 0,
+                  }}
+                  exit={{
+                    scale: sstable.isCompacting ? 0.5 : 0,
+                    opacity: 0,
+                    rotate: sstable.isCompacting ? 180 : 0, // Spin out if compacting
+                    transition: { duration: 0.6 },
+                  }}
+                  transition={{
+                    type: 'spring',
+                    delay: idx * 0.15,
+                    mass: sstable.level === 1 ? 4.0 : 3.0, // L1 is HEAVIER (compressed)
+                    stiffness: 100,
+                    damping: 12, // Less bounce than memtable
+                  }}
                 >
                   <div className="sstable-level">L{sstable.level}</div>
                   <div className="sstable-keys">{sstable.data.length} keys</div>

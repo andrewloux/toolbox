@@ -94,9 +94,15 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             <div className="table-cell citadel-cell">
               <motion.div
                 className="metric-value"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.6, type: 'spring', stiffness: 300 }}
+                initial={{ scale: 0, y: -100, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                transition={{
+                  delay: 0.6,
+                  type: 'spring',
+                  mass: 2.5,
+                  stiffness: 200,
+                  damping: 15,
+                }}
               >
                 {btreeState.writeIOCount > 0 ? avgBTreeWrite : 'N/A'}
               </motion.div>
@@ -107,9 +113,15 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             <div className="table-cell frontier-cell">
               <motion.div
                 className="metric-value"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.7, type: 'spring', stiffness: 300 }}
+                initial={{ scale: 0, y: -100, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                transition={{
+                  delay: 0.7,
+                  type: 'spring',
+                  mass: 2.5,
+                  stiffness: 200,
+                  damping: 15,
+                }}
               >
                 {lsmState.writeIOCount > 0 ? avgLSMWrite : 'N/A'}
               </motion.div>
@@ -124,9 +136,15 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             <div className="table-cell citadel-cell">
               <motion.div
                 className="metric-value"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.8, type: 'spring', stiffness: 300 }}
+                initial={{ scale: 0, y: -100, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                transition={{
+                  delay: 0.8,
+                  type: 'spring',
+                  mass: 2.5,
+                  stiffness: 200,
+                  damping: 15,
+                }}
               >
                 {avgBTreeRead}
               </motion.div>
@@ -135,9 +153,15 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             <div className="table-cell frontier-cell">
               <motion.div
                 className="metric-value"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.9, type: 'spring', stiffness: 300 }}
+                initial={{ scale: 0, y: -100, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                transition={{
+                  delay: 0.9,
+                  type: 'spring',
+                  mass: 2.5,
+                  stiffness: 200,
+                  damping: 15,
+                }}
               >
                 {avgLSMRead}
               </motion.div>
@@ -156,9 +180,15 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             <div className="table-cell citadel-cell">
               <motion.div
                 className={`metric-value ${parseFloat(btreeWriteAmp) > 10 ? 'critical' : ''}`}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 1.0, type: 'spring', stiffness: 300 }}
+                initial={{ scale: 0, y: -150, opacity: 0, rotate: -30 }}
+                animate={{ scale: 1, y: 0, opacity: 1, rotate: 0 }}
+                transition={{
+                  delay: 1.0,
+                  type: 'spring',
+                  mass: 3.5, // Write amp is HEAVY - it's the weight of I/O!
+                  stiffness: 160,
+                  damping: 18,
+                }}
               >
                 {btreeWriteAmp}×
               </motion.div>
@@ -169,9 +199,15 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             <div className="table-cell frontier-cell">
               <motion.div
                 className={`metric-value ${parseFloat(lsmWriteAmp) > 10 ? 'critical' : ''}`}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 1.1, type: 'spring', stiffness: 300 }}
+                initial={{ scale: 0, y: -150, opacity: 0, rotate: 30 }}
+                animate={{ scale: 1, y: 0, opacity: 1, rotate: 0 }}
+                transition={{
+                  delay: 1.1,
+                  type: 'spring',
+                  mass: 3.5, // Write amp is HEAVY
+                  stiffness: 160,
+                  damping: 18,
+                }}
               >
                 {lsmWriteAmp}×
               </motion.div>
@@ -190,9 +226,15 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             <div className="table-cell citadel-cell">
               <motion.div
                 className={`metric-value ${parseFloat(btreeFragmentation) > 40 ? 'critical' : ''}`}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 1.2, type: 'spring', stiffness: 300 }}
+                initial={{ scale: 0, y: -150, opacity: 0, rotate: -25 }}
+                animate={{ scale: 1, y: 0, opacity: 1, rotate: 0 }}
+                transition={{
+                  delay: 1.2,
+                  type: 'spring',
+                  mass: 3.0, // Fragmentation has weight - wasted space
+                  stiffness: 170,
+                  damping: 16,
+                }}
               >
                 {btreeFragmentation}% wasted
               </motion.div>
@@ -203,9 +245,15 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             <div className="table-cell frontier-cell">
               <motion.div
                 className="metric-value positive"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 1.3, type: 'spring', stiffness: 300 }}
+                initial={{ scale: 0, y: -120, opacity: 0, rotate: 15 }}
+                animate={{ scale: 1, y: 0, opacity: 1, rotate: 0 }}
+                transition={{
+                  delay: 1.3,
+                  type: 'spring',
+                  mass: 2.0, // Lighter - this is SAVINGS, not cost
+                  stiffness: 220,
+                  damping: 14,
+                }}
               >
                 {lsmCompressionRatio}% saved
               </motion.div>
