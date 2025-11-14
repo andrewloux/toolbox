@@ -17,6 +17,7 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
   const [targetNodeId, setTargetNodeId] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
 
   const showStatus = (message: string, duration = 2000) => {
     setStatusMessage(message);
@@ -324,9 +325,53 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
+      {/* Intro Overlay */}
+      <AnimatePresence>
+        {showIntro && (
+          <motion.div
+            className="citadel-intro-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowIntro(false)}
+          >
+            <motion.div
+              className="intro-content"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h3>HONEST GEOMETRY</h3>
+              <p className="intro-principle">
+                The B-Tree makes no promises it can't keep.
+              </p>
+              <div className="intro-guarantees">
+                <div className="guarantee-item">
+                  <span className="guarantee-icon">✓</span>
+                  <span>Every write knows its exact cost</span>
+                </div>
+                <div className="guarantee-item">
+                  <span className="guarantee-icon">✓</span>
+                  <span>Every read takes O(log n) steps. Always.</span>
+                </div>
+                <div className="guarantee-item">
+                  <span className="guarantee-icon">✓</span>
+                  <span>Durability is explicit (WAL)</span>
+                </div>
+                <div className="guarantee-item">
+                  <span className="guarantee-icon">✓</span>
+                  <span>Perfect order, maintained in-place</span>
+                </div>
+              </div>
+              <div className="intro-cta">Click anywhere to explore</div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="citadel-header">
-        <h2>The Citadel</h2>
-        <p>Perfect order comes at a price. Every write must maintain the sacred structure.</p>
+        <h2>Honest Geometry</h2>
+        <p>No deferred costs. No hidden amplification. Every operation's price is known upfront.</p>
       </div>
 
       {/* Controls */}
