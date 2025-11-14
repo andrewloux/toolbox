@@ -142,6 +142,11 @@
   animation: criticalPulse 2s ease-in-out infinite;
 }
 
+.metric-value.positive {
+  color: var(--accent-primary) !important;
+  text-shadow: 0 0 20px rgba(0, 255, 194, 0.6);
+}
+
 @keyframes criticalPulse {
   0%, 100% {
     opacity: 1;

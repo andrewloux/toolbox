@@ -41,6 +41,17 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
       ? (lsmState.totalBytesWritten / lsmState.actualDataWritten).toFixed(1)
       : 'N/A';
 
+  // Calculate storage efficiency
+  const btreeFragmentation =
+    btreeState.totalDiskSpace > 0
+      ? ((btreeState.wastedSpace / btreeState.totalDiskSpace) * 100).toFixed(0)
+      : '0';
+
+  const lsmCompressionRatio =
+    lsmState.totalDiskSpace > 0 && lsmState.compressionSavings > 0
+      ? (((lsmState.compressionSavings / (lsmState.totalDiskSpace + lsmState.compressionSavings)) * 100).toFixed(0))
+      : '0';
+
   return (
     <motion.div
       className="frame the-dashboard"
@@ -170,6 +181,40 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
             </div>
           </div>
 
+          {/* Storage Efficiency Row */}
+          <div className="table-row highlight-row">
+            <div className="table-cell metric-label">
+              Storage Efficiency
+              <span className="metric-hint">Fragmentation vs Compression</span>
+            </div>
+            <div className="table-cell citadel-cell">
+              <motion.div
+                className={`metric-value ${parseFloat(btreeFragmentation) > 40 ? 'critical' : ''}`}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1.2, type: 'spring', stiffness: 300 }}
+              >
+                {btreeFragmentation}% wasted
+              </motion.div>
+              <div className="metric-description">
+                {parseFloat(btreeFragmentation) > 40 ? 'Half-empty pages' : 'Fragmentation penalty'}
+              </div>
+            </div>
+            <div className="table-cell frontier-cell">
+              <motion.div
+                className="metric-value positive"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1.3, type: 'spring', stiffness: 300 }}
+              >
+                {lsmCompressionRatio}% saved
+              </motion.div>
+              <div className="metric-description">
+                {parseFloat(lsmCompressionRatio) > 20 ? 'Aggressive compression' : 'Compact storage'}
+              </div>
+            </div>
+          </div>
+
           {/* Special Stats Row */}
           <div className="table-row">
             <div className="table-cell metric-label">Special Stats</div>
@@ -226,8 +271,9 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
               <ul>
                 <li>Writes are <strong>expensive</strong> but maintain perfect order</li>
                 <li>Reads are <strong>fast</strong> and <strong>predictable</strong> (O(log n))</li>
+                <li><strong>Fragmentation</strong>: 30-50% wasted space after splits</li>
                 <li>Ideal for: Read-heavy workloads, transactional systems</li>
-                <li>Trade-off: Write amplification for read performance</li>
+                <li>Trade-off: Write amplification & fragmentation for read speed</li>
               </ul>
             </div>
             <div className="insight-card frontier">
@@ -235,8 +281,9 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
               <ul>
                 <li>Writes are <strong>instant</strong> (append-only to memtable)</li>
                 <li>Reads are <strong>slow</strong> and <strong>unpredictable</strong></li>
+                <li><strong>Compression</strong>: 30%+ space savings on disk</li>
                 <li>Ideal for: Write-heavy workloads, time-series data, logs</li>
-                <li>Trade-off: Read amplification for write performance</li>
+                <li>Trade-off: Read amplification for write speed & storage</li>
               </ul>
             </div>
           </div>
