@@ -58,6 +58,48 @@
   box-shadow: 0 0 60px rgba(255, 0, 110, 0.5);
 }
 
+/* Storage Efficiency Counter */
+.cascade-storage-counter {
+  position: fixed;
+  top: 8rem;
+  left: 2rem;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  border: 3px solid var(--accent-primary);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  min-width: 240px;
+  box-shadow: 0 0 60px rgba(0, 255, 194, 0.5);
+}
+
+.storage-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.storage-value {
+  font-size: 2rem;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-primary);
+  line-height: 1;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 30px currentColor;
+}
+
+.storage-detail {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+}
+
 .amp-label {
   font-size: 0.75rem;
   text-transform: uppercase;

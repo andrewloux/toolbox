@@ -18,6 +18,8 @@ export interface BTreeNode {
   data?: DataChip[]; // Only for leaf nodes
   isLocked?: boolean;
   isOverflowing?: boolean;
+  capacity?: number; // Max keys this node can hold (for fragmentation viz)
+  pageSize?: number; // Size of this page in bytes (typically 4096)
   x?: number; // For animation positioning
   y?: number;
 }
@@ -33,6 +35,8 @@ export interface BTreeState {
   walWrites: number; // Write-Ahead Log writes
   totalBytesWritten: number; // For write amplification calculation
   actualDataWritten: number; // Actual user data written
+  totalDiskSpace: number; // Total disk space used (all pages)
+  wastedSpace: number; // Fragmentation waste (empty slots in pages)
 }
 
 // LSM-Tree Types
@@ -53,6 +57,8 @@ export interface SSTable {
   y?: number;
   isCompacting?: boolean; // Currently being compacted
   bloomFilterChecks?: number; // Times bloom filter was checked
+  sizeBytes: number; // Size in bytes (uncompressed)
+  compressedBytes?: number; // Size after compression (L1+ only)
 }
 
 export interface LSMState {
@@ -67,6 +73,8 @@ export interface LSMState {
   totalBytesWritten: number; // For write amplification
   actualDataWritten: number; // Actual user data written
   bloomFilterSaves: number; // I/Os saved by bloom filters
+  totalDiskSpace: number; // Total disk space used (sum of all SSTables)
+  compressionSavings: number; // Bytes saved through compression
 }
 
 // Shared State

@@ -21,6 +21,8 @@ const initBTree = (): BTreeState => ({
           { id: '1', key: 'grape', value: 'A purple fruit', timestamp: Date.now() },
           { id: '2', key: 'honey', value: 'Sweet nectar', timestamp: Date.now() },
         ],
+        capacity: 4, // Max 4 keys
+        pageSize: 4096, // 4KB page
       },
     ],
   ]),
@@ -33,6 +35,8 @@ const initBTree = (): BTreeState => ({
   walWrites: 0,
   totalBytesWritten: 0,
   actualDataWritten: 0,
+  totalDiskSpace: 4096, // Start with 1 page (root)
+  wastedSpace: 2048, // 2/4 slots used = 50% waste
 });
 
 // Initialize LSM-Tree with empty memtable
@@ -52,6 +56,8 @@ const initLSM = (): LSMState => ({
   totalBytesWritten: 0,
   actualDataWritten: 0,
   bloomFilterSaves: 0,
+  totalDiskSpace: 0, // No SSTables yet
+  compressionSavings: 0, // No compression yet
 });
 
 function App() {

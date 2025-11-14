@@ -47,6 +47,8 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
     totalBytesWritten: 0,
     actualDataWritten: 0,
     bloomFilterSaves: 0,
+    totalDiskSpace: 0,
+    compressionSavings: 0,
   });
   const [canContinue, setCanContinue] = useState(false);
   const [writeAmp, setWriteAmp] = useState(0);
@@ -205,6 +207,7 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
         minKey: prev.memtable.data.reduce((min, d) => (d.key < min ? d.key : min), prev.memtable.data[0].key),
         maxKey: prev.memtable.data.reduce((max, d) => (d.key > max ? d.key : max), prev.memtable.data[0].key),
         createdAt: Date.now(),
+        sizeBytes: flushSize, // L0 = uncompressed
       };
 
       const newState = {
@@ -213,6 +216,7 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
         sstables: [newSSTable, ...prev.sstables],
         writeIOCount: prev.writeIOCount + 1,
         totalBytesWritten: prev.totalBytesWritten + flushSize,
+        totalDiskSpace: prev.totalDiskSpace + flushSize, // Add SSTable size to disk usage
       };
 
       // Update write amp
@@ -224,7 +228,7 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
     });
 
     await sleep(1500);
-    showNarration('SSTable written to L0.', 1500);
+    showNarration('SSTable written to L0. 100% uncompressed.', 1500);
     await sleep(1800);
     setCanContinue(true);
   };
@@ -296,6 +300,13 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
       const mergedData = allData.sort((a, b) => a.key.localeCompare(b.key));
       const mergedSize = mergedData.length * 100;
 
+      // COMPRESSION: Simulate 30% compression ratio for L1
+      const compressedSize = Math.floor(mergedSize * 0.7);
+      const compressionSaved = mergedSize - compressedSize;
+
+      // Calculate L0 disk space to be freed
+      const l0DiskSpace = l0Tables.reduce((sum, t) => sum + t.sizeBytes, 0);
+
       const newL1Table: SSTable = {
         id: `sstable-l1-${Date.now()}`,
         level: 1,
@@ -303,6 +314,8 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
         minKey: mergedData[0].key,
         maxKey: mergedData[mergedData.length - 1].key,
         createdAt: Date.now(),
+        sizeBytes: mergedSize, // Uncompressed size
+        compressedBytes: compressedSize, // Compressed on-disk size
       };
 
       const newState = {
@@ -315,6 +328,9 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
         compactionCount: prev.compactionCount + 1,
         isCompacting: false,
         totalBytesWritten: prev.totalBytesWritten + mergedSize,
+        // Disk space: Remove L0 tables, add compressed L1
+        totalDiskSpace: prev.totalDiskSpace - l0DiskSpace + compressedSize,
+        compressionSavings: prev.compressionSavings + compressionSaved,
       };
 
       // Update write amp
@@ -327,6 +343,8 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
 
     await sleep(2500);
     showNarration('You wrote the same data again.', 3000);
+    await sleep(3500);
+    showNarration('But... L1 is compressed! 30% smaller on disk.', 3000);
     await sleep(3500);
     showNarration(`Write Amplification: ${writeAmp.toFixed(1)}×`, 3000);
     await sleep(3500);
@@ -388,6 +406,24 @@ const TheCascade = ({ onComplete }: TheCascadeProps) => {
           </motion.div>
           <div className="amp-detail">
             {state.totalBytesWritten} / {state.actualDataWritten} bytes
+          </div>
+        </motion.div>
+      )}
+
+      {/* Storage Efficiency Counter */}
+      {state.compressionSavings > 0 && (
+        <motion.div
+          className="cascade-storage-counter"
+          initial={{ scale: 0, x: -50 }}
+          animate={{ scale: 1, x: 0 }}
+          transition={{ type: 'spring', stiffness: 200 }}
+        >
+          <div className="storage-label">Compression Savings</div>
+          <motion.div className="storage-value">
+            {state.compressionSavings} bytes
+          </motion.div>
+          <div className="storage-detail">
+            Disk: {state.totalDiskSpace} bytes (30% smaller)
           </div>
         </motion.div>
       )}

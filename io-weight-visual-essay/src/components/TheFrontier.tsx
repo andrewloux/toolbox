@@ -78,9 +78,8 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
 
     await sleep(1500);
 
-    const flushSize = state.memtable.data.length * 100; // Bytes
-
     updateState(prev => {
+      const flushSize = prev.memtable.data.length * 100;
       const newSSTable: SSTable = {
         id: `sstable-${Date.now()}`,
         level: 0,
@@ -88,6 +87,7 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
         minKey: prev.memtable.data.reduce((min, d) => (d.key < min ? d.key : min), prev.memtable.data[0].key),
         maxKey: prev.memtable.data.reduce((max, d) => (d.key > max ? d.key : max), prev.memtable.data[0].key),
         createdAt: Date.now(),
+        sizeBytes: flushSize,
       };
 
       return {
@@ -159,11 +159,13 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
     const allData: DataChip[] = [];
     l0Tables.forEach(t => allData.push(...t.data));
     const mergedData = allData.sort((a, b) => a.key.localeCompare(b.key));
-    const mergedSize = mergedData.length * 100;
 
     // Write to L1 (this is write amplification!)
     showStatus('Writing merged SSTable to L1...', 2000);
     await sleep(1500);
+
+    const mergedSize = mergedData.length * 100;
+    const compressedSize = Math.floor(mergedSize * 0.7); // 30% compression
 
     const newL1Table: SSTable = {
       id: `sstable-l1-${Date.now()}`,
@@ -172,6 +174,8 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
       minKey: mergedData[0].key,
       maxKey: mergedData[mergedData.length - 1].key,
       createdAt: Date.now(),
+      sizeBytes: mergedSize,
+      compressedBytes: compressedSize,
     };
 
     updateState(prev => ({
