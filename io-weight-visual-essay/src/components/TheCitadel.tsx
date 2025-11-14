@@ -146,11 +146,24 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
       await sleep(800);
 
       const pageSize = 4096; // 4KB page
-      updateState(prev => ({
-        ...prev,
-        writeIOCount: prev.writeIOCount + 1,
-        totalBytesWritten: prev.totalBytesWritten + pageSize, // Write entire page!
-      }));
+      updateState(prev => {
+        // Calculate current fragmentation across all nodes
+        let totalWasted = 0;
+        prev.nodes.forEach(node => {
+          if (node.capacity) {
+            const emptySlots = node.capacity - node.keys.length;
+            const wastedBytes = (emptySlots / node.capacity) * (node.pageSize || 4096);
+            totalWasted += wastedBytes;
+          }
+        });
+
+        return {
+          ...prev,
+          writeIOCount: prev.writeIOCount + 1,
+          totalBytesWritten: prev.totalBytesWritten + pageSize,
+          wastedSpace: totalWasted,
+        };
+      });
 
       await sleep(500);
 
@@ -197,12 +210,14 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
       const leftData = node.data!.slice(0, mid);
       const rightData = node.data!.slice(mid + 1);
 
-      // Create new nodes
+      // Create new nodes (WITH CAPACITY for fragmentation tracking)
       const leftNode: BTreeNode = {
         id: `${nodeId}-left`,
         level: 0,
         keys: leftKeys,
         data: leftData,
+        capacity: prev.order,
+        pageSize: 4096,
       };
 
       const rightNode: BTreeNode = {
@@ -210,6 +225,8 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
         level: 0,
         keys: rightKeys,
         data: rightData,
+        capacity: prev.order,
+        pageSize: 4096,
       };
 
       newNodes.set(leftNode.id, leftNode);
@@ -222,17 +239,34 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
           level: 1,
           keys: [medianKey],
           children: [leftNode.id, rightNode.id],
+          capacity: prev.order,
+          pageSize: 4096,
         };
         newNodes.set(newRoot.id, newRoot);
         newNodes.delete(nodeId);
 
         const pageSize = 4096;
+
+        // Calculate fragmentation after split
+        let totalWasted = 0;
+        let totalDisk = 0;
+        newNodes.forEach(node => {
+          if (node.capacity && node.pageSize) {
+            const emptySlots = node.capacity - node.keys.length;
+            const wastedBytes = (emptySlots / node.capacity) * node.pageSize;
+            totalWasted += wastedBytes;
+            totalDisk += node.pageSize;
+          }
+        });
+
         return {
           ...prev,
           nodes: newNodes,
           rootId: newRoot.id,
           writeIOCount: prev.writeIOCount + 3, // Writing 3 pages
           totalBytesWritten: prev.totalBytesWritten + (pageSize * 3), // 3 pages!
+          totalDiskSpace: totalDisk,
+          wastedSpace: totalWasted, // MASSIVE waste after split!
           writeHistory: [...prev.writeHistory, prev.writeIOCount + 3],
         };
       }
@@ -241,11 +275,26 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
       newNodes.delete(nodeId);
 
       const pageSize = 4096;
+
+      // Calculate fragmentation after split
+      let totalWasted = 0;
+      let totalDisk = 0;
+      newNodes.forEach(node => {
+        if (node.capacity && node.pageSize) {
+          const emptySlots = node.capacity - node.keys.length;
+          const wastedBytes = (emptySlots / node.capacity) * node.pageSize;
+          totalWasted += wastedBytes;
+          totalDisk += node.pageSize;
+        }
+      });
+
       return {
         ...prev,
         nodes: newNodes,
         writeIOCount: prev.writeIOCount + 2, // Writing 2 pages
         totalBytesWritten: prev.totalBytesWritten + (pageSize * 2), // 2 pages!
+        totalDiskSpace: totalDisk,
+        wastedSpace: totalWasted,
         writeHistory: [...prev.writeHistory, prev.writeIOCount + 2],
       };
     });
@@ -396,6 +445,24 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
         />
       )}
 
+      {/* Fragmentation Stats */}
+      {state.wastedSpace > 0 && (
+        <motion.div
+          className="fragmentation-stats"
+          initial={{ scale: 0, x: 50 }}
+          animate={{ scale: 1, x: 0 }}
+          transition={{ type: 'spring', stiffness: 200 }}
+        >
+          <div className="frag-label">Fragmentation</div>
+          <div className="frag-value">
+            {((state.wastedSpace / state.totalDiskSpace) * 100).toFixed(0)}%
+          </div>
+          <div className="frag-detail">
+            {state.wastedSpace} / {state.totalDiskSpace} bytes wasted
+          </div>
+        </motion.div>
+      )}
+
       {/* WAL Stats */}
       {state.walWrites > 0 && (
         <div className="wal-stats">
@@ -462,8 +529,14 @@ const BTreeVisualization = ({ nodes, rootId, targetNodeId }: BTreeVisualizationP
         >
           <div className="node-label">
             {node.level === 0 ? 'Leaf' : `Level ${node.level}`}
+            {node.capacity && (
+              <span className="node-capacity">
+                {node.keys.length}/{node.capacity}
+              </span>
+            )}
           </div>
           <div className="node-keys">
+            {/* Actual keys */}
             {node.keys.map((key, idx) => (
               <motion.div
                 key={`${nodeId}-${key}-${idx}`}
@@ -474,6 +547,19 @@ const BTreeVisualization = ({ nodes, rootId, targetNodeId }: BTreeVisualizationP
                 transition={{ delay: idx * 0.05 }}
               >
                 {key}
+              </motion.div>
+            ))}
+            {/* Empty slots (wasted space) */}
+            {node.capacity && Array.from({ length: node.capacity - node.keys.length }).map((_, idx) => (
+              <motion.div
+                key={`${nodeId}-empty-${idx}`}
+                className="key-chip empty"
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.3 }}
+                transition={{ delay: (node.keys.length + idx) * 0.05 }}
+              >
+                ___
               </motion.div>
             ))}
           </div>

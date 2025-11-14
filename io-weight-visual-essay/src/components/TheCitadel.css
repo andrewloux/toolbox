@@ -214,6 +214,18 @@
   letter-spacing: 0.1em;
   color: var(--text-secondary);
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.node-capacity {
+  font-size: 0.65rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-primary);
+  background: rgba(0, 255, 194, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
 }
 
 .node-keys {
@@ -238,6 +250,61 @@
 .key-chip:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 255, 194, 0.4);
+}
+
+.key-chip.empty {
+  background: transparent;
+  border: 1px dashed rgba(255, 68, 68, 0.3);
+  color: rgba(255, 68, 68, 0.4);
+  box-shadow: none;
+  font-weight: 400;
+}
+
+.key-chip.empty:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Fragmentation Stats */
+.fragmentation-stats {
+  position: fixed;
+  top: 8rem;
+  left: 2rem;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  border: 3px solid #ff4444;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  min-width: 220px;
+  box-shadow: 0 0 60px rgba(255, 68, 68, 0.5);
+}
+
+.frag-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.frag-value {
+  font-size: 3rem;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  color: #ff4444;
+  line-height: 1;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 30px rgba(255, 68, 68, 0.8);
+}
+
+.frag-detail {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* WAL Stats */
