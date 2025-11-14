@@ -31,6 +31,9 @@ const initBTree = (): BTreeState => ({
   readIOCount: 0,
   writeHistory: [],
   readHistory: [],
+  walWrites: 0,
+  totalBytesWritten: 0,
+  actualDataWritten: 0,
 });
 
 // Initialize LSM-Tree with empty memtable
@@ -45,6 +48,11 @@ const initLSM = (): LSMState => ({
   readIOCount: 0,
   writeHistory: [],
   readHistory: [],
+  compactionCount: 0,
+  isCompacting: false,
+  totalBytesWritten: 0,
+  actualDataWritten: 0,
+  bloomFilterSaves: 0,
 });
 
 function App() {

@@ -189,3 +189,60 @@
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
+
+/* Amplification Counter */
+.amplification-counter {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 220px;
+}
+
+.amplification-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.amplification-value {
+  font-size: 3rem;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-primary);
+  line-height: 1;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.amplification-value.critical {
+  color: var(--io-pulse);
+}
+
+.amplification-value.pulsing {
+  animation: amplificationPulse 0.3s ease-in-out;
+}
+
+@keyframes amplificationPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.amplification-detail {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+}

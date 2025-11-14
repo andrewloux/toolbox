@@ -30,6 +30,9 @@ export interface BTreeState {
   readIOCount: number;
   writeHistory: number[];
   readHistory: number[];
+  walWrites: number; // Write-Ahead Log writes
+  totalBytesWritten: number; // For write amplification calculation
+  actualDataWritten: number; // Actual user data written
 }
 
 // LSM-Tree Types
@@ -48,6 +51,8 @@ export interface SSTable {
   createdAt: number;
   x?: number;
   y?: number;
+  isCompacting?: boolean; // Currently being compacted
+  bloomFilterChecks?: number; // Times bloom filter was checked
 }
 
 export interface LSMState {
@@ -57,6 +62,11 @@ export interface LSMState {
   readIOCount: number;
   writeHistory: number[];
   readHistory: number[];
+  compactionCount: number; // Number of compactions performed
+  isCompacting: boolean; // Currently running compaction
+  totalBytesWritten: number; // For write amplification
+  actualDataWritten: number; // Actual user data written
+  bloomFilterSaves: number; // I/Os saved by bloom filters
 }
 
 // Shared State
@@ -75,9 +85,12 @@ export type AnimationPhase =
   | 'locking'
   | 'modifying'
   | 'writing'
+  | 'wal-writing' // Writing to WAL
   | 'splitting'
   | 'flushing'
+  | 'compacting' // Compaction in progress
   | 'hunting'
+  | 'bloom-check' // Checking bloom filter
   | 'complete';
 
 export interface AnimationState {
