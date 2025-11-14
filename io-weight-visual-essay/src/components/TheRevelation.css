@@ -1,0 +1,130 @@
+.the-revelation {
+  background: #000000;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.the-revelation::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 255, 194, 0.15), transparent 70%);
+  border-radius: 50%;
+  animation: revelationGlow 3s ease-in-out infinite;
+}
+
+@keyframes revelationGlow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+.revelation-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.revelation-question {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 300;
+  color: var(--text-secondary);
+  font-style: italic;
+  max-width: 800px;
+  line-height: 1.4;
+  margin-bottom: 3rem;
+}
+
+.revelation-answer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.revelation-title {
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--accent-primary), rgba(0, 255, 194, 0.6));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 0.9;
+  text-shadow: 0 0 80px rgba(0, 255, 194, 0.8);
+  animation: titlePulse 2s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+  0%, 100% {
+    text-shadow: 0 0 80px rgba(0, 255, 194, 0.6);
+  }
+  50% {
+    text-shadow: 0 0 120px rgba(0, 255, 194, 1);
+  }
+}
+
+.revelation-subtitle {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.revelation-geometry {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  color: var(--accent-primary);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.revelation-geometry svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 20px currentColor);
+}
+
+@media (max-width: 768px) {
+  .revelation-question {
+    font-size: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .revelation-title {
+    font-size: 2.5rem;
+  }
+
+  .revelation-subtitle {
+    font-size: 1.5rem;
+  }
+
+  .revelation-geometry {
+    width: 200px;
+    height: 200px;
+  }
+}

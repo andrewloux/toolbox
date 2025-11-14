@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import './App.css';
-import type { AppState, WorldType, BTreeState, LSMState } from './types';
-import TheChoice from './components/TheChoice';
+import type { BTreeState, LSMState } from './types';
+import TheCascade from './components/TheCascade';
+import TheRevelation from './components/TheRevelation';
 import TheCitadel from './components/TheCitadel';
-import TheFrontier from './components/TheFrontier';
 import TheDashboard from './components/TheDashboard';
-import WorldToggle from './components/WorldToggle';
 import IOCounter from './components/IOCounter';
 
 // Initialize B-Tree with a simple root
@@ -56,113 +55,79 @@ const initLSM = (): LSMState => ({
 });
 
 function App() {
-  const [state, setState] = useState<AppState>({
-    currentWorld: null,
-    currentFrame: 1,
-    btree: initBTree(),
-    lsm: initLSM(),
-    showDashboard: false,
-  });
+  // Frame management: 0=Cascade, 1=Revelation, 2=Citadel, 3=Dashboard
+  const [currentFrame, setCurrentFrame] = useState(0);
 
-  const handleWorldChoice = (world: WorldType) => {
-    setState((prev) => ({
-      ...prev,
-      currentWorld: world,
-      currentFrame: 2,
-    }));
+  // State for both structures
+  const [btreeState, setBtreeState] = useState<BTreeState>(initBTree());
+  const [lsmState, setLsmState] = useState<LSMState>(initLSM());
+
+  // Handlers for frame transitions
+  const handleCascadeComplete = (finalLSMState: LSMState) => {
+    setLsmState(finalLSMState); // Capture the LSM state from The Cascade
+    setCurrentFrame(1); // Move to Revelation
   };
 
-  const toggleWorld = (world: WorldType) => {
-    setState((prev) => ({
-      ...prev,
-      currentWorld: world,
-    }));
+  const handleRevelationComplete = () => {
+    setCurrentFrame(2); // Move to Citadel
+  };
+
+  const handleCitadelComplete = () => {
+    setCurrentFrame(3); // Move to Dashboard
   };
 
   const updateBTree = (updater: (prev: BTreeState) => BTreeState) => {
-    setState((prev) => ({
-      ...prev,
-      btree: updater(prev.btree),
-    }));
+    setBtreeState(updater);
   };
 
-  const updateLSM = (updater: (prev: LSMState) => LSMState) => {
-    setState((prev) => ({
-      ...prev,
-      lsm: updater(prev.lsm),
-    }));
-  };
-
-  const showDashboard = () => {
-    setState((prev) => ({
-      ...prev,
-      showDashboard: true,
-      currentFrame: 6,
-    }));
-  };
-
-  const resetToChoice = () => {
-    setState({
-      currentWorld: null,
-      currentFrame: 1,
-      btree: initBTree(),
-      lsm: initLSM(),
-      showDashboard: false,
-    });
+  const resetToBeginning = () => {
+    setCurrentFrame(0);
+    setBtreeState(initBTree());
+    setLsmState(initLSM());
   };
 
   return (
     <div className="app">
       <AnimatePresence mode="wait">
-        {/* Frame 1: The Choice */}
-        {state.currentFrame === 1 && (
-          <TheChoice key="choice" onChoice={handleWorldChoice} />
+        {/* Frame 0: The Cascade (Forced LSM Experience) */}
+        {currentFrame === 0 && (
+          <TheCascade
+            key="cascade"
+            onComplete={handleCascadeComplete}
+          />
         )}
 
-        {/* Frame 2-5: The Worlds */}
-        {state.currentWorld && !state.showDashboard && (
+        {/* Frame 1: The Revelation (Title Card) */}
+        {currentFrame === 1 && (
+          <TheRevelation
+            key="revelation"
+            onComplete={handleRevelationComplete}
+          />
+        )}
+
+        {/* Frame 2: The Citadel (B-Tree Deep Dive) */}
+        {currentFrame === 2 && (
           <>
-            <WorldToggle
-              currentWorld={state.currentWorld}
-              onToggle={toggleWorld}
-            />
             <IOCounter
-              writeCount={
-                state.currentWorld === 'citadel'
-                  ? state.btree.writeIOCount
-                  : state.lsm.writeIOCount
-              }
-              readCount={
-                state.currentWorld === 'citadel'
-                  ? state.btree.readIOCount
-                  : state.lsm.readIOCount
-              }
+              writeCount={btreeState.writeIOCount}
+              readCount={btreeState.readIOCount}
             />
-            {state.currentWorld === 'citadel' ? (
-              <TheCitadel
-                key="citadel"
-                state={state.btree}
-                updateState={updateBTree}
-                onShowDashboard={showDashboard}
-              />
-            ) : (
-              <TheFrontier
-                key="frontier"
-                state={state.lsm}
-                updateState={updateLSM}
-                onShowDashboard={showDashboard}
-              />
-            )}
+            <TheCitadel
+              key="citadel"
+              state={btreeState}
+              updateState={updateBTree}
+              onShowDashboard={handleCitadelComplete}
+            />
           </>
         )}
 
-        {/* Frame 6: The Dashboard */}
-        {state.showDashboard && (
+        {/* Frame 3: The Synthesis (Dashboard) */}
+        {currentFrame === 3 && (
           <TheDashboard
             key="dashboard"
-            btreeState={state.btree}
-            lsmState={state.lsm}
-            onReset={resetToChoice}
+            btreeState={btreeState}
+            lsmState={lsmState}
+            onReset={resetToBeginning}
           />
         )}
       </AnimatePresence>
