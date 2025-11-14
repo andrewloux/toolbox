@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { LSMState, DataChip, SSTable } from '../types';
+import AmplificationCounter from './AmplificationCounter';
 import './TheFrontier.css';
 
 interface TheFrontierProps {
@@ -40,6 +41,8 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
 
     await sleep(800);
 
+    const dataSize = 100; // Simulated size in bytes
+
     updateState(prev => {
       const newData = [...prev.memtable.data, chip];
       const isFull = newData.length >= prev.memtable.capacity;
@@ -51,6 +54,7 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
           data: newData,
           isFull,
         },
+        actualDataWritten: prev.actualDataWritten + dataSize,
       };
     });
 
@@ -74,6 +78,8 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
 
     await sleep(1500);
 
+    const flushSize = state.memtable.data.length * 100; // Bytes
+
     updateState(prev => {
       const newSSTable: SSTable = {
         id: `sstable-${Date.now()}`,
@@ -94,12 +100,98 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
         sstables: [newSSTable, ...prev.sstables],
         writeIOCount: prev.writeIOCount + 1,
         writeHistory: [...prev.writeHistory, prev.writeIOCount + 1],
+        totalBytesWritten: prev.totalBytesWritten + flushSize,
       };
     });
 
     await sleep(1500);
     showStatus('Flush complete! SSTable written to L0.', 1500);
     await sleep(1000);
+
+    // Check if compaction is needed (>= 4 L0 SSTables)
+    const l0Count = state.sstables.filter(t => t.level === 0).length + 1; // +1 for the one we just added
+    if (l0Count >= 4) {
+      await sleep(500);
+      await handleCompaction();
+    }
+  };
+
+  // THE COMPACTION SCENE - The brutal reality
+  const handleCompaction = async () => {
+    showStatus('⚠️ COMPACTION TRIGGERED!', 2000);
+    await sleep(1500);
+
+    updateState(prev => ({ ...prev, isCompacting: true }));
+
+    showStatus('Merging L0 SSTables...', 2000);
+    await sleep(1000);
+
+    // Get all L0 tables
+    const l0Tables = state.sstables.filter(t => t.level === 0);
+    if (l0Tables.length < 2) {
+      updateState(prev => ({ ...prev, isCompacting: false }));
+      return;
+    }
+
+    // Mark them as compacting
+    updateState(prev => ({
+      ...prev,
+      sstables: prev.sstables.map(t =>
+        t.level === 0 ? { ...t, isCompacting: true } : t
+      ),
+    }));
+
+    await sleep(1500);
+
+    // Merge sort animation (simulate reading all L0 tables)
+    showStatus('Reading and merging SSTables...', 2000);
+    for (let i = 0; i < l0Tables.length; i++) {
+      await sleep(600);
+      updateState(prev => ({
+        ...prev,
+        readIOCount: prev.readIOCount + 1,
+      }));
+    }
+
+    await sleep(1000);
+
+    // Merge all L0 data
+    const allData: DataChip[] = [];
+    l0Tables.forEach(t => allData.push(...t.data));
+    const mergedData = allData.sort((a, b) => a.key.localeCompare(b.key));
+    const mergedSize = mergedData.length * 100;
+
+    // Write to L1 (this is write amplification!)
+    showStatus('Writing merged SSTable to L1...', 2000);
+    await sleep(1500);
+
+    const newL1Table: SSTable = {
+      id: `sstable-l1-${Date.now()}`,
+      level: 1,
+      data: mergedData,
+      minKey: mergedData[0].key,
+      maxKey: mergedData[mergedData.length - 1].key,
+      createdAt: Date.now(),
+    };
+
+    updateState(prev => ({
+      ...prev,
+      sstables: [
+        ...prev.sstables.filter(t => t.level !== 0), // Remove all L0
+        newL1Table,
+      ],
+      writeIOCount: prev.writeIOCount + 1,
+      compactionCount: prev.compactionCount + 1,
+      isCompacting: false,
+      // WRITE AMPLIFICATION: We wrote the same data again!
+      totalBytesWritten: prev.totalBytesWritten + mergedSize,
+    }));
+
+    await sleep(1000);
+    showStatus('Compaction complete. Data rewritten to L1.', 2500);
+    await sleep(1500);
+    showStatus('This is where you paid for those cheap writes.', 2500);
+    await sleep(2000);
   };
 
   // Perform read operation
@@ -132,7 +224,24 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
         sequence.push(sstable.id);
         setHuntingSequence([...sequence]);
 
-        showStatus(`Checking SSTable L${sstable.level} (${sstable.minKey} - ${sstable.maxKey})...`, 1000);
+        // BLOOM FILTER CHECK (NEW!)
+        showStatus(`Bloom filter check: ${sstable.id}...`, 500);
+        await sleep(500);
+
+        const keyExists = sstable.data.some(d => d.key === key);
+        const bloomResult = !keyExists && Math.random() < 0.8 ? 'NOT_PRESENT' : 'MAYBE';
+
+        if (bloomResult === 'NOT_PRESENT') {
+          showStatus(`✓ Bloom: NOT in ${sstable.id}. Skipping I/O!`, 800);
+          updateState(prev => ({
+            ...prev,
+            bloomFilterSaves: prev.bloomFilterSaves + 1,
+          }));
+          await sleep(800);
+          continue; // SKIP the disk I/O!
+        }
+
+        showStatus(`Bloom: MAYBE in L${sstable.level}. Reading disk...`, 1000);
         await sleep(1000);
 
         // Simulate disk I/O
@@ -144,9 +253,8 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
 
         await sleep(600);
 
-        // Check if key is in range
+        // Check if key is in range and scan
         if (key >= sstable.minKey && key <= sstable.maxKey) {
-          // Scan the SSTable
           if (sstable.data.some(d => d.key === key)) {
             found = true;
             showStatus(`HIT in L${sstable.level}! (${ioCount} I/Os)`, 2000);
@@ -188,16 +296,40 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
 
       {/* Controls */}
       <div className="controls">
-        <button onClick={handleWrite} disabled={isAnimating}>
+        <button onClick={handleWrite} disabled={isAnimating || state.isCompacting}>
           Write Document
         </button>
-        <button onClick={handleRead} disabled={isAnimating}>
+        <button onClick={handleRead} disabled={isAnimating || state.isCompacting}>
           Find Document
+        </button>
+        <button
+          onClick={handleCompaction}
+          disabled={isAnimating || state.isCompacting || state.sstables.filter(t => t.level === 0).length < 2}
+          className="compaction-btn"
+        >
+          Trigger Compaction
         </button>
         <button onClick={onShowDashboard} disabled={isAnimating}>
           View Results
         </button>
       </div>
+
+      {/* Amplification Counter */}
+      {state.totalBytesWritten > 0 && (
+        <AmplificationCounter
+          totalBytesWritten={state.totalBytesWritten}
+          actualDataWritten={state.actualDataWritten}
+          type="write"
+        />
+      )}
+
+      {/* Bloom Filter Stats */}
+      {state.bloomFilterSaves > 0 && (
+        <div className="bloom-stats">
+          <div className="bloom-label">Bloom Filter Saves</div>
+          <div className="bloom-value">{state.bloomFilterSaves} I/Os</div>
+        </div>
+      )}
 
       {/* LSM Visualization */}
       <div className="lsm-container">
@@ -246,7 +378,7 @@ const TheFrontier = ({ state, updateState, onShowDashboard }: TheFrontierProps) 
               {state.sstables.map((sstable, idx) => (
                 <motion.div
                   key={sstable.id}
-                  className={`sstable ${targetSSTableId === sstable.id ? 'hunting' : ''} ${huntingSequence.includes(sstable.id) ? 'checked' : ''}`}
+                  className={`sstable ${targetSSTableId === sstable.id ? 'hunting' : ''} ${huntingSequence.includes(sstable.id) ? 'checked' : ''} ${sstable.isCompacting ? 'compacting' : ''}`}
                   initial={{ x: 0, y: -100, opacity: 0, scale: 0.8 }}
                   animate={{ x: 0, y: 0, opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.5 }}

@@ -148,6 +148,46 @@
   box-shadow: 0 6px 16px rgba(0, 255, 194, 0.4);
 }
 
+/* WAL Stats */
+.wal-stats {
+  position: fixed;
+  bottom: 10rem;
+  right: 2rem;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid var(--accent-primary);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  min-width: 220px;
+}
+
+.wal-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.wal-value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-primary);
+  line-height: 1;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.wal-detail {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+}
+
 @media (max-width: 768px) {
   .btree-container {
     padding: 1rem;

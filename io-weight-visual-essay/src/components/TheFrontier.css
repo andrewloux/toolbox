@@ -131,6 +131,23 @@
   opacity: 0.6;
 }
 
+.sstable.compacting {
+  border-color: #ff8800;
+  background: rgba(255, 136, 0, 0.2);
+  box-shadow: 0 0 40px rgba(255, 136, 0, 0.6);
+  animation: compactPulse 1s ease-in-out infinite;
+}
+
+@keyframes compactPulse {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(255, 136, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(255, 136, 0, 0.9);
+    transform: scale(1.05);
+  }
+}
+
 @keyframes huntPulse {
   0%, 100% {
     box-shadow: 0 0 40px rgba(0, 255, 194, 0.5);
@@ -178,6 +195,55 @@
   color: var(--text-secondary);
   padding: 3rem;
   font-style: italic;
+}
+
+/* Compaction Button */
+.compaction-btn {
+  background: linear-gradient(135deg, #ff8800, #ff4400);
+  color: var(--bg-dark);
+  border: none;
+}
+
+.compaction-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffaa00, #ff6600);
+  box-shadow: 0 0 40px rgba(255, 136, 0, 0.6);
+}
+
+.compaction-btn:disabled {
+  background: rgba(255, 136, 0, 0.2);
+  color: var(--text-secondary);
+}
+
+/* Bloom Filter Stats */
+.bloom-stats {
+  position: fixed;
+  bottom: 10rem;
+  right: 2rem;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid var(--accent-primary);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  min-width: 200px;
+}
+
+.bloom-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.bloom-value {
+  font-size: 2rem;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-primary);
+  line-height: 1;
+  text-align: center;
 }
 
 @media (max-width: 768px) {

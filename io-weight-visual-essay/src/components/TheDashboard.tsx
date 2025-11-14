@@ -30,6 +30,17 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
       ? (lsmState.readHistory.reduce((a, b) => a + b, 0) / lsmState.readHistory.length).toFixed(1)
       : 'N/A';
 
+  // Calculate write amplification
+  const btreeWriteAmp =
+    btreeState.actualDataWritten > 0
+      ? (btreeState.totalBytesWritten / btreeState.actualDataWritten).toFixed(1)
+      : 'N/A';
+
+  const lsmWriteAmp =
+    lsmState.actualDataWritten > 0
+      ? (lsmState.totalBytesWritten / lsmState.actualDataWritten).toFixed(1)
+      : 'N/A';
+
   return (
     <motion.div
       className="frame the-dashboard"
@@ -121,6 +132,61 @@ const TheDashboard = ({ btreeState, lsmState, onReset }: TheDashboardProps) => {
               </motion.div>
               <div className="metric-description">
                 {parseFloat(avgLSMRead) > 5 ? 'The chaos of the hunt' : 'Variable performance'}
+              </div>
+            </div>
+          </div>
+
+          {/* Write Amplification Row */}
+          <div className="table-row highlight-row">
+            <div className="table-cell metric-label">
+              Write Amplification
+              <span className="metric-hint">Bytes written / User data</span>
+            </div>
+            <div className="table-cell citadel-cell">
+              <motion.div
+                className={`metric-value ${parseFloat(btreeWriteAmp) > 10 ? 'critical' : ''}`}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1.0, type: 'spring', stiffness: 300 }}
+              >
+                {btreeWriteAmp}×
+              </motion.div>
+              <div className="metric-description">
+                {parseFloat(btreeWriteAmp) > 20 ? 'WAL + Full Page Writes' : 'The cost of order'}
+              </div>
+            </div>
+            <div className="table-cell frontier-cell">
+              <motion.div
+                className={`metric-value ${parseFloat(lsmWriteAmp) > 10 ? 'critical' : ''}`}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1.1, type: 'spring', stiffness: 300 }}
+              >
+                {lsmWriteAmp}×
+              </motion.div>
+              <div className="metric-description">
+                {parseFloat(lsmWriteAmp) > 5 ? 'Compaction penalty' : 'Deferred cost'}
+              </div>
+            </div>
+          </div>
+
+          {/* Special Stats Row */}
+          <div className="table-row">
+            <div className="table-cell metric-label">Special Stats</div>
+            <div className="table-cell citadel-cell">
+              <div className="metric-value small">{btreeState.walWrites}</div>
+              <div className="metric-description">WAL Writes (durability)</div>
+            </div>
+            <div className="table-cell frontier-cell">
+              <div className="stat-split">
+                <div>
+                  <div className="metric-value small">{lsmState.compactionCount}</div>
+                  <div className="metric-description">Compactions</div>
+                </div>
+                <div>
+                  <div className="metric-value small">{lsmState.bloomFilterSaves}</div>
+                  <div className="metric-description">Bloom Saves</div>
+                </div>
               </div>
             </div>
           </div>

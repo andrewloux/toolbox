@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { BTreeState, BTreeNode, DataChip, AnimationPhase } from '../types';
+import AmplificationCounter from './AmplificationCounter';
 import './TheCitadel.css';
 
 interface TheCitadelProps {
@@ -51,6 +52,25 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
       value: `Value for ${key}`,
       timestamp: Date.now(),
     };
+
+    const dataSize = 100; // Simulated size in bytes
+
+    // PHASE 0: WAL WRITE (NEW!)
+    setAnimationPhase('wal-writing');
+    showStatus('Writing to Write-Ahead Log...', 1000);
+
+    await sleep(800);
+    updateState(prev => ({
+      ...prev,
+      walWrites: prev.walWrites + 1,
+      writeIOCount: prev.writeIOCount + 1,
+      totalBytesWritten: prev.totalBytesWritten + dataSize,
+      actualDataWritten: prev.actualDataWritten + dataSize,
+    }));
+
+    await sleep(500);
+    showStatus('WAL write complete. Now modifying tree...', 800);
+    await sleep(800);
 
     // PHASE 1: SEEK
     setAnimationPhase('seeking');
@@ -123,9 +143,12 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
       showStatus('Writing page back to disk...', 1000);
 
       await sleep(800);
+
+      const pageSize = 4096; // 4KB page
       updateState(prev => ({
         ...prev,
         writeIOCount: prev.writeIOCount + 1,
+        totalBytesWritten: prev.totalBytesWritten + pageSize, // Write entire page!
       }));
 
       await sleep(500);
@@ -202,11 +225,13 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
         newNodes.set(newRoot.id, newRoot);
         newNodes.delete(nodeId);
 
+        const pageSize = 4096;
         return {
           ...prev,
           nodes: newNodes,
           rootId: newRoot.id,
           writeIOCount: prev.writeIOCount + 3, // Writing 3 pages
+          totalBytesWritten: prev.totalBytesWritten + (pageSize * 3), // 3 pages!
           writeHistory: [...prev.writeHistory, prev.writeIOCount + 3],
         };
       }
@@ -214,10 +239,12 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
       // Remove old node
       newNodes.delete(nodeId);
 
+      const pageSize = 4096;
       return {
         ...prev,
         nodes: newNodes,
         writeIOCount: prev.writeIOCount + 2, // Writing 2 pages
+        totalBytesWritten: prev.totalBytesWritten + (pageSize * 2), // 2 pages!
         writeHistory: [...prev.writeHistory, prev.writeIOCount + 2],
       };
     });
@@ -314,6 +341,24 @@ const TheCitadel = ({ state, updateState, onShowDashboard }: TheCitadelProps) =>
           View Results
         </button>
       </div>
+
+      {/* Amplification Counter */}
+      {state.totalBytesWritten > 0 && (
+        <AmplificationCounter
+          totalBytesWritten={state.totalBytesWritten}
+          actualDataWritten={state.actualDataWritten}
+          type="write"
+        />
+      )}
+
+      {/* WAL Stats */}
+      {state.walWrites > 0 && (
+        <div className="wal-stats">
+          <div className="wal-label">WAL Writes</div>
+          <div className="wal-value">{state.walWrites}</div>
+          <div className="wal-detail">Durability requires writing twice</div>
+        </div>
+      )}
 
       {/* B-Tree Visualization */}
       <div className="btree-container">
