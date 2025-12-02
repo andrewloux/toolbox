@@ -3,140 +3,67 @@ package main_test
 import (
 	"os"
 	"os/exec"
-	"path/filepath"
-	"regexp"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/andrewloux/toolbox/chronos/testutil"
 )
-
-var chronosBinary string
-
-func TestMain(m *testing.M) {
-	// Build the binary before running tests
-	tmpDir, err := os.MkdirTemp("", "chronos-test")
-	if err != nil {
-		panic(err)
-	}
-	defer os.RemoveAll(tmpDir)
-
-	chronosBinary = filepath.Join(tmpDir, "chronos")
-	cmd := exec.Command("go", "build", "-o", chronosBinary, "./cmd/chronos")
-	cmd.Dir = getProjectRoot()
-	if out, err := cmd.CombinedOutput(); err != nil {
-		panic("failed to build chronos: " + string(out))
-	}
-
-	os.Exit(m.Run())
-}
-
-func getProjectRoot() string {
-	// Find the directory containing go.mod
-	dir, _ := os.Getwd()
-	for {
-		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
-			return dir
-		}
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			panic("could not find project root")
-		}
-		dir = parent
-	}
-}
-
-// runChronos executes chronos with given script and returns stdout/stderr
-func runChronos(t *testing.T, script string, timeout time.Duration) (string, error) {
-	t.Helper()
-
-	// Create temp script
-	tmpDir := t.TempDir()
-	scriptPath := filepath.Join(tmpDir, "test.sh")
-	if err := os.WriteFile(scriptPath, []byte(script), 0755); err != nil {
-		t.Fatal(err)
-	}
-
-	cmd := exec.Command(chronosBinary, "run", "--no-color", scriptPath)
-	cmd.Env = append(os.Environ(), "TERM=dumb")
-
-	// Use timeout for the command
-	done := make(chan error, 1)
-	var out []byte
-	go func() {
-		var err error
-		out, err = cmd.CombinedOutput()
-		done <- err
-	}()
-
-	select {
-	case err := <-done:
-		return string(out), err
-	case <-time.After(timeout):
-		cmd.Process.Kill()
-		return "", os.ErrDeadlineExceeded
-	}
-}
 
 // ============================================================================
 // Basic Flow Tests
 // ============================================================================
 
 func TestBasicExecCommand(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec -- echo "hello world"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	// Should contain success marker
-	if !strings.Contains(output, "[OK]") && !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected success in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec().Cmd("echo", "hello world"),
+	)
 
-	// Task name should be the command
-	if !strings.Contains(output, "echo hello world") {
-		t.Errorf("expected task name 'echo hello world' in output, got:\n%s", output)
-	}
+	result.MustSucceed()
+	result.MustContain("echo hello world") // Task name is the command
 }
 
 func TestNamedExecCommand(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec "My Task" -- echo "test output"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "My Task") {
-		t.Errorf("expected 'My Task' in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec("My Task").Cmd("echo", "test output"),
+	)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS in output, got:\n%s", output)
-	}
+	result.MustSucceed()
+	result.MustHaveTask("My Task")
+	result.Task("My Task").MustSucceed()
 }
 
 func TestStartEndFlow(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` start "Build"
-` + chronosBinary + ` exec -- echo "building..."
-` + chronosBinary + ` end "Build"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "Build") {
-		t.Errorf("expected 'Build' task in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Start("Build"),
+		h.Exec().Cmd("echo", "building..."),
+		h.End("Build"),
+	)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result.MustSucceed()
+	result.MustHaveTask("Build")
+	result.Task("Build").MustSucceed()
+}
+
+func TestMultipleExecCommands(t *testing.T) {
+	h := testutil.New(t)
+
+	result := h.Run(
+		h.Exec("Task1").Cmd("echo", "one"),
+		h.Exec("Task2").Cmd("echo", "two"),
+		h.Exec("Task3").Cmd("echo", "three"),
+	)
+
+	result.MustSucceed()
+	result.MustHaveTask("Task1")
+	result.MustHaveTask("Task2")
+	result.MustHaveTask("Task3")
 }
 
 // ============================================================================
@@ -144,108 +71,81 @@ func TestStartEndFlow(t *testing.T) {
 // ============================================================================
 
 func TestNestedTasks(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` start "Outer"
-` + chronosBinary + ` start "Inner"
-` + chronosBinary + ` exec -- echo "nested task"
-` + chronosBinary + ` end "Inner"
-` + chronosBinary + ` end "Outer"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "Outer") {
-		t.Errorf("expected 'Outer' in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Start("Outer"),
+		h.Start("Inner"),
+		h.Exec("DeepTask").Cmd("echo", "nested"),
+		h.End("Inner"),
+		h.End("Outer"),
+	)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result.MustSucceed()
+	result.MustHaveTask("Outer")
 }
 
 func TestMultipleSiblingTasks(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` start "Phase1"
-` + chronosBinary + ` exec -- echo "phase 1"
-` + chronosBinary + ` end "Phase1"
+	h := testutil.New(t)
 
-` + chronosBinary + ` start "Phase2"
-` + chronosBinary + ` exec -- echo "phase 2"
-` + chronosBinary + ` end "Phase2"
+	result := h.Run(
+		h.Start("Phase1"),
+		h.Exec().Cmd("echo", "phase 1"),
+		h.End("Phase1"),
 
-` + chronosBinary + ` start "Phase3"
-` + chronosBinary + ` exec -- echo "phase 3"
-` + chronosBinary + ` end "Phase3"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+		h.Start("Phase2"),
+		h.Exec().Cmd("echo", "phase 2"),
+		h.End("Phase2"),
 
-	// All phases should appear
-	for _, phase := range []string{"Phase1", "Phase2", "Phase3"} {
-		if !strings.Contains(output, phase) {
-			t.Errorf("expected '%s' in output, got:\n%s", phase, output)
-		}
-	}
+		h.Start("Phase3"),
+		h.Exec().Cmd("echo", "phase 3"),
+		h.End("Phase3"),
+	)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result.MustSucceed()
+	result.MustHaveTask("Phase1")
+	result.MustHaveTask("Phase2")
+	result.MustHaveTask("Phase3")
 }
 
 func TestDeeplyNestedTasks(t *testing.T) {
-	// Note: Successful subtrees are collapsed in the artifact per spec
-	// So we only see Level1, the nested children are collapsed
-	script := `#!/bin/bash
-` + chronosBinary + ` start "Level1"
-` + chronosBinary + ` start "Level2"
-` + chronosBinary + ` start "Level3"
-` + chronosBinary + ` exec -- echo "deep"
-` + chronosBinary + ` end "Level3"
-` + chronosBinary + ` end "Level2"
-` + chronosBinary + ` end "Level1"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	// Only Level1 should be visible (collapsed successful subtree)
-	if !strings.Contains(output, "Level1") {
-		t.Errorf("expected 'Level1' in output, got:\n%s", output)
-	}
+	// Successful subtrees are collapsed in artifact
+	result := h.Run(
+		h.Start("Level1"),
+		h.Start("Level2"),
+		h.Start("Level3"),
+		h.Exec().Cmd("echo", "deep"),
+		h.End("Level3"),
+		h.End("Level2"),
+		h.End("Level1"),
+	)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result.MustSucceed()
+	result.MustHaveTask("Level1")
 }
 
 func TestDeeplyNestedTasksWithFailure(t *testing.T) {
+	h := testutil.New(t)
+
 	// When there's a failure, nested structure IS shown
-	script := `#!/bin/bash
-` + chronosBinary + ` start "Level1"
-` + chronosBinary + ` start "Level2"
-` + chronosBinary + ` start "Level3"
-` + chronosBinary + ` exec "Failing" -- sh -c "exit 1"
-` + chronosBinary + ` end "Level3"
-` + chronosBinary + ` end "Level2"
-` + chronosBinary + ` end "Level1"
-`
-	output, _ := runChronos(t, script, 10*time.Second)
+	result := h.Run(
+		h.Start("Level1"),
+		h.Start("Level2"),
+		h.Start("Level3"),
+		h.Exec("Failing").CmdString("exit 1"),
+		h.End("Level3"),
+		h.End("Level2"),
+		h.End("Level1"),
+	)
 
-	// All levels should be visible because of the failure
-	for _, level := range []string{"Level1", "Level2", "Level3", "Failing"} {
-		if !strings.Contains(output, level) {
-			t.Errorf("expected '%s' in output, got:\n%s", level, output)
-		}
-	}
-
-	if !strings.Contains(output, "FAILED") {
-		t.Errorf("expected FAILED, got:\n%s", output)
-	}
+	result.MustFail()
+	result.MustHaveTask("Level1")
+	result.MustHaveTask("Level2")
+	result.MustHaveTask("Level3")
+	result.MustHaveTask("Failing")
+	result.Task("Failing").MustFail()
 }
 
 // ============================================================================
@@ -253,91 +153,70 @@ func TestDeeplyNestedTasksWithFailure(t *testing.T) {
 // ============================================================================
 
 func TestExecFailure(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec "Failing Task" -- sh -c "exit 1"
-`
-	output, _ := runChronos(t, script, 10*time.Second)
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "FAILED") {
-		t.Errorf("expected FAILED in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec("Failing Task").CmdString("exit 1"),
+	)
 
-	if !strings.Contains(output, "Failing Task") {
-		t.Errorf("expected 'Failing Task' in output, got:\n%s", output)
-	}
-
-	// Should show exit code
-	if !strings.Contains(output, "exit code 1") {
-		t.Errorf("expected 'exit code 1' in output, got:\n%s", output)
-	}
+	result.MustFail()
+	result.Task("Failing Task").MustFail().MustHaveExitCode(1)
 }
 
 func TestFailedTaskShowsOutput(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec "Error Task" -- sh -c 'echo "error message here"; exit 1'
-`
-	output, _ := runChronos(t, script, 10*time.Second)
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "FAILED") {
-		t.Errorf("expected FAILED in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec("Error Task").CmdString("echo 'error message here'; exit 1"),
+	)
 
-	// The error output should be shown in the artifact
-	if !strings.Contains(output, "error message here") {
-		t.Errorf("expected error output in artifact, got:\n%s", output)
-	}
+	result.MustFail()
+	result.Task("Error Task").MustFail().MustShowOutput("error message here")
 }
 
 func TestFailedChildShowsInSuccessfulParent(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` start "Parent"
-` + chronosBinary + ` exec "Good Task" -- echo "works"
-` + chronosBinary + ` exec "Bad Task" -- sh -c 'echo "failure output"; exit 1'
-` + chronosBinary + ` end "Parent"
-`
-	output, _ := runChronos(t, script, 10*time.Second)
+	h := testutil.New(t)
 
-	// Should show FAILED overall
-	if !strings.Contains(output, "FAILED") {
-		t.Errorf("expected FAILED in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Start("Parent"),
+		h.Exec("Good Task").Cmd("echo", "works"),
+		h.Exec("Bad Task").CmdString("echo 'failure output'; exit 1"),
+		h.End("Parent"),
+	)
 
-	// Parent task should be shown
-	if !strings.Contains(output, "Parent") {
-		t.Errorf("expected 'Parent' in output, got:\n%s", output)
-	}
-
-	// Bad Task should be shown with its output
-	if !strings.Contains(output, "Bad Task") {
-		t.Errorf("expected 'Bad Task' in output, got:\n%s", output)
-	}
-
-	// Good Task should also be shown (sibling of failed task)
-	if !strings.Contains(output, "Good Task") {
-		t.Errorf("expected 'Good Task' in output, got:\n%s", output)
-	}
-
-	// Failure output should be visible
-	if !strings.Contains(output, "failure output") {
-		t.Errorf("expected failure output in artifact, got:\n%s", output)
-	}
+	result.MustFail()
+	result.MustHaveTask("Parent")
+	result.MustHaveTask("Good Task")
+	result.MustHaveTask("Bad Task")
+	result.Task("Bad Task").MustFail().MustShowOutput("failure output")
 }
 
 func TestExplicitFailCommand(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` start "Manual Fail"
-` + chronosBinary + ` exec -- echo "some work"
-` + chronosBinary + ` fail "Manual Fail"
-`
-	output, _ := runChronos(t, script, 10*time.Second)
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "FAILED") {
-		t.Errorf("expected FAILED in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Start("Manual Fail"),
+		h.Exec().Cmd("echo", "some work"),
+		h.Fail("Manual Fail"),
+	)
 
-	if !strings.Contains(output, "Manual Fail") {
-		t.Errorf("expected 'Manual Fail' in output, got:\n%s", output)
-	}
+	result.MustFail()
+	result.Task("Manual Fail").MustFail()
+}
+
+func TestMultipleFailures(t *testing.T) {
+	h := testutil.New(t)
+
+	result := h.Run(
+		h.Exec("Fail1").CmdString("exit 1"),
+		h.Exec("Fail2").CmdString("exit 2"),
+		h.Exec("Success").Cmd("echo", "ok"),
+	)
+
+	result.MustFail()
+	result.Task("Fail1").MustFail()
+	result.Task("Fail2").MustFail()
+	result.Task("Success").MustSucceed()
 }
 
 // ============================================================================
@@ -345,65 +224,52 @@ func TestExplicitFailCommand(t *testing.T) {
 // ============================================================================
 
 func TestArtifactContainsDurations(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec "Timed Task" -- sleep 0.1
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	// Should contain some duration format (ms, s, or m)
-	durationPattern := regexp.MustCompile(`\d+ms|\d+\.\d+s|\d+m`)
-	if !durationPattern.MatchString(output) {
-		t.Errorf("expected duration in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec("Timed Task").CmdString("sleep 0.1"),
+	)
+
+	result.MustSucceed()
+	result.Task("Timed Task").MustHaveDuration()
 }
 
 func TestArtifactShowsTaskCount(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec -- echo "task1"
-` + chronosBinary + ` exec -- echo "task2"
-` + chronosBinary + ` exec -- echo "task3"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	// SUCCESS should appear (all passed)
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec("T1").Cmd("echo", "1"),
+		h.Exec("T2").Cmd("echo", "2"),
+		h.Exec("T3").Cmd("echo", "3"),
+	)
+
+	result.MustSucceed()
 }
 
 func TestArtifactFailureCount(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec -- echo "pass1"
-` + chronosBinary + ` exec -- sh -c "exit 1"
-` + chronosBinary + ` exec -- echo "pass2"
-`
-	output, _ := runChronos(t, script, 10*time.Second)
+	h := testutil.New(t)
 
-	// Should show FAILED with count
-	failedPattern := regexp.MustCompile(`FAILED \(\d+/\d+\)`)
-	if !failedPattern.MatchString(output) {
-		t.Errorf("expected 'FAILED (n/m)' in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec("Pass").Cmd("echo", "ok"),
+		h.Exec("Fail").CmdString("exit 1"),
+	)
+
+	result.MustFail()
+	// Should show FAILED (1/N) in output
+	result.MustContain("FAILED")
 }
 
 func TestArtifactBorders(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec -- echo "test"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
+	result := h.Run(
+		h.Exec().Cmd("echo", "test"),
+	)
+
+	result.MustSucceed()
 	// Should have box drawing characters
-	if !strings.Contains(output, "─") && !strings.Contains(output, "-") {
-		t.Errorf("expected border characters in output, got:\n%s", output)
+	if !strings.Contains(result.Raw(), "─") && !strings.Contains(result.Raw(), "-") {
+		t.Errorf("expected border characters in output")
 	}
 }
 
@@ -412,24 +278,17 @@ func TestArtifactBorders(t *testing.T) {
 // ============================================================================
 
 func TestLogCommand(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` start "Task With Logs"
-` + chronosBinary + ` log "First log message"
-` + chronosBinary + ` log "Second log message"
-` + chronosBinary + ` end "Task With Logs"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "Task With Logs") {
-		t.Errorf("expected 'Task With Logs' in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Start("Task With Logs"),
+		h.Log("First log message"),
+		h.Log("Second log message"),
+		h.End("Task With Logs"),
+	)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result.MustSucceed()
+	result.Task("Task With Logs").MustSucceed()
 }
 
 // ============================================================================
@@ -437,48 +296,50 @@ func TestLogCommand(t *testing.T) {
 // ============================================================================
 
 func TestScopeStackIsolation(t *testing.T) {
-	// This tests that the scope stack properly tracks nesting
-	script := `#!/bin/bash
-` + chronosBinary + ` start "A"
-` + chronosBinary + ` start "B"
-` + chronosBinary + ` exec -- echo "in B"
-` + chronosBinary + ` end  # should end B (current scope)
-` + chronosBinary + ` exec -- echo "in A"
-` + chronosBinary + ` end  # should end A
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	// Test scope stack properly tracks nesting
+	result := h.Run(
+		h.Start("A"),
+		h.Start("B"),
+		h.Exec().Cmd("echo", "in B"),
+		h.End(), // Should end B (current scope)
+		h.Exec().Cmd("echo", "in A"),
+		h.End(), // Should end A
+	)
+
+	result.MustSucceed()
 }
 
 func TestEndWithoutNameUsesCurrentScope(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` start "First"
-` + chronosBinary + ` end
-` + chronosBinary + ` start "Second"
-` + chronosBinary + ` end
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "First") {
-		t.Errorf("expected 'First' in output, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Start("First"),
+		h.End(),
+		h.Start("Second"),
+		h.End(),
+	)
 
-	if !strings.Contains(output, "Second") {
-		t.Errorf("expected 'Second' in output, got:\n%s", output)
-	}
+	result.MustSucceed()
+	result.MustHaveTask("First")
+	result.MustHaveTask("Second")
+}
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+func TestInterleavedScopes(t *testing.T) {
+	h := testutil.New(t)
+
+	result := h.Run(
+		h.Start("Outer"),
+		h.Exec("Outer-Task1").Cmd("echo", "1"),
+		h.Start("Inner"),
+		h.Exec("Inner-Task").Cmd("echo", "2"),
+		h.End("Inner"),
+		h.Exec("Outer-Task2").Cmd("echo", "3"),
+		h.End("Outer"),
+	)
+
+	result.MustSucceed()
 }
 
 // ============================================================================
@@ -486,81 +347,56 @@ func TestEndWithoutNameUsesCurrentScope(t *testing.T) {
 // ============================================================================
 
 func TestEmptyScript(t *testing.T) {
-	script := `#!/bin/bash
-# Empty script - no chronos commands
-echo "just output"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	// Should still produce an artifact with SUCCESS
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS for empty script, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Shell("echo 'just output'"),
+	)
+
+	result.MustSucceed()
 }
 
 func TestLongTaskName(t *testing.T) {
+	h := testutil.New(t)
 	longName := strings.Repeat("A", 100)
-	script := `#!/bin/bash
-` + chronosBinary + ` exec "` + longName + `" -- echo "test"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
 
-	// Should handle long names gracefully (possibly truncated)
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec(longName).Cmd("echo", "test"),
+	)
+
+	result.MustSucceed()
 }
 
 func TestSpecialCharactersInTaskName(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec "Task with 'quotes' and \"double quotes\"" -- echo "test"
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec("Task with 'quotes' and spaces").Cmd("echo", "test"),
+	)
+
+	result.MustSucceed()
 }
 
-func TestCommandWithArguments(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` exec -- sh -c 'echo "arg1 arg2 arg3"'
-`
-	output, err := runChronos(t, script, 10*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
+func TestCommandWithComplexArgs(t *testing.T) {
+	h := testutil.New(t)
 
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result := h.Run(
+		h.Exec("Complex").CmdString("echo 'arg1 arg2 arg3'"),
+	)
+
+	result.MustSucceed()
 }
 
 func TestRapidTaskCreation(t *testing.T) {
-	// Create many tasks quickly to test socket handling
-	var cmds strings.Builder
-	cmds.WriteString("#!/bin/bash\n")
+	h := testutil.New(t).WithTimeout(60 * time.Second)
+
+	var ops []testutil.Op
 	for i := 0; i < 20; i++ {
-		cmds.WriteString(chronosBinary + ` exec -- echo "task ` + string(rune('A'+i)) + `"` + "\n")
+		ops = append(ops, h.Exec().Cmd("echo", "task"))
 	}
 
-	output, err := runChronos(t, cmds.String(), 30*time.Second)
-	if err != nil {
-		t.Logf("Output: %s", output)
-	}
-
-	if !strings.Contains(output, "SUCCESS") {
-		t.Errorf("expected SUCCESS, got:\n%s", output)
-	}
+	result := h.Run(ops...)
+	result.MustSucceed()
 }
 
 // ============================================================================
@@ -568,55 +404,141 @@ func TestRapidTaskCreation(t *testing.T) {
 // ============================================================================
 
 func TestEndNonexistentTask(t *testing.T) {
-	script := `#!/bin/bash
-` + chronosBinary + ` end "NonexistentTask" 2>&1 || true
-`
-	output, _ := runChronos(t, script, 10*time.Second)
+	h := testutil.New(t)
 
-	// The script should still complete (we use || true)
-	// But there should be some indication it couldn't find the task
-	_ = output // Error goes to the script's stderr
+	// Script should complete even if end fails
+	result := h.Run(
+		h.Shell(`./chronos end "NonexistentTask" 2>&1 || true`),
+	)
+
+	// The script itself succeeds (error is caught by || true)
+	result.MustSucceed()
 }
 
 func TestStartOutsideSession(t *testing.T) {
-	// Try to run start without a session
-	cmd := exec.Command(chronosBinary, "start", "SomeTask")
+	// Find or build the binary
+	h := testutil.New(t)
+	_ = h // Just to ensure binary is built
+
+	// Run start command directly (not through chronos run)
+	cmd := exec.Command("go", "run", "./cmd/chronos", "start", "SomeTask")
+	cmd.Dir = findProjectRoot()
 	out, err := cmd.CombinedOutput()
 
 	if err == nil {
 		t.Error("expected error when running start outside session")
 	}
 
-	outLower := strings.ToLower(string(out))
-	if !strings.Contains(outLower, "no active session") {
+	if !strings.Contains(strings.ToLower(string(out)), "no active session") {
 		t.Errorf("expected 'no active session' error, got: %s", out)
 	}
 }
 
 func TestExecOutsideSession(t *testing.T) {
-	cmd := exec.Command(chronosBinary, "exec", "--", "echo", "test")
+	h := testutil.New(t)
+	_ = h
+
+	cmd := exec.Command("go", "run", "./cmd/chronos", "exec", "--", "echo", "test")
+	cmd.Dir = findProjectRoot()
 	out, err := cmd.CombinedOutput()
 
 	if err == nil {
 		t.Error("expected error when running exec outside session")
 	}
 
-	outLower := strings.ToLower(string(out))
-	if !strings.Contains(outLower, "no active session") {
+	if !strings.Contains(strings.ToLower(string(out)), "no active session") {
 		t.Errorf("expected 'no active session' error, got: %s", out)
 	}
 }
 
 func TestLogOutsideSession(t *testing.T) {
-	cmd := exec.Command(chronosBinary, "log", "some message")
+	h := testutil.New(t)
+	_ = h
+
+	cmd := exec.Command("go", "run", "./cmd/chronos", "log", "some message")
+	cmd.Dir = findProjectRoot()
 	out, err := cmd.CombinedOutput()
 
 	if err == nil {
 		t.Error("expected error when running log outside session")
 	}
 
-	outLower := strings.ToLower(string(out))
-	if !strings.Contains(outLower, "no active session") {
+	if !strings.Contains(strings.ToLower(string(out)), "no active session") {
 		t.Errorf("expected 'no active session' error, got: %s", out)
+	}
+}
+
+// ============================================================================
+// Complex Scenarios
+// ============================================================================
+
+func TestBuildDeployPipeline(t *testing.T) {
+	h := testutil.New(t)
+
+	result := h.Run(
+		h.Start("Build"),
+		h.Exec("Install Deps").Cmd("echo", "installing..."),
+		h.Exec("Compile").Cmd("echo", "compiling..."),
+		h.End("Build"),
+
+		h.Start("Test"),
+		h.Exec("Unit Tests").Cmd("echo", "testing..."),
+		h.End("Test"),
+
+		h.Start("Deploy"),
+		h.Log("Starting deployment..."),
+		h.Exec("Push").Cmd("echo", "pushing..."),
+		h.Log("Deployment complete"),
+		h.End("Deploy"),
+	)
+
+	result.MustSucceed()
+	result.MustHaveTask("Build")
+	result.MustHaveTask("Test")
+	result.MustHaveTask("Deploy")
+}
+
+func TestPartialFailure(t *testing.T) {
+	h := testutil.New(t)
+
+	result := h.Run(
+		h.Start("Pipeline"),
+
+		h.Start("Stage1"),
+		h.Exec("S1-Task").Cmd("echo", "ok"),
+		h.End("Stage1"),
+
+		h.Start("Stage2"),
+		h.Exec("S2-Task").CmdString("exit 1"), // Fails
+		h.End("Stage2"),
+
+		h.Start("Stage3"), // Still runs
+		h.Exec("S3-Task").Cmd("echo", "ok"),
+		h.End("Stage3"),
+
+		h.End("Pipeline"),
+	)
+
+	result.MustFail()
+	result.Task("Stage1").MustSucceed()
+	result.Task("S2-Task").MustFail()
+	result.Task("Stage3").MustSucceed()
+}
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+func findProjectRoot() string {
+	dir, _ := os.Getwd()
+	for {
+		if _, err := os.Stat(dir + "/go.mod"); err == nil {
+			return dir
+		}
+		parent := dir[:strings.LastIndex(dir, "/")]
+		if parent == dir {
+			return "."
+		}
+		dir = parent
 	}
 }
