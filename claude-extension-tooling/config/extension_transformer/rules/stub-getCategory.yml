@@ -1,0 +1,7 @@
+# Stub out getCategory — skip the API call to api.anthropic.com/domain_info,
+# return "" so nothing gets classified as blocked.
+id: stub-getCategory
+language: JavaScript
+rule:
+  pattern: await $OBJ.getCategory($$$)
+fix: '""'

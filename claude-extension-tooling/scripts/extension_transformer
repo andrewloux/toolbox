@@ -1,0 +1,869 @@
+#!/usr/bin/env bash
+#
+# extension_transformer — Copy a Chrome extension's latest installed version
+# to a local directory for inspection or modification.
+#
+# QUICK START (macOS)
+# -------------------
+#   1. Make executable:   chmod +x extension_transformer
+#   2. See what's there:  ./extension_transformer --list-profiles
+#   3. Copy + transform:  ./extension_transformer
+#   4. Preview first:     ./extension_transformer --dry-run
+#   5. Undo transforms:   ./extension_transformer --restore
+#
+#   All profiles are scanned, and the highest version found across any
+#   profile is copied. Each run gets a timestamped directory with the
+#   extension files right at the top level:
+#
+#     ~/ClaudeChromeExtension/
+#       runs/
+#         1741310400/          ← this run
+#           manifest.json      ← extension files, right here
+#           assets/
+#           .source_manifest
+#         1740787200/          ← previous run
+#       latest -> runs/1741310400
+#
+#   "latest" always points to the most recent run's files.
+#   Old runs stick around for diffing:
+#     diff ~/ClaudeChromeExtension/runs/1740787200 ~/ClaudeChromeExtension/runs/1741310400
+#
+# TRANSFORM / RESTORE
+# -------------------
+#   TRANSFORM (default):
+#     scan all profiles ──► pick highest version
+#       ──► copy to ~/…/runs/<timestamp>/
+#       ──► validate  [hook]
+#       ──► apply_local_transforms [hook]  ← your patches
+#       ──► write .source_manifest         ← breadcrumb for restore
+#       ──► update "latest" symlink
+#
+#   RESTORE (--restore):
+#     "latest" ──► read .source_manifest ──► re-copy clean from Chrome
+#     No transforms applied. Clean slate.
+#
+# HOW IT WORKS
+# ------------
+#   Chrome stores extensions under:
+#     macOS:  ~/Library/Application Support/Google/Chrome/<Profile>/Extensions/
+#     Linux:  ~/.config/google-chrome/<Profile>/Extensions/
+#
+#   Each extension has an ID directory, and inside that, one or more version
+#   directories (e.g. 1.2.3_0). This script finds the extension by name
+#   (or ID), picks the highest version, and copies it to your destination.
+#
+# PLUGGABLE HOOKS
+# ---------------
+#   Four lifecycle hooks run during the copy pipeline. By default they are
+#   no-ops (except print_next_steps). You can override any of them by
+#   writing a hooks file:
+#
+#     Default location:  ~/.config/extension_transformer/hooks.sh
+#     Or pass one:       --hooks ./my_hooks.sh
+#     Or set env:        HOOKS_FILE=./my_hooks.sh
+#
+#   The hooks file is a plain bash script that gets sourced. Just redefine
+#   whichever functions you want. The rest keep their defaults.
+#
+#   Available hooks (called in this order):
+#
+#     prepare_extension_copy <source_dir> <destination>
+#       Runs BEFORE the copy. Use it to validate the source, check disk
+#       space, back up an existing destination, etc.
+#
+#     validate_copied_extension <destination>
+#       Runs AFTER the copy. Use it to verify that expected files landed
+#       (e.g. specific icons, _locales, background scripts).
+#
+#     apply_local_transforms <destination>
+#       Runs AFTER validation. Use it to patch manifest.json, strip
+#       _metadata, inject config, or apply any local modifications.
+#
+#     print_next_steps <destination>
+#       Runs last. Override to customize the summary message or suppress
+#       output entirely.
+#
+#   EXAMPLE HOOKS FILE (~/.config/extension_transformer/hooks.sh):
+#
+#     validate_copied_extension() {
+#       local destination="$1"
+#       [[ -d "$destination/icons" ]] || warn "Missing icons/ directory"
+#     }
+#
+#     apply_local_transforms() {
+#       local destination="$1"
+#       # Strip the _metadata dir Chrome injects
+#       rm -rf "$destination/_metadata"
+#     }
+#
+#   All of this script's helper functions (info, warn, die, success, json_get,
+#   etc.) are available inside your hooks file since it's sourced into the
+#   same shell.
+#
+
+set -Eeuo pipefail
+
+PROGRAM_NAME="${0##*/}"
+
+# ---------------------------------------------------------------------------
+# Defaults — override via flags or environment variables
+# ---------------------------------------------------------------------------
+
+DEFAULT_PROFILE="Profile 1"
+DEFAULT_DESTINATION="$HOME/ClaudeChromeExtension"
+DEFAULT_EXTENSION_NAME="Claude"
+DEFAULT_HOOKS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/extension_transformer/hooks.sh"
+
+CHROME_PROFILE="${CHROME_PROFILE:-$DEFAULT_PROFILE}"
+DESTINATION_PATH="${DESTINATION_PATH:-$DEFAULT_DESTINATION}"
+CHROME_USER_DATA="${CHROME_USER_DATA:-}"       # Auto-detected if empty
+EXTENSION_NAME="${EXTENSION_NAME:-$DEFAULT_EXTENSION_NAME}"
+EXTENSION_ID="${EXTENSION_ID:-}"               # If set, match by ID instead of name
+HOOKS_FILE="${HOOKS_FILE:-}"                   # If set, must point to a real file
+
+LIST_PROFILES=0
+SINGLE_PROFILE=0       # When 1, only process --profile instead of all
+RESTORE_MODE=0         # When 1, re-copy from source without transforms
+DRY_RUN=0
+
+# Each run gets a unix-timestamped subdirectory (seconds since epoch).
+RUN_TIMESTAMP="$(date +%s)"
+
+
+
+# ---------------------------------------------------------------------------
+# Terminal colors (disabled when piped or NO_COLOR is set)
+# ---------------------------------------------------------------------------
+
+if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
+  C_RESET=$'\033[0m'
+  C_RED=$'\033[31m'
+  C_YELLOW=$'\033[33m'
+  C_GREEN=$'\033[32m'
+  C_CYAN=$'\033[36m'
+  C_DIM=$'\033[2m'
+else
+  C_RESET=""
+  C_RED=""
+  C_YELLOW=""
+  C_GREEN=""
+  C_CYAN=""
+  C_DIM=""
+fi
+
+dim() {
+  printf '%s%s%s\n' "$C_DIM" "$*" "$C_RESET"
+}
+
+info() {
+  printf '%s%s%s\n' "$C_CYAN" "$*" "$C_RESET"
+}
+
+success() {
+  printf '%s%s%s\n' "$C_GREEN" "$*" "$C_RESET"
+}
+
+warn() {
+  printf '%sWarning:%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2
+}
+
+die() {
+  printf '%sError:%s %s\n' "$C_RED" "$C_RESET" "$*" >&2
+  exit 1
+}
+
+usage() {
+  cat <<EOF
+Usage: $PROGRAM_NAME [options]
+
+Options:
+  --profile NAME            Target a single Chrome profile (default: all)
+  --destination PATH        Where to copy the latest version
+  --chrome-user-data PATH   Explicit Chrome/Chromium user data directory
+  --extension-name NAME     Extension display name to match (default: $DEFAULT_EXTENSION_NAME)
+  --extension-id ID         Match a specific extension ID instead of name
+  --hooks FILE              Path to a hooks file to source (overrides default)
+  --restore                 Re-copy from Chrome without transforms (undo)
+  --list-profiles           List detected profiles and exit
+  --dry-run                 Show what would happen without copying
+  -h, --help                Show this help
+
+Env overrides:
+  CHROME_PROFILE
+  DESTINATION_PATH
+  CHROME_USER_DATA
+  EXTENSION_NAME
+  EXTENSION_ID
+  HOOKS_FILE
+
+Pluggable hooks:
+  Override any of these functions in your hooks file:
+    prepare_extension_copy <source_dir> <destination>
+    validate_copied_extension <destination>
+    apply_local_transforms <destination>
+    print_next_steps <destination>
+
+  Default hooks file location:
+    $DEFAULT_HOOKS_FILE
+
+Examples:
+  $PROGRAM_NAME                                    # all profiles (default)
+  $PROGRAM_NAME --profile "Default"                # single profile
+  $PROGRAM_NAME --dry-run                          # preview without copying
+  $PROGRAM_NAME --restore                          # undo transforms, re-copy clean
+  $PROGRAM_NAME --list-profiles
+  $PROGRAM_NAME --extension-id abcdefghijklmnopqrstuvwxyzabcdef
+  $PROGRAM_NAME --hooks ./my_hooks.sh
+EOF
+}
+
+# ---------------------------------------------------------------------------
+# Utility functions (also available inside hooks files)
+# ---------------------------------------------------------------------------
+
+lower() {
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+# json_get FILE DOTTED.PATH — extract a value from a JSON file.
+# Tries jq first, then python3, then a basic sed fallback for simple keys.
+json_get() {
+  local file="$1"
+  local path="$2"
+
+  if command -v jq >/dev/null 2>&1; then
+    jq -r --arg path "$path" '
+      def digpath($parts):
+        reduce $parts[] as $part (.;
+          if type == "object" and has($part) then .[$part] else empty end
+        );
+      digpath($path | split(".")) // empty
+    ' "$file" 2>/dev/null || true
+    return 0
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$file" "$path" <<'PY'
+import json
+import sys
+
+file_path, dotted = sys.argv[1], sys.argv[2]
+
+try:
+    with open(file_path, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+
+    cur = data
+    for part in dotted.split("."):
+        if not isinstance(cur, dict) or part not in cur:
+            sys.exit(0)
+        cur = cur[part]
+
+    if cur is None:
+        sys.exit(0)
+    if isinstance(cur, (str, int, float, bool)):
+        print(cur)
+except Exception:
+    pass
+PY
+    return 0
+  fi
+
+  case "$path" in
+    name|short_name|description|version)
+      sed -nE "s/.*\"$path\"[[:space:]]*:[[:space:]]*\"([^\"]+)\".*/\\1/p" "$file" | head -n 1
+      ;;
+    *)
+      ;;
+  esac
+}
+
+# Resolve a manifest.json field, following Chrome's __MSG_token__ i18n pattern
+# if the value is a localization placeholder.
+resolve_manifest_field() {
+  local manifest="$1"
+  local version_dir="$2"
+  local field="$3"
+  local raw token messages resolved
+
+  raw="$(json_get "$manifest" "$field")"
+  [[ -n "$raw" ]] || return 0
+
+  if [[ "$raw" =~ ^__MSG_([A-Za-z0-9_@.-]+)__$ ]]; then
+    token="${BASH_REMATCH[1]}"
+
+    for messages in \
+      "$version_dir/_locales/en/messages.json" \
+      "$version_dir/_locales/en_US/messages.json" \
+      "$version_dir"/_locales/*/messages.json
+    do
+      [[ -f "$messages" ]] || continue
+      resolved="$(json_get "$messages" "$token.message")"
+      if [[ -n "$resolved" ]]; then
+        printf '%s\n' "$resolved"
+        return 0
+      fi
+    done
+  fi
+
+  printf '%s\n' "$raw"
+}
+
+# Check if a manifest's "name" or "short_name" matches the expected extension
+# name (case-insensitive). Handles i18n-resolved names.
+manifest_matches_name() {
+  local manifest="$1"
+  local version_dir="$2"
+  local expected="$3"
+  local expected_lower actual
+
+  expected_lower="$(lower "$expected")"
+
+  actual="$(resolve_manifest_field "$manifest" "$version_dir" "name")"
+  if [[ -n "$actual" && "$(lower "$actual")" == "$expected_lower" ]]; then
+    return 0
+  fi
+
+  actual="$(resolve_manifest_field "$manifest" "$version_dir" "short_name")"
+  if [[ -n "$actual" && "$(lower "$actual")" == "$expected_lower" ]]; then
+    return 0
+  fi
+
+  return 1
+}
+
+# ---------------------------------------------------------------------------
+# Chrome path detection
+# ---------------------------------------------------------------------------
+
+# Auto-detect the Chrome/Chromium user data directory.
+# macOS paths are checked first, then Linux. Pass --chrome-user-data to skip.
+detect_chrome_user_data() {
+  if [[ -n "$CHROME_USER_DATA" ]]; then
+    [[ -d "$CHROME_USER_DATA" ]] || die "Chrome user data directory does not exist: $CHROME_USER_DATA"
+    printf '%s\n' "$CHROME_USER_DATA"
+    return 0
+  fi
+
+  case "$(uname -s)" in
+    Darwin)
+      for candidate in \
+        "$HOME/Library/Application Support/Google/Chrome" \
+        "$HOME/Library/Application Support/Google/Chrome Beta" \
+        "$HOME/Library/Application Support/Chromium"
+      do
+        [[ -d "$candidate" ]] && { printf '%s\n' "$candidate"; return 0; }
+      done
+      ;;
+    Linux)
+      for candidate in \
+        "$HOME/.config/google-chrome" \
+        "$HOME/.config/google-chrome-beta" \
+        "$HOME/.config/chromium"
+      do
+        [[ -d "$candidate" ]] && { printf '%s\n' "$candidate"; return 0; }
+      done
+      ;;
+    *)
+      die "Unsupported OS: $(uname -s)"
+      ;;
+  esac
+
+  die "Could not auto-detect a Chrome/Chromium user data directory. Pass --chrome-user-data."
+}
+
+# List all Chrome profiles that have an Extensions/ directory.
+list_profiles() {
+  local user_data="$1"
+  local found=0
+  local dir
+
+  while IFS= read -r dir; do
+    [[ -d "$dir/Extensions" ]] || continue
+    printf '%s\n' "${dir##*/}"
+    found=1
+  done < <(find "$user_data" -mindepth 1 -maxdepth 1 -type d \( -name 'Default' -o -name 'Profile *' \) | LC_ALL=C sort)
+
+  if [[ "$found" -eq 0 ]]; then
+    warn "No Chrome profiles with an Extensions directory were found in: $user_data"
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Extension discovery
+# ---------------------------------------------------------------------------
+
+# Walk the Extensions/ directory to find the extension by ID or by name.
+# Returns the path to the extension's ID directory (one level above versions).
+find_extension_dir() {
+  local extensions_root="$1"
+  local ext_dir version_dir manifest
+
+  if [[ -n "$EXTENSION_ID" ]]; then
+    if [[ -d "$extensions_root/$EXTENSION_ID" ]]; then
+      printf '%s\n' "$extensions_root/$EXTENSION_ID"
+      return 0
+    fi
+    return 1
+  fi
+
+  while IFS= read -r -d '' ext_dir; do
+    while IFS= read -r -d '' version_dir; do
+      manifest="$version_dir/manifest.json"
+      [[ -f "$manifest" ]] || continue
+
+      if manifest_matches_name "$manifest" "$version_dir" "$EXTENSION_NAME"; then
+        printf '%s\n' "$ext_dir"
+        return 0
+      fi
+    done < <(find "$ext_dir" -mindepth 1 -maxdepth 1 -type d -print0)
+  done < <(find "$extensions_root" -mindepth 1 -maxdepth 1 -type d -print0)
+
+  return 1
+}
+
+# Convert a version string like "1.2.3_0" into a zero-padded sortable key
+# so that string comparison gives the correct ordering.
+version_sort_key() {
+  local raw="${1//_/.}"
+  local IFS='.'
+  local part out=""
+  local parts=()
+
+  read -r -a parts <<< "$raw"
+
+  for part in "${parts[@]}"; do
+    [[ "$part" =~ ^[0-9]+$ ]] || part=0
+    printf -v out '%s%010d.' "$out" "$part"
+  done
+
+  printf '%s\n' "$out"
+}
+
+# Find the highest version directory inside an extension's ID directory.
+latest_version_dir() {
+  local extension_dir="$1"
+  local dir base key best_dir="" best_key=""
+
+  while IFS= read -r -d '' dir; do
+    base="${dir##*/}"
+    key="$(version_sort_key "$base")"
+
+    if [[ -z "$best_dir" || "$key" > "$best_key" ]]; then
+      best_key="$key"
+      best_dir="$dir"
+    fi
+  done < <(find "$extension_dir" -mindepth 1 -maxdepth 1 -type d -print0)
+
+  [[ -n "$best_dir" ]] || return 1
+  printf '%s\n' "$best_dir"
+}
+
+# ---------------------------------------------------------------------------
+# Safety checks
+# ---------------------------------------------------------------------------
+
+# Verify the source looks like a real unpacked extension (has manifest.json).
+validate_source_extension() {
+  local source_dir="$1"
+
+  [[ -d "$source_dir" ]] || die "Source directory not found: $source_dir"
+  [[ -f "$source_dir/manifest.json" ]] || die "Source does not look like an unpacked extension: $source_dir"
+}
+
+# Basic sanity check that the copy produced a directory with a manifest.
+validate_basic_copy() {
+  local destination="$1"
+
+  [[ -d "$destination" ]] || die "Copied extension directory not found: $destination"
+  [[ -f "$destination/manifest.json" ]] || die "Copied extension is missing manifest.json: $destination"
+}
+
+# ---------------------------------------------------------------------------
+# Pluggable hooks — override any of these in your hooks file.
+#
+# To customize behavior, create a hooks file at:
+#   ~/.config/extension_transformer/hooks.sh
+# or pass --hooks /path/to/hooks.sh
+#
+# Your hooks file is sourced into this script, so you can call info(), warn(),
+# die(), json_get(), and any other function defined here.
+# ---------------------------------------------------------------------------
+
+# Hook 1: Runs BEFORE the copy starts.
+# Use for: pre-flight checks, backing up existing destination, logging.
+prepare_extension_copy() {
+  local source_dir="$1"
+  local destination="$2"
+  :
+}
+
+# Hook 2: Runs AFTER the copy, after the basic manifest check.
+# Use for: verifying expected files exist (icons, locales, scripts).
+validate_copied_extension() {
+  local destination="$1"
+  :
+}
+
+# Hook 3: Runs AFTER validation.
+# Use for: patching manifest.json, removing _metadata, injecting config.
+apply_local_transforms() {
+  local destination="$1"
+  :
+}
+
+# Hook 4: Runs last. Prints a summary of what happened.
+# Override to customize output or suppress it.
+print_next_steps() {
+  local destination="$1"
+
+  cat <<EOF
+Copied unpacked extension to:
+  $destination
+
+Possible next steps:
+  - inspect manifest.json
+  - review assets/
+  - diff against a previous run's copy
+  - run with --restore to undo transforms
+EOF
+}
+
+# ---------------------------------------------------------------------------
+# Hook loader — sources the user's hooks file (if any) so that the function
+# definitions above get replaced with the user's versions.
+# ---------------------------------------------------------------------------
+
+load_hooks() {
+  local hooks_path="${HOOKS_FILE:-$DEFAULT_HOOKS_FILE}"
+
+  if [[ -n "$HOOKS_FILE" ]]; then
+    [[ -f "$hooks_path" ]] || die "Hooks file not found: $hooks_path"
+    # shellcheck source=/dev/null
+    source "$hooks_path"
+    info "Loaded hooks from: $hooks_path"
+    return 0
+  fi
+
+  if [[ -f "$hooks_path" ]]; then
+    # shellcheck source=/dev/null
+    source "$hooks_path"
+    info "Loaded hooks from: $hooks_path"
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Core copy logic
+# ---------------------------------------------------------------------------
+
+# Atomically copy the source extension to the destination using a temp
+# staging directory. Falls back to cp if mv across filesystems fails.
+copy_latest_version() {
+  local source_dir="$1"
+  local destination="$2"
+  local parent tmp_root staged
+
+  validate_source_extension "$source_dir"
+
+  parent="$(dirname "$destination")"
+  mkdir -p "$parent"
+
+  tmp_root="$(
+    mktemp -d "$parent/.${PROGRAM_NAME}.tmp.XXXXXX" 2>/dev/null \
+      || mktemp -d "${TMPDIR:-/tmp}/${PROGRAM_NAME}.XXXXXX"
+  )"
+  staged="$tmp_root/staged"
+
+  mkdir -p "$staged"
+  cp -R "$source_dir/." "$staged"
+
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    info "[dry-run] Would replace: $destination"
+    info "[dry-run] With:          $source_dir"
+    rm -rf "$tmp_root"
+    return 0
+  fi
+
+  rm -rf "$destination"
+
+  if ! mv "$staged" "$destination" 2>/dev/null; then
+    mkdir -p "$destination"
+    cp -R "$staged/." "$destination"
+  fi
+
+  rm -rf "$tmp_root"
+}
+
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --profile)
+        [[ $# -ge 2 ]] || die "--profile requires a value"
+        CHROME_PROFILE="$2"
+        SINGLE_PROFILE=1
+        shift 2
+        ;;
+      --destination)
+        [[ $# -ge 2 ]] || die "--destination requires a value"
+        DESTINATION_PATH="$2"
+        shift 2
+        ;;
+      --chrome-user-data)
+        [[ $# -ge 2 ]] || die "--chrome-user-data requires a value"
+        CHROME_USER_DATA="$2"
+        shift 2
+        ;;
+      --extension-name)
+        [[ $# -ge 2 ]] || die "--extension-name requires a value"
+        EXTENSION_NAME="$2"
+        shift 2
+        ;;
+      --extension-id)
+        [[ $# -ge 2 ]] || die "--extension-id requires a value"
+        EXTENSION_ID="$2"
+        shift 2
+        ;;
+      --hooks)
+        [[ $# -ge 2 ]] || die "--hooks requires a value"
+        HOOKS_FILE="$2"
+        shift 2
+        ;;
+      --restore)
+        RESTORE_MODE=1
+        shift
+        ;;
+      --list-profiles)
+        LIST_PROFILES=1
+        shift
+        ;;
+      --dry-run)
+        DRY_RUN=1
+        shift
+        ;;
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      *)
+        die "Unknown argument: $1"
+        ;;
+    esac
+  done
+}
+
+# ---------------------------------------------------------------------------
+# Main entry point
+# ---------------------------------------------------------------------------
+#
+# Pipeline (transform):
+#   1. scan all profiles, pick highest version
+#   2. copy to ~/dest/runs/<timestamp>/
+#   3. validate + apply_local_transforms [hook]
+#   4. write .source_manifest, update "latest" symlink
+#
+# Pipeline (--restore):
+#   1. follow "latest" symlink, read .source_manifest
+#   2. re-copy clean from Chrome source
+#   3. validate (no transforms)
+#
+
+# ---------------------------------------------------------------------------
+# Source manifest — breadcrumb written alongside the copied files so
+# --restore can find the original Chrome source and re-copy cleanly.
+# ---------------------------------------------------------------------------
+
+write_source_manifest() {
+  local dest="$1"
+  local source_dir="$2"
+  local ext_id="$3"
+  local version="$4"
+  local profiles="$5"
+
+  cat > "$dest/.source_manifest" <<EOF
+# Written by $PROGRAM_NAME — do not edit manually.
+# Used by --restore to find the original extension source.
+source_dir='$source_dir'
+extension_id='$ext_id'
+version='$version'
+profiles='$profiles'
+timestamp='$(date +%s)'
+EOF
+}
+
+# ---------------------------------------------------------------------------
+# Find the highest version across all profiles (or a single profile).
+#
+# Scans each profile, finds the extension, gets its latest version dir.
+# Compares across profiles and returns the absolute highest.
+#
+# Sets these variables in the caller's scope:
+#   BEST_SOURCE   — full path to the version dir in Chrome
+#   BEST_EXT_ID   — the extension ID
+#   BEST_VERSION  — the version dirname (e.g. 1.0.57_0)
+#   BEST_PROFILES — comma-separated list of profiles that had this version
+# ---------------------------------------------------------------------------
+
+find_best_version() {
+  local user_data="$1"
+  shift
+  local profiles_to_scan=("$@")
+
+  BEST_SOURCE=""
+  BEST_EXT_ID=""
+  BEST_VERSION=""
+  BEST_PROFILES=""
+  local best_key=""
+
+  local profile extensions_path extension_dir latest_dir ext_id version key
+  for profile in "${profiles_to_scan[@]}"; do
+    extensions_path="$user_data/$profile/Extensions"
+    if [[ ! -d "$extensions_path" ]]; then
+      warn "Skipping profile '$profile' — no Extensions/ directory"
+      continue
+    fi
+
+    if ! extension_dir="$(find_extension_dir "$extensions_path")"; then
+      if [[ -n "$EXTENSION_ID" ]]; then
+        warn "Extension ID '$EXTENSION_ID' not found in '$profile' — skipping"
+      else
+        warn "Extension '$EXTENSION_NAME' not found in '$profile' — skipping"
+      fi
+      continue
+    fi
+
+    latest_dir="$(latest_version_dir "$extension_dir")" || {
+      warn "No versions in $extension_dir — skipping"
+      continue
+    }
+
+    ext_id="${extension_dir##*/}"
+    version="${latest_dir##*/}"
+    key="$(version_sort_key "$version")"
+
+    dim "  $profile: $version"
+
+    if [[ -z "$best_key" || "$key" > "$best_key" ]]; then
+      best_key="$key"
+      BEST_SOURCE="$latest_dir"
+      BEST_EXT_ID="$ext_id"
+      BEST_VERSION="$version"
+      BEST_PROFILES="$profile"
+    elif [[ "$key" == "$best_key" ]]; then
+      BEST_PROFILES="$BEST_PROFILES, $profile"
+    fi
+  done
+
+  [[ -n "$BEST_SOURCE" ]] || return 1
+}
+
+# ---------------------------------------------------------------------------
+
+main() {
+  local user_data run_dir runs_dir
+
+  parse_args "$@"
+  load_hooks
+
+  user_data="$(detect_chrome_user_data)"
+
+  if [[ "$LIST_PROFILES" -eq 1 ]]; then
+    list_profiles "$user_data"
+    exit 0
+  fi
+
+  runs_dir="$DESTINATION_PATH/runs"
+  run_dir="$runs_dir/$RUN_TIMESTAMP"
+
+  # --restore: re-copy from Chrome without transforms.
+  if [[ "$RESTORE_MODE" -eq 1 ]]; then
+    local latest_link="$DESTINATION_PATH/latest"
+    if [[ ! -L "$latest_link" && ! -d "$latest_link" ]]; then
+      die "No 'latest' found in $DESTINATION_PATH — nothing to restore."
+    fi
+
+    local restore_dir
+    restore_dir="$(cd "$DESTINATION_PATH" && cd "$(readlink "$latest_link")" && pwd)"
+
+    [[ -f "$restore_dir/.source_manifest" ]] || \
+      die "No .source_manifest in $restore_dir — cannot restore."
+
+    local source_dir="" extension_id="" version="" profiles="" timestamp=""
+    # shellcheck source=/dev/null
+    source "$restore_dir/.source_manifest"
+
+    if [[ ! -d "$source_dir" ]]; then
+      die "Original source gone: $source_dir (extension uninstalled?)"
+    fi
+
+    info "Restoring: $extension_id/$version"
+    info "From: $source_dir"
+    copy_latest_version "$source_dir" "$restore_dir"
+
+    if [[ "$DRY_RUN" -eq 0 ]]; then
+      validate_basic_copy "$restore_dir"
+      validate_copied_extension "$restore_dir"
+      write_source_manifest "$restore_dir" "$source_dir" "$extension_id" "$version" "$profiles"
+      success "Restored clean copy (no transforms applied)"
+    fi
+    return 0
+  fi
+
+  # --- Scan profiles, pick the highest version ---
+
+  info "Scanning profiles..."
+
+  local profiles_to_scan=()
+  if [[ "$SINGLE_PROFILE" -eq 1 ]]; then
+    local extensions_path="$user_data/$CHROME_PROFILE/Extensions"
+    [[ -d "$extensions_path" ]] || {
+      warn "Extensions directory not found: $extensions_path"
+      warn "Available profiles:"
+      list_profiles "$user_data"
+      exit 1
+    }
+    profiles_to_scan=("$CHROME_PROFILE")
+  else
+    while IFS= read -r profile; do
+      profiles_to_scan+=("$profile")
+    done < <(list_profiles "$user_data")
+
+    [[ ${#profiles_to_scan[@]} -gt 0 ]] || die "No profiles found in: $user_data"
+  fi
+
+  if ! find_best_version "$user_data" "${profiles_to_scan[@]}"; then
+    die "Extension not found in any profile."
+  fi
+
+  echo
+  success "Best version: $BEST_VERSION ($BEST_EXT_ID)"
+  dim "Profiles: $BEST_PROFILES"
+  dim "Source: $BEST_SOURCE"
+  echo
+
+  # --- Copy to run dir, apply transforms ---
+
+  mkdir -p "$runs_dir"
+
+  prepare_extension_copy "$BEST_SOURCE" "$run_dir"
+  copy_latest_version "$BEST_SOURCE" "$run_dir"
+
+  if [[ "$DRY_RUN" -eq 0 ]]; then
+    validate_basic_copy "$run_dir"
+    validate_copied_extension "$run_dir"
+    apply_local_transforms "$run_dir"
+    write_source_manifest "$run_dir" "$BEST_SOURCE" "$BEST_EXT_ID" "$BEST_VERSION" "$BEST_PROFILES"
+
+    # "latest" points straight at the run dir (which IS the extension files).
+    ln -sfn "runs/$RUN_TIMESTAMP" "$DESTINATION_PATH/latest"
+
+    print_next_steps "$run_dir"
+    echo
+    info "latest -> $DESTINATION_PATH/latest"
+  fi
+}
+
+main "$@"

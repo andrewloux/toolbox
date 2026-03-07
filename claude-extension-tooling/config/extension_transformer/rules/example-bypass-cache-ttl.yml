@@ -1,0 +1,9 @@
+# Example: zero out a cache TTL check so the cache is always stale.
+# Matches:  Date.now() - $CACHE.timestamp > this.CACHE_TTL_MS
+# Replaces: true  (always re-fetch)
+
+id: bypass-cache-ttl
+language: JavaScript
+rule:
+  pattern: Date.now() - $CACHE.timestamp > this.CACHE_TTL_MS
+fix: 'true'

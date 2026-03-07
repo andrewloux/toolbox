@@ -1,0 +1,12 @@
+# Example: search-only rule (no fix). Finds classes that use the
+# cache + pendingRequests pattern. Useful for exploration.
+#
+# Run with:  extension_ast search <dir> 'this.pendingRequests.get($KEY)'
+# Or use this rule with:  extension_ast preview <dir>
+
+id: find-cache-pattern
+language: JavaScript
+severity: hint
+rule:
+  pattern: this.pendingRequests.get($KEY)
+message: 'Found pending-request cache pattern using key: $KEY'

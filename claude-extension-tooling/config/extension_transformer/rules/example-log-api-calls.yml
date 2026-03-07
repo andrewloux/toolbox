@@ -1,0 +1,8 @@
+# Example: wrap fetchCategoryFromAPI calls with a console.log.
+
+id: log-api-calls
+language: JavaScript
+rule:
+  pattern: this.fetchCategoryFromAPI($KEY)
+fix: |-
+  (console.log('[ext-ast] fetchCategoryFromAPI', $KEY), this.fetchCategoryFromAPI($KEY))
