@@ -73,6 +73,14 @@ machinery today, so first-class API treatment must be designed in, not inherited
 The v105 correction has **not** been through cold-reader rounds yet. This copy is the
 **source of truth**; the session-directory copy is a serve mirror.
 
+**v106 (2026-06-11, current)** — **restores the v99 back-trail**, silently lost since v100:
+the v100 push copied a session working file over this repo's v99 without diffing against it,
+dropping the back-trail CSS + JS (3,354 bytes). Caught by `make check` (DRIFT) when adopting
+the split-source workflow; reinstated byte-exact from the v99 chunks and verified live (chip
+appears on in-page jump, returns to exact scroll, hides). Note: versions v100–v105 — including
+the `v103-recertified.html` snapshot — lack the back-trail; the certification statements are
+about page *content*, which was unaffected. `src/` is now re-synced to the artifact.
+
 ## What's in the page
 
 - **Header state-of-play box** — direction / page planks / open decisions / next dates / burning

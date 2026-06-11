@@ -270,6 +270,11 @@ body{background:
   radial-gradient(900px 480px at 98% 4%, rgba(168,224,95,.025), transparent 55%),
   #000}
 #prog{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,#6fae2f,var(--grn));z-index:70;pointer-events:none}
+#backchip{position:fixed;left:18px;bottom:18px;z-index:100;cursor:pointer;
+  font-family:var(--mono);font-size:11px;letter-spacing:.6px;color:var(--grn-soft);
+  background:var(--panel);border:1px solid rgba(168,224,95,.35);border-radius:999px;
+  padding:8px 14px;max-width:46ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#backchip:hover{color:var(--grn);border-color:var(--grn)}
 nav a{position:relative;transition:color .15s}
 nav a.act{color:var(--ink)}
 nav a.act::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:2px;background:var(--grn)}
@@ -697,7 +702,7 @@ p.diacap+p.diacap{margin-top:8px}
   <div id="temporal-map">
     <p class="slede">Three engines appear in the configs read. <b>Google’s</b> runs in the <span class="m">google-system</span> namespace on FISH — frontend <span class="m">temporal-frontend.google-system:7233</span> — and hosts the doctor workflow family (<a href="https://bloom-shared.googlesource.com/bloom-temporal" target="_blank" rel="noreferrer">bloom-temporal on Google’s Gerrit</a> and the temporal-web Teleport registration are the receipts).</p>
     <p class="slede"><b>Temporal Cloud</b> is the vendor’s hosted service — Temporal Technologies’ SaaS — and <span class="m">infrastructure.gdjny</span> is FS’s own namespace on it (the config lives in FS’s systems repo), reachable at <span class="m">ap-northeast-1.aws.api.temporal.io:7233</span>. It is live today as site-worker’s primary connection; being FS’s estate, it is not a Google↔FS boundary touch. What that primary carries today wasn’t read, and “gdjny” is a bare token — its expansion isn’t written down. <b>FS’s own dcim engine</b> runs dcim-worker’s <span class="m">RepairTaskWorkflow</span> — its production home wasn’t read either; the example config defaults to <span class="m">localhost:7233</span> — if that engine also rides Temporal Cloud in prod, the census collapses to two.</p>
-    <p class="slede">Who connects to what: <span class="m">site-worker</span> (the per-site worker service in the systems repo) holds both connections in one base config — <a href="https://github.com/fluidstackio/systems/blob/34e92787301ccdd6da52382a69bed18e3b1f2b07/gitops/apps/fish-base/site-worker/values.yaml#L1-L10" target="_blank" rel="noreferrer">values.yaml</a> names Temporal Cloud as the worker home and <span class="m">temporal-frontend.google-system:7233</span> as a <span class="m">localTemporalInstance</span>, dialed as a client only.</p>
+    <p class="slede">Who connects to what: <span class="m">site-worker</span> (the per-site worker service in the systems repo) holds both connections in one base config — <a href="https://github.com/fluidstackio/systems/blob/main/gitops/apps/fish-base/site-worker/values.yaml" target="_blank" rel="noreferrer">values.yaml</a> names Temporal Cloud as the worker home and <span class="m">temporal-frontend.google-system:7233</span> as a <span class="m">localTemporalInstance</span>, dialed as a client only.</p>
     <p class="slede"><b>Corrected Jun 11 — the direction was wrong here.</b> <span class="m">worker.New()</span> appears exactly once in site-worker, against the Temporal Cloud client (<a href="https://github.com/fluidstackio/systems/blob/34e92787301ccdd6da52382a69bed18e3b1f2b07/projects/site-worker/cmd/site-worker/main.go#L87" target="_blank" rel="noreferrer">main.go:87</a>), so its activities — machine netboot/reset, NetBox reads, ping checks (<a href="https://github.com/fluidstackio/systems/tree/main/projects/site-worker/internal/activities" target="_blank" rel="noreferrer">the activities tree</a>) — register only there, and a workflow on Google’s engine cannot call them: Temporal can’t schedule activities across clusters. The earlier “on the secondary it executes the FS-side activities Google’s workflows call” reading is retired; if rack-turnup’s QA phase resets machines, it does that through Google’s own workers, not site-worker. The google-system dial serves the opposite direction: <span class="m">RunSiteLocalWorkflow</span> starts a named workflow on the local instance and polls it to completion, and its doc comment sets the direction outright — “Callers on the central Temporal instance invoke this as a child workflow, targeting the task queue of the desired site-worker, which then drives the local instance interaction” (<a href="https://github.com/fluidstackio/systems/blob/34e92787301ccdd6da52382a69bed18e3b1f2b07/projects/site-worker/internal/localtemporalinstance/workflow.go#L36-L39" target="_blank" rel="noreferrer">workflow.go:36-39</a>).</p>
     <p class="slede">So site-worker is FS’s arm <i>at the site</i> — netboot/reset/ping need device-network reachability, and only something in-cluster can reach <span class="m">temporal-frontend.google-system</span> — and FS’s gateway into Google’s Temporal, not their activity worker. Its queue <span class="m">google-workflows-site-worker-&lt;site&gt;</span> is a Temporal Cloud queue (<a href="https://github.com/fluidstackio/systems/blob/34e92787301ccdd6da52382a69bed18e3b1f2b07/gitops/apps/clusters/buf101/site-worker/values.yaml#L3" target="_blank" rel="noreferrer">buf101 values:3</a>) — the prefix describes purpose, not location. Zero callers of <span class="m">RunSiteLocalWorkflow</span> (or of site-worker’s own <span class="m">ProvisionRackWorkflow</span>/<span class="m">ProvisionMachineWorkflow</span>) exist outside site-worker in either repo: the whole FS→Google start path is built but unexercised.</p>
     <p class="slede">dcim-api’s <span class="m">google.go</span> names Google’s <span class="m">RackTurnupWorkflow</span> on queue <span class="m">rack-turnup-task-queue</span> — and the trigger is gated off in code: <span class="m">TURNUP_WORKFLOW_DEPLOYED = false</span>, “Google has yet to actually deploy this workflow” (<a href="https://github.com/fluidstackio/dcim/blob/main/services/dcim-api/internal/server/rack_workflows.go" target="_blank" rel="noreferrer">rack_workflows.go</a>). Production config answers the endpoint question: dcim-api dials <b>Temporal Cloud</b> — <span class="m">ap-northeast-1.aws.api.temporal.io:7233</span>, namespace <span class="m">infrastructure.gdjny</span> (<a href="https://github.com/fluidstackio/dcim/blob/main/argocd/datacenters-prod/dcim-api/values.yaml" target="_blank" rel="noreferrer">argocd values</a>) — not the google-system frontend. (An earlier draft inferred a same-frontend link from a queue name; retired as wrong.) Nor does site-worker host rack-turnup: it registers exactly three workflows — ProvisionRack, ProvisionMachine, RunSiteLocal <a href="https://github.com/fluidstackio/systems/tree/main/projects/site-worker/internal" target="_blank" rel="noreferrer">↗</a> (the Jun 10 tree; an April read showed a fourth, Firmware, since removed); the executing worker would be Google-deployed on that queue, which doesn’t exist yet — the code’s own TODO wonders whether their deployment will suffix it. The same file’s later TODO asks whether the dial “should be a separate temporal client for the on-prem deployed control plane?” (<a href="https://github.com/fluidstackio/dcim/blob/b6eea015af01044ce5c41aaa8e29bb655557a2f7/services/dcim-api/internal/server/rack_workflows.go#L159" target="_blank" rel="noreferrer">rack_workflows.go:159</a>) — the bridge reads as that answer: the sanctioned FS→Google start would be a <span class="m">RunSiteLocalWorkflow</span> child on site-worker’s queue, not a direct dial. Nothing calls it yet.</p>
@@ -1799,6 +1804,76 @@ function onScrollSpy() {
 addEventListener("scroll", onScrollSpy, { passive: true });
 
 renderBar(); renderTL(); onScrollSpy(); openEvFromHash();
+
+// ─── back-trail ── labeled return after in-page jumps ───────────────────────
+// Completes the browser's native history rather than competing with it: every
+// in-page hash click already pushes a real entry; we stamp the *origin* entry
+// with exact view state (scroll, open drills, seam tab, timeline filters) via
+// replaceState, and surface history.back() as a labeled chip. Drill opens are
+// deliberately NOT history entries — ✕ is panel state, back is spatial.
+(() => {
+  const chip = document.createElement("button");
+  chip.id = "backchip"; chip.type = "button"; chip.hidden = true;
+  document.body.appendChild(chip);
+  chip.addEventListener("click", () => history.back());
+
+  const secLabel = () => {
+    let cur = null;
+    for (const [a, s] of spyTargets) if (s.getBoundingClientRect().top <= 130) cur = a;
+    if (!cur) return "the top";
+    const b = cur.querySelector("b");
+    return b ? `${b.textContent} · ${cur.textContent.slice(b.textContent.length)}` : cur.textContent;
+  };
+  const capture = () => ({
+    y: scrollY,
+    drills: [...document.querySelectorAll("g[data-d].sel")].map((g) => g.dataset.d),
+    seam: bApi.classList.contains("on") ? "api" : "today",
+    track: state.track, q: state.q, open: [...state.open],
+    label: secLabel(),
+  });
+  const trailOf = () => (history.state && history.state.mvTrail) || [];
+  const paint = () => {
+    const t = trailOf();
+    chip.hidden = !t.length;
+    if (t.length) chip.textContent = `← back · ${t[t.length - 1]}`;
+  };
+  const restore = (r) => {
+    seam(r.seam);
+    state.track = r.track; state.q = r.q; state.open = new Set(r.open);
+    renderBar(); renderTL();
+    for (const id of r.drills) {
+      const g = document.querySelector(`g[data-d="${id}"]`);
+      if (!g || g.classList.contains("sel")) continue;
+      const blk = g.closest(".vizblk");
+      blk.querySelectorAll("g[data-d].sel").forEach((n) => n.classList.remove("sel"));
+      g.classList.add("sel");
+      renderDrill(blk.querySelector(".npanel"), id);
+    }
+    const go = () => scrollTo(0, r.y);
+    go(); setTimeout(go, 120); // outlast openEvFromHash's centered scrollIntoView
+  };
+
+  history.replaceState({ mvTrail: trailOf() }, ""); // depth 0 on the load entry
+  let pendingTrail = null;
+  document.addEventListener("click", (ev) => {
+    if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    const a = ev.target.closest('a[href^="#"]');
+    if (!a || a.getAttribute("href") === location.hash) return;
+    const r = capture();
+    history.replaceState({ mvBack: r, mvTrail: trailOf() }, "");
+    pendingTrail = [...trailOf(), r.label];
+  });
+  addEventListener("hashchange", () => {
+    if (pendingTrail) { history.replaceState({ mvTrail: pendingTrail }, ""); pendingTrail = null; }
+    paint();
+  });
+  addEventListener("popstate", (ev) => {
+    const s = ev.state || {};
+    if (s.mvBack) restore(s.mvBack);
+    paint();
+  });
+  paint();
+})();
 </script>
 </body>
 </html>
