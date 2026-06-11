@@ -52,11 +52,26 @@ terraform" (it's Miguel Varela Ramos's systems#1122); the FISH expansion was sou
 RFC's own title; Rob's May 27 spec-by-Jun-1→3 commitment was surfaced into the state-of-play
 as an unreconciled caveat on ~Jul 21.
 
-**v104 (2026-06-11, current)** — post-certification polish: the 20 LOW findings queued from
+**v104 (2026-06-11)** — post-certification polish: the 20 LOW findings queued from
 the two clean rounds (diagram-specific drill hints, hero "ghost"→"dashed", census row ③/④
 label precision, dek hedge, d-auth status vocabulary, 03 sourcing caveat, webhook idempotency
 receipt, storm denominator, feldspar org-mechanism wording, and more). Same no-loss invariant:
 0 href / 0 numeric removals vs the v88 baseline, v88 → v104.
+
+**v105 (2026-06-11, current)** — **material correction** (owner-supplied, code-verified): the
+site-worker Temporal model was wrong in direction. `worker.New()` appears exactly once
+(main.go:87) — against **Temporal Cloud** — so site-worker's activities register only there
+and a workflow on Google's engine cannot call them; `temporal-frontend.google-system` is
+dialed as a *client* only, via the `RunSiteLocalWorkflow` bridge (central→site direction per
+its own doc comment), which has **zero callers** in either repo. The "secondary connection
+executes FS-side activities for their workflows" reading is retired at all five sites that
+carried it (census row ⑤ + follow-up, 01·MAP, u-fs drill, s-tenancy). Also landed:
+dcim-api's `siteWorkerTaskQueuePrefix` marked staged-not-live (the Go field is read by
+nothing), the rack_workflows.go:159 TODO connected to the bridge as its likely answer, and
+the sharpened §03 consequence — FS-born repairs have no path into Google's ticket-filing
+machinery today, so first-class API treatment must be designed in, not inherited.
+The v105 correction has **not** been through cold-reader rounds yet. This copy is the
+**source of truth**; the session-directory copy is a serve mirror.
 
 ## What's in the page
 
