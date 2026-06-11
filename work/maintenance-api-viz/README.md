@@ -103,5 +103,5 @@ mirrored here. The corpus is the ground truth for every recomputed statistic on 
 - Receipts require FluidStack access (Slack workspace, Atlassian, private GitHub, incident.io).
 - The page is a **snapshot dated 2026-06-11**; pinned repo states are named inline where they
   matter (e.g. site-worker's workflow roster "per the Jun 10 tree").
-- Sibling artifacts from the same sessions (not stored here yet): `provisioning-viz.html`,
-  `systolic-explainer.html`.
+- Sibling artifact from the same FluidStack grounding work (not stored here yet):
+  `provisioning-viz.html`.
