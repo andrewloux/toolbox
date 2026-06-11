@@ -41,17 +41,22 @@ no-loss invariant re-verified, 0 removals vs the v88 baseline):
   the terraform comment + the TPU hardware doc, both terms defined together only in the FISH RFC
   glossary; third expansion noted — dcim SOPs use BMS = Battery Management System).
 
-The v100 additions have **not** been through cold-reader certification rounds; the v98
-statements above do not extend to them.
+**RE-CERTIFIED at v103 (2026-06-11)** after the v100 content additions: rounds 18 and 19
+passed dual-clean (zero MEDIUM/HIGH from both personas) on a byte-identical frozen artifact —
+the same bar as the original v97/v98 certification. The path: round 15 (v100) FAIL/FAIL →
+v101 fixes; round 16 FS-PASS/Google-FAIL → v102 fixes; round 17 FS-PASS/Google-FAIL → v103
+fixes; rounds 18+19 dual PASS on frozen v103 (`versions/v103-recertified.html`). Notable
+research-backed corrections along the way: the boundary census gained its explicit scope rule
+(signal channels, not access surfaces); git blame falsified "Xander wrote the external-org
+terraform" (it's Miguel Varela Ramos's systems#1122); the FISH expansion was sourced to the
+RFC's own title; Rob's May 27 spec-by-Jun-1→3 commitment was surfaced into the state-of-play
+as an unreconciled caveat on ~Jul 21.
 
-**v101 (2026-06-11)** — round-15 dual cold-read of v100 returned FAIL/FAIL (3 unique MEDIUM,
-11 LOW; two MEDIUMs were in the v100 additions themselves). All findings fixed in one batch:
-census row ① direction disambiguated (Jira→dcim-tasks mirror polls; Google's status-watch
-stays unverified), Rob's May 27 spec-by-Jun-1→3 commitment surfaced into the state-of-play
-next row as an unreconciled caveat on ~Jul 21, FISH expansion sourced to the RFC title
-(decoder + buf101 rows), plus the 11 LOWs (colophon re-dated, hero p50 sweep-deflation caveat,
-queue/request-type gloss, legend decision-vs-build note, and more). Re-certification rounds
-16+17 run on v101 frozen.
+**v104 (2026-06-11, current)** — post-certification polish: the 20 LOW findings queued from
+the two clean rounds (diagram-specific drill hints, hero "ghost"→"dashed", census row ③/④
+label precision, dek hedge, d-auth status vocabulary, 03 sourcing caveat, webhook idempotency
+receipt, storm denominator, feldspar org-mechanism wording, and more). Same no-loss invariant:
+0 href / 0 numeric removals vs the v88 baseline, v88 → v104.
 
 ## What's in the page
 
