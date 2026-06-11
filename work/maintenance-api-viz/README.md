@@ -58,7 +58,7 @@ label precision, dek hedge, d-auth status vocabulary, 03 sourcing caveat, webhoo
 receipt, storm denominator, feldspar org-mechanism wording, and more). Same no-loss invariant:
 0 href / 0 numeric removals vs the v88 baseline, v88 → v104.
 
-**v105 (2026-06-11, current)** — **material correction** (owner-supplied, code-verified): the
+**v105 (2026-06-11)** — **material correction** (owner-supplied, code-verified): the
 site-worker Temporal model was wrong in direction. `worker.New()` appears exactly once
 (main.go:87) — against **Temporal Cloud** — so site-worker's activities register only there
 and a workflow on Google's engine cannot call them; `temporal-frontend.google-system` is
@@ -73,13 +73,27 @@ machinery today, so first-class API treatment must be designed in, not inherited
 The v105 correction has **not** been through cold-reader rounds yet. This copy is the
 **source of truth**; the session-directory copy is a serve mirror.
 
-**v106 (2026-06-11, current)** — **restores the v99 back-trail**, silently lost since v100:
+**v106 (2026-06-11)** — **restores the v99 back-trail**, silently lost since v100:
 the v100 push copied a session working file over this repo's v99 without diffing against it,
 dropping the back-trail CSS + JS (3,354 bytes). Caught by `make check` (DRIFT) when adopting
 the split-source workflow; reinstated byte-exact from the v99 chunks and verified live (chip
 appears on in-page jump, returns to exact scroll, hides). Note: versions v100–v105 — including
 the `v103-recertified.html` snapshot — lack the back-trail; the certification statements are
 about page *content*, which was unaffected. `src/` is now re-synced to the artifact.
+
+**v107 (2026-06-11, current)** — the loop diagram + assignment/classification research. New `01·LOOP`
+landmark: the repair round-trip as it runs today, three swim lanes (Google's engine / the
+seam / FS's floor), nine stages, every box drilling to a receipted panel. Two stages were
+researched live (3-lane sweep: dcim code, the 15,622-issue corpus, live Jira changelogs +
+Confluence + Slack) because the page's story was wrong: assignment is **tech self-claim**
+(5/6 sampled changelogs; 79.1% of Done tickets never assigned; dcim-tasks bot has never
+written a Jira assignee; the lead-routing role is dated Jun 9), and classify/ack is
+**measurably nothing** (priority = Medium default with one exception ever; Severity field
+never populated; JSM SLA clocks never run; paging unwired — while the contract's Sev1–4
+clocks and FS's own Approved escalation matrix both sit unimplemented on paper). New drill
+panels `l-classify` and `l-assign` carry the receipts; eight stale "DCO lead routes" sites
+corrected page-wide.
+
 
 ## What's in the page
 
@@ -179,16 +193,3 @@ mirrored here. The corpus is the ground truth for every recomputed statistic on 
   matter (e.g. site-worker's workflow roster "per the Jun 10 tree").
 - Sibling artifact from the same FluidStack grounding work (not stored here yet):
   `provisioning-viz.html`.
-
-**v107 (2026-06-11)** — the loop diagram + assignment/classification research. New `01·LOOP`
-landmark: the repair round-trip as it runs today, three swim lanes (Google's engine / the
-seam / FS's floor), nine stages, every box drilling to a receipted panel. Two stages were
-researched live (3-lane sweep: dcim code, the 15,622-issue corpus, live Jira changelogs +
-Confluence + Slack) because the page's story was wrong: assignment is **tech self-claim**
-(5/6 sampled changelogs; 79.1% of Done tickets never assigned; dcim-tasks bot has never
-written a Jira assignee; the lead-routing role is dated Jun 9), and classify/ack is
-**measurably nothing** (priority = Medium default with one exception ever; Severity field
-never populated; JSM SLA clocks never run; paging unwired — while the contract's Sev1–4
-clocks and FS's own Approved escalation matrix both sit unimplemented on paper). New drill
-panels `l-classify` and `l-assign` carry the receipts; eight stale "DCO lead routes" sites
-corrected page-wide.
