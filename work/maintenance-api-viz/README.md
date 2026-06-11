@@ -81,7 +81,7 @@ appears on in-page jump, returns to exact scroll, hides). Note: versions v100–
 the `v103-recertified.html` snapshot — lack the back-trail; the certification statements are
 about page *content*, which was unaffected. `src/` is now re-synced to the artifact.
 
-**v107 (2026-06-11, current)** — the loop diagram + assignment/classification research. New `01·LOOP`
+**v107 (2026-06-11)** — the loop diagram + assignment/classification research. New `01·LOOP`
 landmark: the repair round-trip as it runs today, three swim lanes (Google's engine / the
 seam / FS's floor), nine stages, every box drilling to a receipted panel. Two stages were
 researched live (3-lane sweep: dcim code, the 15,622-issue corpus, live Jira changelogs +
@@ -93,6 +93,21 @@ never populated; JSM SLA clocks never run; paging unwired — while the contract
 clocks and FS's own Approved escalation matrix both sit unimplemented on paper). New drill
 panels `l-classify` and `l-assign` carry the receipts; eight stale "DCO lead routes" sites
 corrected page-wide.
+
+**v108–v109 (2026-06-11, current)** — the world-class drill (4-dimension audit: code links /
+API-vs-workflow typing / concrete names / entity state transitions; 24 verified findings, all
+implemented). v108 redrew 01·LOOP as a component diagram (type-tagged boxes, numbered action
+pills, in-SVG legend). v109: every loop stage now carries its write-path code links (the close
+chain handleTransition → POST /issue/{key}/transitions was the biggest hole); two declared
+unknowns resolved from the repos (the repair-watcher → RepairTaskWorkflow trigger chain; the
+Temporal engine census — two deployments, dcim-worker's prod home read); the retired
+site-worker claim found surviving in u-fs and fixed; dcim-worker's "Jira workflows" correctly
+typed as workflows (CreateJiraTicketWorkflow — FS's own file-and-wait mirror of Google's
+pattern); a wrong-lines link fixed (a-dcim's three-tier lookup); and **two new drawn state
+machines**: the machine's asset states per Partner-Ops v0.4 (§03 — GOOGLE_SERVING → DRAINED →
+PARTNER_OWNED → PENDING_HANDOVER → GOOGLE_OWNED, with the done-signal and pre-repair gate
+marked) and the dcim-task enum with verified writers + Jira projections (02·B — including
+dashed queued, zero-in-corpus, and the silently-skipped Jira drift statuses).
 
 
 ## What's in the page

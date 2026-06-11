@@ -27,6 +27,37 @@
     <div class="cuj dim"><span class="id">CUJ5</span><span class="what"><b>Escalation</b></span><span class="own">Rob reads it as a process, not an API<sup class="rf"><a href="#ref-10">[10]</a></sup> — no owner named in anything this page read</span></div>
   </div>
 
+
+  <p class="slede" style="margin-top:18px"><b>The machine&#8217;s states &#8212; the actual contract content.</b> Per Partner-Ops v0.4 (read Jun 11), the repair loop&#8217;s binding signals ride this state machine, not the ticket: PARTNER_OWNED is set automatically when the ticket files, and the done-signal is FS&#8217;s PATCH to PENDING_HANDOVER. Drawn from the doc&#8217;s state table + the CUJ3 flow:</p>
+  <div class="diawrap"><svg class="wide" viewBox="0 0 1700 268" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Machine asset states per Partner-Ops v0.4: Google Serving, Drained, Partner Owned, Pending Handover, Google Owned, and back to serving.">
+      <defs><marker id="ah8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5a5a5a"/></marker></defs>
+      <rect class="sv-box" x="40" y="40" width="270" height="70" rx="3"/>
+      <text class="sv-t" x="54" y="66">GOOGLE_SERVING</text>
+      <text class="sv-s" x="54" y="86">healthy default &#183; available to Borg</text>
+      <rect class="sv-box" x="372" y="40" width="270" height="70" rx="3"/>
+      <text class="sv-t" x="386" y="66">DRAINED</text>
+      <text class="sv-s" x="386" y="86">Google&#8217;s, not serving &#183; nearby work ok</text>
+      <rect class="sv-box" x="704" y="40" width="270" height="70" rx="3"/>
+      <text class="sv-t" x="718" y="66">PARTNER_OWNED</text>
+      <text class="sv-s" x="718" y="86">FS holds BMC + node &#183; repair default</text>
+      <rect class="sv-box" x="1036" y="40" width="270" height="70" rx="3"/>
+      <text class="sv-t" x="1050" y="66">PENDING_HANDOVER</text>
+      <text class="sv-s" x="1050" y="86">FS&#8217;s signal: repair complete</text>
+      <rect class="sv-box" x="1368" y="40" width="290" height="70" rx="3"/>
+      <text class="sv-t" x="1382" y="66">GOOGLE_OWNED</text>
+      <text class="sv-s" x="1382" y="86">re-attested &#8594; rejoins Borg, serving</text>
+      <path class="sv-edge" d="M310 75 H 366" marker-end="url(#ah8)"/><text class="sv-s" x="318" y="64">&#10122;</text>
+      <path class="sv-edge" d="M642 75 H 698" marker-end="url(#ah8)"/><text class="sv-s" x="650" y="64">&#10123;</text>
+      <path class="sv-edge" d="M974 75 H 1030" marker-end="url(#ah8)"/><text class="sv-s" x="982" y="64">&#10124;</text>
+      <path class="sv-edge" d="M1306 75 H 1362" marker-end="url(#ah8)"/><text class="sv-s" x="1314" y="64">&#10125;</text>
+      <text class="sv-s" x="40" y="148">&#10122; Google drains workloads off the machine &#160;&#160; &#10123; creds rotate to pre-shared &#8212; and the state flips automatically when the repair ticket files</text>
+      <text class="sv-s" x="40" y="170">&#10124; FS repairs &#183; optionally PATCHes replaced FRU serials (UpdateHardwareAsset) &#183; then PATCHes state=PENDING_HANDOVER &#8212; <tspan fill="#A8E05F">the done-signal lives here, not on the ticket</tspan></text>
+      <text class="sv-s" x="40" y="192">&#10125; Google takes the BMC back, reinstalls BorneoOS, re-attests &#8212; failure routes back through CUJ3</text>
+      <rect class="sv-chip" x="40" y="214" width="660" height="26" rx="4"/>
+      <text class="sv-chipt" x="52" y="231">GATE &#183; before hands touch the machine: GetHardwareAsset must show PARTNER_OWNED (CUJ3 step 4)</text>
+      <text class="sv-s" x="40" y="262">the v0.4 table names the partner-visible trio (Google Serving &#183; Drained &#183; Partner owned); GOOGLE_OWNED and PENDING_HANDOVER appear in its flows</text>
+    </svg></div>
+
   <p class="diacap" style="margin-top:14px"><b>Two return channels, different payloads:</b> the Maintenance API's webhook carries repair <b>lifecycle status</b> (the CUJ3 interaction); the Borneo adapter's completion sync — the CUJ2-shared “on change in Crucible” mechanism — carries <b>asset/inventory updates</b> to Google's asset database after the physical work. They answer different questions and don't replace each other.</p>
 
   <div class="fails">

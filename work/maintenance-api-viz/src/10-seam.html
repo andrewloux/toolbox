@@ -18,7 +18,7 @@
 
   <div class="sub" id="loop"><span class="sk2">01·LOOP</span><h3>The repair loop, end to end — as it runs today</h3></div>
   <p class="slede">The unit of the seam isn’t a ticket — it’s a <b>round trip</b>: broken machine out of Google’s pool, fixed machine back, no human on Google’s side. The diagram separates <b>kinds</b>: sharp boxes are the components and actors (type-tagged), the numbered green pills are the nine actions in time order, chips are signals. Every box and pill below is shipped code or measured corpus behavior — including the two actions history never built, classify/ack (⑤ — nothing fires) and assignment (self-claim), both researched live Jun 11. Click anything for mechanism and receipts.</p>
-  <div class="vizblk"><div class="diawrap"><svg class="wide" viewBox="0 0 1700 740" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Component view of the repair loop today: Google workflows file a Jira ticket; FluidStack services mirror it; techs self-claim and execute; the Done transition wakes the parked run; failures refile.">
+  <div class="vizblk"><div class="diawrap"><svg class="wide" viewBox="0 0 1700 830" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Component view of the repair loop today: Google workflows file a Jira ticket; FluidStack services mirror it; techs self-claim and execute; the Done transition wakes the parked run; failures refile.">
       <defs>
         <marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5a5a5a"/></marker>
         <marker id="ahg7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#A8E05F"/></marker>
@@ -28,7 +28,7 @@
       <text class="sv-zl g" x="32" y="64">GOOGLE&#8217;S ENGINE &#183; TEMPORAL IN GOOGLE-SYSTEM &#8212; THEIR CODE, OUR CLUSTER</text>
       <rect class="sv-zone" x="18" y="260" width="1664" height="146"/>
       <text class="sv-zl" x="32" y="280">THE SEAM &#183; ATLASBUF &#8212; JIRA SERVICE MANAGEMENT</text>
-      <rect class="sv-zone" x="18" y="470" width="1664" height="180"/>
+      <rect class="sv-zone" x="18" y="470" width="1664" height="270"/>
       <text class="sv-zl" x="32" y="490">FLUIDSTACK&#8217;S FLOOR &#183; DCIM-TASKS &#8594; CONSOLE &#8594; HANDS</text>
 
       <!-- refile arc (drawn first, under everything) -->
@@ -46,11 +46,11 @@
       </g>
       <g data-d="s-ticket">
         <rect class="sv-box" x="470" y="84" width="260" height="104" rx="3"/>
-        <text class="sv-tag" x="718" y="100" text-anchor="end">SERVICE ACCOUNT</text>
+        <text class="sv-tag" x="718" y="100" text-anchor="end">JIRA SERVICE ACCOUNT</text>
         <text class="sv-t" x="484" y="120">the filer</text>
         <text class="sv-m" x="484" y="142">Ext-Bloom-Atlas-Workflows</text>
-        <text class="sv-s" x="484" y="160">writes 5 templated custom fields</text>
-        <text class="sv-s" x="484" y="176">93% of all 15,622 tickets</text>
+        <text class="sv-s" x="484" y="160">the identity their workflows file as —</text>
+        <text class="sv-s" x="484" y="176">5 templated fields · 93% of 15,622</text>
       </g>
       <g data-d="s-paused">
         <rect class="sv-box" x="900" y="84" width="260" height="104" rx="3"/>
@@ -90,7 +90,7 @@
       <!-- ===== FLOOR LANE: components ===== -->
       <g data-d="p-sync">
         <rect class="sv-box" x="40" y="502" width="280" height="104" rx="3"/>
-        <text class="sv-tag" x="308" y="518" text-anchor="end">GO SERVICE</text>
+        <text class="sv-tag" x="308" y="518" text-anchor="end">SERVICE · REST + JSM SYNC</text>
         <text class="sv-t" x="54" y="538">dcim-tasks &#183; JSM sync</text>
         <text class="sv-m" x="54" y="560">inbound mirror + outbound writer</text>
         <text class="sv-s" x="54" y="578">polls 5m discovery / 10m drift &#183; 30s drain</text>
@@ -166,8 +166,19 @@
       <text class="sv-s" x="1168" y="158">Done resumes the run</text>
 
       <!-- legend -->
-      <text class="sv-s" x="40" y="690">grammar: sharp boxes = components &amp; actors (type-tagged top-right) &#183; green pills = the nine actions, numbered in time order &#183; chips = signals</text>
-      <text class="sv-s" x="40" y="708">boxes and pills both drill down &#183; lanes = who runs the machinery &#183; green strokes = Google-side motion, grey = FS-side</text>
+      <g data-d="p-task">
+        <rect class="sv-box" x="470" y="656" width="300" height="72" rx="3"/>
+        <text class="sv-tag" x="758" y="672" text-anchor="end">TEMPORAL WORKFLOW &#183; FS</text>
+        <text class="sv-t" x="484" y="692">RepairTaskWorkflow</text>
+        <text class="sv-s" x="484" y="710">started per-minute by the repair-watcher cron;</text>
+        <text class="sv-s" x="484" y="724">pins the SOP, walks auto-steps</text>
+      </g>
+      <path class="sv-edge" d="M180 606 V 692 H 464" marker-end="url(#ah7)"/>
+      <text class="sv-s" x="196" y="660">lists open repair tasks</text>
+      <path class="sv-edge" d="M770 692 H 1475 V 612" marker-end="url(#ah7)"/>
+      <text class="sv-s" x="800" y="684">FetchSOPByProblemCode &#8594; RecordSOPOnTask</text>
+      <text class="sv-s" x="40" y="780">grammar: sharp boxes = components &amp; actors (type-tagged top-right) &#183; green pills = the nine actions, numbered in time order &#183; chips = signals</text>
+      <text class="sv-s" x="40" y="798">boxes and pills both drill down &#183; lanes = who runs the machinery &#183; green strokes = Google-side motion, grey = FS-side</text>
     </svg></div>
     <p class="scrollhint">↔ scroll the diagram sideways for the full loop · actions ⑤ and ⑥ are the two the floor never built — their pills carry the receipts</p>
   <p class="dhint">▸ <b>solid boxes drill down</b> — mechanism, real exemplars, receipts</p>
@@ -436,8 +447,8 @@
 
   <div class="sub" id="tmap"><span class="sk2">01·MAP</span><h3>The Temporal map — every engine on this page, in one place</h3></div>
   <div id="temporal-map">
-    <p class="slede">Three engines appear in the configs read. <b>Google’s</b> runs in the <span class="m">google-system</span> namespace on FISH — frontend <span class="m">temporal-frontend.google-system:7233</span> — and hosts the doctor workflow family (<a href="https://bloom-shared.googlesource.com/bloom-temporal" target="_blank" rel="noreferrer">bloom-temporal on Google’s Gerrit</a> and the temporal-web Teleport registration are the receipts).</p>
-    <p class="slede"><b>Temporal Cloud</b> is the vendor’s hosted service — Temporal Technologies’ SaaS — and <span class="m">infrastructure.gdjny</span> is FS’s own namespace on it (the config lives in FS’s systems repo), reachable at <span class="m">ap-northeast-1.aws.api.temporal.io:7233</span>. It is live today as site-worker’s primary connection; being FS’s estate, it is not a Google↔FS boundary touch. What that primary carries today wasn’t read, and “gdjny” is a bare token — its expansion isn’t written down. <b>FS’s own dcim engine</b> runs dcim-worker’s <span class="m">RepairTaskWorkflow</span> — its production home wasn’t read either; the example config defaults to <span class="m">localhost:7233</span> — if that engine also rides Temporal Cloud in prod, the census collapses to two.</p>
+    <p class="slede">Three engines appear in the configs read — hosted, it turns out, on two Temporal deployments (resolved below, Jun 11). <b>Google’s</b> runs in the <span class="m">google-system</span> namespace on FISH — frontend <span class="m">temporal-frontend.google-system:7233</span> — and hosts the doctor workflow family (<a href="https://bloom-shared.googlesource.com/bloom-temporal" target="_blank" rel="noreferrer">bloom-temporal on Google’s Gerrit</a> and the temporal-web Teleport registration are the receipts).</p>
+    <p class="slede"><b>Temporal Cloud</b> is the vendor’s hosted service — Temporal Technologies’ SaaS — and <span class="m">infrastructure.gdjny</span> is FS’s own namespace on it (the config lives in FS’s systems repo), reachable at <span class="m">ap-northeast-1.aws.api.temporal.io:7233</span>. It is live today as site-worker’s primary connection; being FS’s estate, it is not a Google↔FS boundary touch. What that primary carries today wasn’t read, and “gdjny” is a bare token — its expansion isn’t written down. <b>FS’s own dcim engine</b> runs dcim-worker’s <span class="m">RepairTaskWorkflow</span> — its production home is now read: both prod dcim-worker overlays dial Temporal Cloud — <span class="m">ap-northeast-1.aws.api.temporal.io:7233</span>, namespace <span class="m">infrastructure.gdjny</span>, task queues <span class="m">dcim-worker</span> / <span class="m">dcim-worker-feldspar</span> (<a href="https://github.com/fluidstackio/dcim/blob/b6eea015af01044ce5c41aaa8e29bb655557a2f7/argocd/datacenters-prod/dcim-worker/values.yaml#L4-L8" target="_blank" rel="noreferrer">values ↗</a>, <a href="https://github.com/fluidstackio/dcim/blob/b6eea015af01044ce5c41aaa8e29bb655557a2f7/argocd/datacenters-prod/dcim-worker-feldspar/values.yaml#L4-L8" target="_blank" rel="noreferrer">feldspar ↗</a>). So the census resolves: <b>two Temporal deployments</b> — Google’s google-system frontend and Temporal Cloud — host the three logical engines.</p>
     <p class="slede">Who connects to what: <span class="m">site-worker</span> (the per-site worker service in the systems repo) holds both connections in one base config — <a href="https://github.com/fluidstackio/systems/blob/main/gitops/apps/fish-base/site-worker/values.yaml" target="_blank" rel="noreferrer">values.yaml</a> names Temporal Cloud as the worker home and <span class="m">temporal-frontend.google-system:7233</span> as a <span class="m">localTemporalInstance</span>, dialed as a client only.</p>
     <p class="slede"><b>Corrected Jun 11 — the direction was wrong here.</b> <span class="m">worker.New()</span> appears exactly once in site-worker, against the Temporal Cloud client (<a href="https://github.com/fluidstackio/systems/blob/34e92787301ccdd6da52382a69bed18e3b1f2b07/projects/site-worker/cmd/site-worker/main.go#L87" target="_blank" rel="noreferrer">main.go:87</a>), so its activities — machine netboot/reset, NetBox reads, ping checks (<a href="https://github.com/fluidstackio/systems/tree/main/projects/site-worker/internal/activities" target="_blank" rel="noreferrer">the activities tree</a>) — register only there, and a workflow on Google’s engine cannot call them: Temporal can’t schedule activities across clusters. The earlier “on the secondary it executes the FS-side activities Google’s workflows call” reading is retired; if rack-turnup’s QA phase resets machines, it does that through Google’s own workers, not site-worker. The google-system dial serves the opposite direction: <span class="m">RunSiteLocalWorkflow</span> starts a named workflow on the local instance and polls it to completion, and its doc comment sets the direction outright — “Callers on the central Temporal instance invoke this as a child workflow, targeting the task queue of the desired site-worker, which then drives the local instance interaction” (<a href="https://github.com/fluidstackio/systems/blob/34e92787301ccdd6da52382a69bed18e3b1f2b07/projects/site-worker/internal/localtemporalinstance/workflow.go#L36-L39" target="_blank" rel="noreferrer">workflow.go:36-39</a>).</p>
     <p class="slede">So site-worker is FS’s arm <i>at the site</i> — netboot/reset/ping need device-network reachability, and only something in-cluster can reach <span class="m">temporal-frontend.google-system</span> — and FS’s gateway into Google’s Temporal, not their activity worker. Its queue <span class="m">google-workflows-site-worker-&lt;site&gt;</span> is a Temporal Cloud queue (<a href="https://github.com/fluidstackio/systems/blob/34e92787301ccdd6da52382a69bed18e3b1f2b07/gitops/apps/clusters/buf101/site-worker/values.yaml#L3" target="_blank" rel="noreferrer">buf101 values:3</a>) — the prefix describes purpose, not location. Zero callers of <span class="m">RunSiteLocalWorkflow</span> (or of site-worker’s own <span class="m">ProvisionRackWorkflow</span>/<span class="m">ProvisionMachineWorkflow</span>) exist outside site-worker in either repo: the whole FS→Google start path is built but unexercised.</p>

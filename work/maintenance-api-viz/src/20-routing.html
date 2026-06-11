@@ -81,7 +81,7 @@
         <rect class="sv-box" x="580" y="56" width="240" height="92" rx="4"/>
         <text class="sv-m w" x="596" y="80">3 · PIN</text>
         <text class="sv-t" x="596" y="103">dcim-tasks record</text>
-        <text class="sv-s" x="596" y="123">SOP version pinned at workflow start</text>
+        <text class="sv-s" x="596" y="123">SOP pinned at RepairTaskWorkflow start</text>
         <text class="sv-s" x="596" y="139">problem code → SOP, FS-internal</text>
       </g>
       <path class="sv-edge" d="M820 102 H 868" marker-end="url(#ah4)"/>
@@ -116,6 +116,51 @@
     <p class="dhint">▸ <b>solid stages drill down</b> — shipped PRs, exemplar tickets, field-test receipts · dashed boxes are pointers</p>
     <div class="npanel"></div>
     <p class="diacap"><b>It's a loop, not a line.</b> The wake-up isn't the end: resumed workflows re-run QA and file again on failure — the rejected exemplar carries <span class="m">Attempt: 9</span> — and sweeps re-fire whole batches.</p>
+
+  <p class="slede" style="margin-top:18px"><b>The task&#8217;s states, drawn</b> &#8212; dcim-tasks&#8217; enum with its verified writers, each box carrying its Jira projection (the prod transition names). The console enforces no transition matrix &#8212; any enum value goes; the workflow and reconciler are the disciplined writers:</p>
+  <div class="diawrap"><svg class="wide" viewBox="0 0 1700 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="dcim-tasks task state machine: open to in_progress to complete or rejected, with blocked and the configured-but-unused queued state.">
+      <defs><marker id="ah9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5a5a5a"/></marker></defs>
+      <path class="sv-edge" d="M540 56 V 24 H 1520 V 50" marker-end="url(#ah9)"/>
+      <text class="sv-s" x="700" y="18">console human &#183; or the webhook/drift mirror of a Jira-side Reject</text>
+      <rect class="sv-box" x="40" y="56" width="250" height="96" rx="3"/>
+      <text class="sv-t" x="54" y="82">open</text>
+      <text class="sv-s" x="54" y="102">initial &#8212; inbound only;</text>
+      <text class="sv-s" x="54" y="118">Jira Open is never a dcim target</text>
+      <rect class="sv-box" x="420" y="56" width="250" height="96" rx="3"/>
+      <text class="sv-t" x="434" y="82">in_progress</text>
+      <text class="sv-m" x="434" y="104">Jira: &#8220;Start Task&#8221;</text>
+      <text class="sv-s" x="434" y="122">&#8594; In Progress</text>
+      <rect class="sv-box" x="1100" y="56" width="250" height="96" rx="3"/>
+      <text class="sv-t" x="1114" y="82">complete</text>
+      <text class="sv-m" x="1114" y="104">Jira: &#8220;Complete Task&#8221;</text>
+      <text class="sv-s" x="1114" y="122">&#8594; Done &#8212; the wake</text>
+      <rect class="sv-box" x="1430" y="56" width="230" height="96" rx="3"/>
+      <text class="sv-t" x="1444" y="82">rejected</text>
+      <text class="sv-m" x="1444" y="104">Jira: &#8220;Reject&#8221;</text>
+      <text class="sv-s" x="1444" y="122">&#8594; Rejected &#8212; also a wake</text>
+      <rect class="sv-box" x="420" y="240" width="250" height="86" rx="3"/>
+      <text class="sv-t" x="434" y="266">blocked</text>
+      <text class="sv-m" x="434" y="288">Jira: &#8220;Blocked&#8221; + reason</text>
+      <text class="sv-s" x="434" y="306">reason required in dcim too</text>
+      <rect class="sv-box dash" x="40" y="240" width="250" height="86" rx="3"/>
+      <text class="sv-t" x="54" y="266">queued</text>
+      <text class="sv-s" x="54" y="288">in prod config (&#8220;Add to Queue&#8221;)</text>
+      <text class="sv-s" x="54" y="306">&#8212; zero occurrences in the corpus</text>
+      <path class="sv-edge" d="M290 104 H 414" marker-end="url(#ah9)"/>
+      <text class="sv-s" x="296" y="94">RepairTaskWorkflow (auto)</text>
+      <text class="sv-s" x="296" y="130">&#183; console human</text>
+      <path class="sv-edge" d="M670 104 H 1094" marker-end="url(#ah9)"/>
+      <text class="sv-s" x="700" y="94">workflow: all steps passed &#183; console human</text>
+      <text class="sv-s" x="700" y="130">&#183; reconciler auto-close (misclassified type / deleted in Jira)</text>
+      <path class="sv-edge" d="M510 152 V 234" marker-end="url(#ah9)"/>
+      <text class="sv-s" x="522" y="200">workflow on step failure &#183; console</text>
+      <path class="sv-edge" d="M600 240 V 158" marker-end="url(#ah9)"/>
+      <text class="sv-s" x="612" y="222">console / reconciler</text>
+      <text class="sv-s" x="40" y="372">unmapped Jira drift &#8212; Closed / Resolved / To Do, 55 tickets &#8212; has no dcim mapping: the mirror <tspan fill="#F2C462">silently skips</tspan> those updates</text>
+      <text class="sv-s" x="40" y="390">dashed = configured but unobserved &#183; every transition is logged with reason + performed_by</text>
+    </svg></div>
+  <p class="diacap">Writers verified at the pinned sha: the schema&#8217;s CHECK <a href="https://github.com/fluidstackio/dcim/blob/b6eea015af01044ce5c41aaa8e29bb655557a2f7/services/dcim-tasks/internal/db/schema.sql#L12-L15" target="_blank" rel="noreferrer">&#8599;</a> &#183; the console&#8217;s enum-only validation <a href="https://github.com/fluidstackio/dcim/blob/b6eea015af01044ce5c41aaa8e29bb655557a2f7/services/dcim-tasks/internal/server/tasks.go#L280-L291" target="_blank" rel="noreferrer">&#8599;</a> &#183; the prod status&#8594;transition map <a href="https://github.com/fluidstackio/dcim/blob/b6eea015af01044ce5c41aaa8e29bb655557a2f7/argocd/datacenters-prod/dcim-tasks/values.yaml#L64-L80" target="_blank" rel="noreferrer">&#8599;</a> &#183; the three-tier inbound lookup <a href="https://github.com/fluidstackio/dcim/blob/b6eea015af01044ce5c41aaa8e29bb655557a2f7/services/dcim-tasks/internal/config/jira.go#L250-L267" target="_blank" rel="noreferrer">&#8599;</a></p>
+
     <p class="diacap">The loop's sweeps produce the bulk of the volume: rack-turnup-referencing tickets alone are 8,737 of 15,529 (June 1–9 mean ~1,090/day; the median June 1–9 day is ~410 — storms make the mean). The API's proposed coalescing on <span class="m">(entity, problem_code)</span> is sized to absorb exactly this — today nothing deduplicates, and Jun 3's 5,068 all landed as individual tickets. Coalescing behavior for code-less requests — 2,637 in the corpus — is a create-path design input.</p>
   </div>
 
@@ -137,7 +182,7 @@
         <rect class="sv-box" x="200" y="28" width="160" height="110" rx="4"/>
         <text class="sv-m w" x="213" y="52">2 · REVIEWED</text>
         <text class="sv-t" x="213" y="74" style="font-size:12.5px">Approval workflow</text>
-        <text class="sv-s" x="213" y="94">draft → review → approved</text>
+        <text class="sv-s" x="213" y="94">in_progress → under_review → approved</text>
         <text class="sv-s" x="213" y="110">owner + reviewer columns</text>
       </g>
       <path class="sv-edge" d="M360 83 H 378" marker-end="url(#ah5)"/>
