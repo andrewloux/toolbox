@@ -179,3 +179,16 @@ mirrored here. The corpus is the ground truth for every recomputed statistic on 
   matter (e.g. site-worker's workflow roster "per the Jun 10 tree").
 - Sibling artifact from the same FluidStack grounding work (not stored here yet):
   `provisioning-viz.html`.
+
+**v107 (2026-06-11)** — the loop diagram + assignment/classification research. New `01·LOOP`
+landmark: the repair round-trip as it runs today, three swim lanes (Google's engine / the
+seam / FS's floor), nine stages, every box drilling to a receipted panel. Two stages were
+researched live (3-lane sweep: dcim code, the 15,622-issue corpus, live Jira changelogs +
+Confluence + Slack) because the page's story was wrong: assignment is **tech self-claim**
+(5/6 sampled changelogs; 79.1% of Done tickets never assigned; dcim-tasks bot has never
+written a Jira assignee; the lead-routing role is dated Jun 9), and classify/ack is
+**measurably nothing** (priority = Medium default with one exception ever; Severity field
+never populated; JSM SLA clocks never run; paging unwired — while the contract's Sev1–4
+clocks and FS's own Approved escalation matrix both sit unimplemented on paper). New drill
+panels `l-classify` and `l-assign` carry the receipts; eight stale "DCO lead routes" sites
+corrected page-wide.

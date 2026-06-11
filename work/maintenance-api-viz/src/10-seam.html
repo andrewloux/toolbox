@@ -16,6 +16,121 @@
   </div>
   <p class="slede">TPU-CC's RPCs read and clear problem state and run health tests <a href="https://github.com/fluidstackio/dcim/blob/main/pkg/google/tpu_command_center/proto/tpu_command_center.proto" target="_blank" rel="noreferrer">↗</a> — diagnostics, not a way to ask FluidStack to fix something. And <span class="m">site-worker</span> dials Google's Temporal only as a <i>client</i> — its worker, and every activity it can run, registers solely on Temporal Cloud, so a workflow on Google's engine cannot call site-worker activities at all (Temporal can't schedule activities across clusters). <b>Corrected Jun 11:</b> the earlier reading here — that it registers on Google's Temporal to execute activities for their workflows — is retired. What the dial actually is: FS's gateway <i>into</i> their instance, a bridge workflow that starts a named workflow there and polls it to completion — built, and so far caller-less. The rewired map and receipts: <a href="#temporal-map">the Temporal map below</a>.</p>
 
+  <div class="sub" id="loop"><span class="sk2">01·LOOP</span><h3>The repair loop, end to end — as it runs today</h3></div>
+  <p class="slede">The unit of the seam isn’t a ticket — it’s a <b>round trip</b>: broken machine out of Google’s pool, fixed machine back, no human on Google’s side. Every box below is shipped code or measured corpus behavior; the two stages history never built — classify/acknowledge and assignment — are drawn as they actually are (researched live, Jun 11). Click any box for mechanism and receipts.</p>
+  <div class="vizblk"><div class="diawrap"><svg class="wide" viewBox="0 0 1480 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The repair loop today: Google's doctors detect and file; the workflow parks; FluidStack mirrors the ticket, techs self-claim, execute the SOP, and the Done transition wakes the workflow; failures refile.">
+      <defs>
+        <marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5a5a5a"/></marker>
+        <marker id="ahg7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#A8E05F"/></marker>
+      </defs>
+      <rect class="sv-zone" x="18" y="40" width="1444" height="132"/>
+      <text class="sv-zl g" x="32" y="60">GOOGLE’S ENGINE · TEMPORAL IN GOOGLE-SYSTEM — THEIR CODE, OUR CLUSTER</text>
+      <rect class="sv-zone" x="18" y="204" width="1444" height="124"/>
+      <text class="sv-zl" x="32" y="224">THE SEAM · ATLASBUF — JIRA SERVICE MANAGEMENT</text>
+      <rect class="sv-zone" x="18" y="360" width="1444" height="146"/>
+      <text class="sv-zl" x="32" y="380">FLUIDSTACK’S FLOOR · DCIM-TASKS → CONSOLE → HANDS</text>
+
+      <g data-d="u-diag">
+        <rect class="sv-box" x="40" y="72" width="212" height="86" rx="4"/>
+        <text class="sv-t" x="54" y="96">① DETECT &amp; DECIDE</text>
+        <text class="sv-m" x="54" y="118">machine-doctor · ocs-link ·</text>
+        <text class="sv-m" x="54" y="134">link-repair · rack-turnup QA</text>
+        <text class="sv-s" x="54" y="150">emits (entity · code · action)</text>
+      </g>
+      <g data-d="s-ticket">
+        <rect class="sv-box" x="306" y="72" width="212" height="86" rx="4"/>
+        <text class="sv-t" x="320" y="96">② FILE</text>
+        <text class="sv-m" x="320" y="118">Ext-Bloom-Atlas-Workflows</text>
+        <text class="sv-m" x="320" y="134">5 templated fields · RT 1669</text>
+        <text class="sv-s" x="320" y="150">storms: 1,127 in 48 min</text>
+      </g>
+      <g data-d="s-paused">
+        <rect class="sv-box" x="572" y="72" width="212" height="86" rx="4"/>
+        <text class="sv-t" x="586" y="96">③ PARK</text>
+        <text class="sv-m" x="586" y="118">watches the status field</text>
+        <text class="sv-s" x="586" y="134">“Close this ticket … to</text>
+        <text class="sv-s" x="586" y="150">resume the workflow”</text>
+      </g>
+      <g data-d="u-flows">
+        <rect class="sv-box" x="1230" y="72" width="212" height="86" rx="4"/>
+        <text class="sv-t" x="1244" y="96">⑨ WAKE &amp; VERIFY</text>
+        <text class="sv-m" x="1244" y="118">Done resumes · re-runs QA</text>
+        <text class="sv-s" x="1244" y="134">refile on fail — Attempt++</text>
+        <text class="sv-s" x="1244" y="150">their workers, not ours</text>
+      </g>
+
+      <g data-d="s-pathA">
+        <rect class="sv-box" x="40" y="236" width="212" height="78" rx="4"/>
+        <text class="sv-t" x="54" y="260">LISTENER A · INCIDENT.IO</text>
+        <text class="sv-m" x="54" y="282">repairs land as P4 alerts</text>
+        <text class="sv-s" x="54" y="298">no paging route matches</text>
+      </g>
+      <g data-d="p-tkt">
+        <rect class="sv-box" x="306" y="236" width="212" height="78" rx="4"/>
+        <text class="sv-t" x="320" y="260">THE TICKET</text>
+        <text class="sv-m" x="320" y="282">Physical Repair Task</text>
+        <text class="sv-s" x="320" y="298">priority Medium = Jira default</text>
+      </g>
+      <rect class="sv-chip" x="1000" y="252" width="240" height="24" rx="4"/>
+      <text class="sv-chipt" x="1010" y="268">the status transition — the only return signal</text>
+
+      <g data-d="p-sync">
+        <rect class="sv-box" x="40" y="396" width="212" height="92" rx="4"/>
+        <text class="sv-t" x="54" y="420">④ MIRROR</text>
+        <text class="sv-m" x="54" y="442">dcim-tasks polls 5m / 10m</text>
+        <text class="sv-s" x="54" y="458">webhook built · dark (Mar 28)</text>
+      </g>
+      <g data-d="l-classify">
+        <rect class="sv-box" x="306" y="396" width="212" height="92" rx="4"/>
+        <text class="sv-t" x="320" y="420">⑤ CLASSIFY / ACK — NONE</text>
+        <text class="sv-m" x="320" y="442">Severity field: never used</text>
+        <text class="sv-m" x="320" y="458">SLA clocks: never run</text>
+        <text class="sv-s" x="320" y="474">contract Sev1–4 unmapped</text>
+      </g>
+      <g data-d="l-assign">
+        <rect class="sv-box" x="572" y="396" width="212" height="92" rx="4"/>
+        <text class="sv-t" x="586" y="420">⑥ ASSIGN — SELF-CLAIM</text>
+        <text class="sv-m" x="586" y="442">techs take tickets themselves</text>
+        <text class="sv-m" x="586" y="458">81% never assigned in Jira</text>
+        <text class="sv-s" x="586" y="474">lead-routing role: 2 days old</text>
+      </g>
+      <g data-d="p-task">
+        <rect class="sv-box" x="838" y="396" width="212" height="92" rx="4"/>
+        <text class="sv-t" x="852" y="420">⑦ EXECUTE</text>
+        <text class="sv-m" x="852" y="442">pinned, versioned SOP</text>
+        <text class="sv-s" x="852" y="458">guide panels on the task</text>
+      </g>
+      <g data-d="p-done">
+        <rect class="sv-box" x="1104" y="396" width="212" height="92" rx="4"/>
+        <text class="sv-t" x="1118" y="420">⑧ CLOSE</text>
+        <text class="sv-m" x="1118" y="442">outbound sync writes Done</text>
+        <text class="sv-s" x="1118" y="458">≤30s after console completion</text>
+      </g>
+
+      <path class="sv-edge g" d="M252 115 H 300" marker-end="url(#ahg7)"/>
+      <path class="sv-edge g" d="M518 115 H 566" marker-end="url(#ahg7)"/>
+      <path class="sv-edge g" d="M412 158 V 230" marker-end="url(#ahg7)"/>
+      <text class="sv-s" x="424" y="196">files</text>
+      <path class="sv-edge" d="M306 275 H 258" marker-end="url(#ah7)"/>
+      <path class="sv-edge" d="M340 314 V 352 H 146 V 390" marker-end="url(#ah7)"/>
+      <text class="sv-s" x="170" y="345">listener B — the mirror</text>
+      <path class="sv-edge" d="M252 442 H 300" marker-end="url(#ah7)"/>
+      <path class="sv-edge" d="M518 442 H 566" marker-end="url(#ah7)"/>
+      <path class="sv-edge" d="M784 442 H 832" marker-end="url(#ah7)"/>
+      <path class="sv-edge" d="M1050 442 H 1098" marker-end="url(#ah7)"/>
+      <path class="sv-edge" d="M1210 396 V 276 H 1240" marker-end="url(#ah7)"/>
+      <path class="sv-edge g" d="M1240 264 H 1336 V 164" marker-end="url(#ahg7)"/>
+      <path class="sv-edge g" d="M784 115 H 1224" marker-end="url(#ahg7)"/>
+      <text class="sv-s" x="940" y="106">wakes on Done</text>
+      <path class="sv-edge g" d="M1336 72 V 28 H 412 V 66" marker-end="url(#ahg7)"/>
+      <text class="sv-s" x="700" y="20">refile on failed re-QA — the Attempt counters in the corpus</text>
+    </svg></div>
+    <p class="scrollhint">↔ scroll the diagram sideways for the full loop · stages ⑤ and ⑥ are the two the floor never built — both researched live Jun 11 (their boxes carry the receipts)</p>
+  <p class="dhint">▸ <b>solid boxes drill down</b> — mechanism, real exemplars, receipts</p>
+  <div class="npanel"></div>
+  </div>
+
+
   <div class="sub" id="twodep"><span class="sk2">01·0</span><h3>Two deployments, one page</h3></div>
   <p class="slede">Every “today” receipt on this page comes from the first; the API is being built for the second:</p>
   <div class="surfaces">
@@ -197,7 +312,7 @@
         <text class="sv-m w" x="678" y="278">PATH B — QUEUE-SHAPED</text>
         <text class="sv-t" x="678" y="302">dcim-tasks → DCIM console queue</text>
         <text class="sv-s" x="678" y="322">pinned SOP · lands unassigned</text>
-        <text class="sv-s" x="678" y="340">DCO (DC-ops) lead routes → hands repair</text>
+        <text class="sv-s" x="678" y="340">hands self-claim (a lead can route) → repair</text>
         <text class="sv-s" x="678" y="358">full pipeline in 02 below ↓</text>
       </g>
       <path class="sv-edge g" d="M810 374 V 432 H 144 V 398" marker-end="url(#ahg)"/>
