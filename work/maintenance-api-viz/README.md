@@ -24,6 +24,26 @@ and the provenance ledger (ref [10]) matches its inline receipts item by item.
 0 href additions; 26-case headless browser matrix passes). Certification statements above refer
 to the v98 content, which v99 carries unchanged.
 
+**v100 (2026-06-11)** adds material the certification rounds did not cover (additions only;
+no-loss invariant re-verified, 0 removals vs the v88 baseline):
+- **Link sweep** — 32 ops converting every bare in-page pointer ("02·B", "§04", "the Temporal
+  map") into a real anchor link; four landmarks (01·A/01·B/02·A/02·B) gained ids
+  (`#upstream`, `#todaytomorrow`, `#demux`, `#pathb`).
+- **The dark webhook** — new research (4-agent sweep over dcim@b6eea015, systems@34e92787,
+  argocd, Slack, Confluence): dcim-tasks ships an HMAC-authenticated inbound Jira webhook
+  (`POST /webhooks/jira/{site}`) plus two unauthenticated admin endpoints, all built in PR #1868
+  (Mar 28) and unreachable in prod — `httpRoute.enabled: false` in every prod values file ever,
+  no NetworkPolicy anywhere despite the code comment demanding one, the Jira-side registration
+  checkbox in argocd#5090 never checked. Canonical home: the pipeline's stage-2 MIRROR panel
+  (02·B); timeline row `#ev-w-dark`; d-push cross-references it as prior art.
+- **Tenancy receipts** — the 01·0 triangle now links each Auth0 org to its pinned terraform
+  block; the BMS-vs-BMC contrast is sourced honestly (no single doc states it; assembled from
+  the terraform comment + the TPU hardware doc, both terms defined together only in the FISH RFC
+  glossary; third expansion noted — dcim SOPs use BMS = Battery Management System).
+
+The v100 additions have **not** been through cold-reader certification rounds; the v98
+statements above do not extend to them.
+
 ## What's in the page
 
 - **Header state-of-play box** — direction / page planks / open decisions / next dates / burning
