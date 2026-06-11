@@ -44,6 +44,15 @@ no-loss invariant re-verified, 0 removals vs the v88 baseline):
 The v100 additions have **not** been through cold-reader certification rounds; the v98
 statements above do not extend to them.
 
+**v101 (2026-06-11)** — round-15 dual cold-read of v100 returned FAIL/FAIL (3 unique MEDIUM,
+11 LOW; two MEDIUMs were in the v100 additions themselves). All findings fixed in one batch:
+census row ① direction disambiguated (Jira→dcim-tasks mirror polls; Google's status-watch
+stays unverified), Rob's May 27 spec-by-Jun-1→3 commitment surfaced into the state-of-play
+next row as an unreconciled caveat on ~Jul 21, FISH expansion sourced to the RFC title
+(decoder + buf101 rows), plus the 11 LOWs (colophon re-dated, hero p50 sweep-deflation caveat,
+queue/request-type gloss, legend decision-vs-build note, and more). Re-certification rounds
+16+17 run on v101 frozen.
+
 ## What's in the page
 
 - **Header state-of-play box** — direction / page planks / open decisions / next dates / burning
