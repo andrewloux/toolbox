@@ -270,11 +270,6 @@ body{background:
   radial-gradient(900px 480px at 98% 4%, rgba(168,224,95,.025), transparent 55%),
   #000}
 #prog{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,#6fae2f,var(--grn));z-index:70;pointer-events:none}
-#backchip{position:fixed;left:18px;bottom:18px;z-index:100;cursor:pointer;
-  font-family:var(--mono);font-size:11px;letter-spacing:.6px;color:var(--grn-soft);
-  background:var(--panel);border:1px solid rgba(168,224,95,.35);border-radius:999px;
-  padding:8px 14px;max-width:46ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#backchip:hover{color:var(--grn);border-color:var(--grn)}
 nav a{position:relative;transition:color .15s}
 nav a.act{color:var(--ink)}
 nav a.act::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:2px;background:var(--grn)}
@@ -1777,76 +1772,6 @@ function onScrollSpy() {
 addEventListener("scroll", onScrollSpy, { passive: true });
 
 renderBar(); renderTL(); onScrollSpy(); openEvFromHash();
-
-// ─── back-trail ── labeled return after in-page jumps ───────────────────────
-// Completes the browser's native history rather than competing with it: every
-// in-page hash click already pushes a real entry; we stamp the *origin* entry
-// with exact view state (scroll, open drills, seam tab, timeline filters) via
-// replaceState, and surface history.back() as a labeled chip. Drill opens are
-// deliberately NOT history entries — ✕ is panel state, back is spatial.
-(() => {
-  const chip = document.createElement("button");
-  chip.id = "backchip"; chip.type = "button"; chip.hidden = true;
-  document.body.appendChild(chip);
-  chip.addEventListener("click", () => history.back());
-
-  const secLabel = () => {
-    let cur = null;
-    for (const [a, s] of spyTargets) if (s.getBoundingClientRect().top <= 130) cur = a;
-    if (!cur) return "the top";
-    const b = cur.querySelector("b");
-    return b ? `${b.textContent} · ${cur.textContent.slice(b.textContent.length)}` : cur.textContent;
-  };
-  const capture = () => ({
-    y: scrollY,
-    drills: [...document.querySelectorAll("g[data-d].sel")].map((g) => g.dataset.d),
-    seam: bApi.classList.contains("on") ? "api" : "today",
-    track: state.track, q: state.q, open: [...state.open],
-    label: secLabel(),
-  });
-  const trailOf = () => (history.state && history.state.mvTrail) || [];
-  const paint = () => {
-    const t = trailOf();
-    chip.hidden = !t.length;
-    if (t.length) chip.textContent = `← back · ${t[t.length - 1]}`;
-  };
-  const restore = (r) => {
-    seam(r.seam);
-    state.track = r.track; state.q = r.q; state.open = new Set(r.open);
-    renderBar(); renderTL();
-    for (const id of r.drills) {
-      const g = document.querySelector(`g[data-d="${id}"]`);
-      if (!g || g.classList.contains("sel")) continue;
-      const blk = g.closest(".vizblk");
-      blk.querySelectorAll("g[data-d].sel").forEach((n) => n.classList.remove("sel"));
-      g.classList.add("sel");
-      renderDrill(blk.querySelector(".npanel"), id);
-    }
-    const go = () => scrollTo(0, r.y);
-    go(); setTimeout(go, 120); // outlast openEvFromHash's centered scrollIntoView
-  };
-
-  history.replaceState({ mvTrail: trailOf() }, ""); // depth 0 on the load entry
-  let pendingTrail = null;
-  document.addEventListener("click", (ev) => {
-    if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
-    const a = ev.target.closest('a[href^="#"]');
-    if (!a || a.getAttribute("href") === location.hash) return;
-    const r = capture();
-    history.replaceState({ mvBack: r, mvTrail: trailOf() }, "");
-    pendingTrail = [...trailOf(), r.label];
-  });
-  addEventListener("hashchange", () => {
-    if (pendingTrail) { history.replaceState({ mvTrail: pendingTrail }, ""); pendingTrail = null; }
-    paint();
-  });
-  addEventListener("popstate", (ev) => {
-    const s = ev.state || {};
-    if (s.mvBack) restore(s.mvBack);
-    paint();
-  });
-  paint();
-})();
 </script>
 </body>
 </html>

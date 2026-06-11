@@ -1,0 +1,49 @@
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+<nav><div class="wrap">
+  <a href="#seam"><b>01</b>THE SEAM</a>
+  <a href="#routing"><b>02</b>ROUTING</a>
+  <a href="#surfaces"><b>03</b>TWO SURFACES</a>
+  <a href="#foundry"><b>04</b>FOUNDRY</a>
+  <a href="#timeline"><b>05</b>TIMELINE</a>
+  <a href="#refs">REFS</a>
+  <a class="home" href="index.html">← PROVISIONING VIZ</a>
+</div></nav>
+
+<header class="wrap">
+  <span class="k">Fluidstack internal · Borneo / IAH1</span>
+  <h1>The Maintenance API:<br>how repairs flow today, and the <em>contract</em> replacing the Jira seam</h1>
+  <p class="dek">Google is landing a B300 GPU cluster — <b>Borneo</b> — at IAH1, a Stream DC colo facility where FluidStack operates the deployment. Its repairs will flow through the API this page motivates and constrains; the spec itself lands ~Jul 21. The repair machinery that exists <b>today</b> serves Google's earlier TPU deployment (<b>Bloom</b>) at buf101, run for the existing tenant (<b>Atlas</b>): Google's workflows decide <b>what</b> gets repaired, FluidStack does the <b>how</b>, and the repair request itself travels only as a Jira ticket. That machinery is the precedent the API generalizes.</p>
+  <p class="dek">FS's working plan has Borneo never touching the Jira seam<sup class="rf"><a href="#ref-10">[10]</a></sup>; Google's acceptance of that timeline is unestablished. If machines land before the API ships, the fallback is undecided — the Jira seam exists at buf101 only, and <a href="#fallback">the fallback note in 01</a> carries the question whole. Atlas leaves Jira only if Rob's pitch to move its traffic onto the same API lands — a workstream pursued in parallel, not a blocker.</p>
+  <p class="dek">This page walks that machinery end-to-end, then the API contract replacing it. <b>Every solid box drills down (ghost boxes are pointers); nearly every claim links a receipt</b> — the few whose permalinks weren't recovered are named, individually, in <a href="#ref-10">[10]</a>.</p>
+  <p class="meta">Owner &amp; build <b>Andrew Louis</b> · Sponsor <b>Rob Colantuoni</b> · Spec to Google <b>~Jul 21, frozen by ~Aug 4</b> · Build starts <b>after the freeze</b></p>
+  <div class="sop" id="state-of-play">
+    <div class="r2"><span class="lb grn">direction</span><span>A generic customer-facing surface, not a Borneo one-off (<a href="#ev-scoping">Jun 8 scoping</a>) · mounts behind foundry-gateway (<a href="#surfaces">03</a>/<a href="#foundry">04</a>) · Temporal Cloud + site-local workers (<a href="#ev-kickoff">kickoff</a>) · Auth0 M2M as the working assumption — Tyler's <a href="https://github.com/fluidstackio/foundry/pull/1697" target="_blank" rel="noreferrer">#1697</a> vs Xander's mTLS, <a href="#ev-d-auth">d-auth</a> closing ~Jun 15</span></div>
+    <div class="r2"><span class="lb">page planks</span><span>batch create · coalescing on (entity, problem_code) · cf_14593 as idempotency key · routing-class field · GET /problem-codes — uncontested, not yet decided (<a href="#timeline">status ledger in 05</a>)</span></div>
+    <div class="r2"><span class="lb">open</span><span><a href="#ev-d-vocab">d-vocab</a> · <a href="#ev-d-actions">d-actions</a> · <a href="#ev-d-push">d-push</a> · <a href="#ev-d-cancel">d-cancel</a> · <a href="#ev-d-cuj5">d-cuj5</a> · <a href="#ev-d-revalidate">d-revalidate</a> — plus the declared build-phase opens (fulfill hop · Path A re-wire · IAH1 stand-up)</span></div>
+    <div class="r2"><span class="lb">next</span><span>Wk 0–1 inputs by Jun 16 → RFC Jun 23 → OpenAPI skeleton Jul 7 → spec to Google ~Jul 21 → freeze ~Aug 4 · the CUJ3 sequence diagram has been owed to Google since <a href="#ev-asks">Apr 28</a></span></div>
+    <div class="r2"><span class="lb">burning</span><span>Machines may land before the API ships — hall 2 is ready-for-service Jun 16; the fallback question is open three ways (<a href="#fallback">the amber note in 01</a>)</span></div>
+  </div>
+  <div class="stats">
+    <div class="st"><div class="n">5,068<i>/day</i></div><div class="l">Peak day — Jun 3</div></div>
+    <div class="st hot"><div class="n">1,127<i> in 48 min</i></div><div class="l">Densest window — Jun 3</div></div>
+    <div class="st hot"><div class="n">17<i>%</i></div><div class="l">Rejected — 2,686 of 15,622 corpus</div></div>
+    <div class="st"><div class="n">56<i>h</i></div><div class="l">Rejection median — timestamped subset</div></div>
+    <div class="st"><div class="n">1.6<i>h</i></div><div class="l">Cycle p50 (create→done)</div></div>
+    <div class="st hot"><div class="n">72<i>d</i></div><div class="l">Longest cycle (create→done)</div></div>
+  </div>
+  <p class="dhint" style="margin-top:10px">all six recomputed Jun 10 from the archived Jun 9 corpus — durations = resolution − created where both timestamps exist; 987 of the 2,671 rejections carry no resolve timestamp (the 2,686-project-wide reconciliation, incl. the 15 non-repair rejected tickets, is in [10]) <sup class="rf"><a href="#ref-10">[10]</a></sup></p>
+  <div class="route" aria-label="how this page flows">
+    <a href="#seam"><b>01</b><span>A repair's life today<i>born → filed → woken</i></span></a>
+    <a href="#routing"><b>02</b><span>Two listeners &amp; the floor<i>page vs queue → hands</i></span></a>
+    <a href="#surfaces"><b>03</b><span>The doc demanding an API<i>two surfaces · five CUJs (user journeys)</i></span></a>
+    <a href="#foundry"><b>04</b><span>Where it mounts<i>foundry-gateway · NetBox dual</i></span></a>
+    <a href="#timeline"><b>05</b><span>The work itself<i>history · plan · decisions</i></span></a>
+  </div>
+</header>
+
+<div class="wrap">
+

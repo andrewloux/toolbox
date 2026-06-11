@@ -19,6 +19,11 @@ Both final readers independently re-verified: every arithmetic web reconciles (~
 every internal anchor and drill target resolves, every "see X" pointer carries what it promises,
 and the provenance ledger (ref [10]) matches its inline receipts item by item.
 
+**v99 (2026-06-11)** adds the back-trail — a navigation affordance only, zero content delta
+(machine-checked: href + numeric-token set-diff vs `versions/v98-pre-backtrail.html` = 0 removals,
+0 href additions; 26-case headless browser matrix passes). Certification statements above refer
+to the v98 content, which v99 carries unchanged.
+
 ## What's in the page
 
 - **Header state-of-play box** — direction / page planks / open decisions / next dates / burning
@@ -66,7 +71,10 @@ and the provenance ledger (ref [10]) matches its inline receipts item by item.
 
 | path | what |
 |---|---|
-| `maintenance-api.html` | the certified artifact (v98) |
+| `maintenance-api.html` | the artifact (v99 = certified v98 content + back-trail) — **a build product, do not edit** |
+| `src/` | the source: numbered chunks, concatenated in filename order by `make build` (pure cat, byte-stable; tag boundaries live in tiny `.html` shims so data/logic chunks are clean `.css`/`.js`) |
+| `Makefile` | `build` / `run` (serves on a free port) / `check` (src↔artifact drift + no-loss invariant) |
+| `versions/v98-pre-backtrail.html` | the certified v98 artifact, frozen — provenance baseline for `make check` |
 | `versions/v75-pre-rebuild.html` | before the corpus-grounded rebuild |
 | `versions/v88-pre-kalos.html` | post-certification-research, pre-editorial baseline |
 | `versions/v91-post-kalos.html` | after the structural editorial pass |
@@ -76,16 +84,25 @@ and the provenance ledger (ref [10]) matches its inline receipts item by item.
 
 ## Viewing
 
-Open `maintenance-api.html` directly, or serve it (`python3 -m http.server`) for clean hash
-navigation. Deep links work cold: `#state-of-play`, `#fallback`, `#temporal-map`, `#anatomy`,
-and any timeline row via `#ev-<id>` (e.g. `#ev-d-push`). 01·B has a Today/Tomorrow tab; solid
-diagram boxes drill down, dashed boxes are pointers.
+Open `maintenance-api.html` directly, or serve it (`make run` picks a free port and prints the
+URL) for clean hash navigation. Deep links work cold: `#state-of-play`, `#fallback`,
+`#temporal-map`, `#anatomy`, and any timeline row via `#ev-<id>` (e.g. `#ev-d-push`). 01·B has
+a Today/Tomorrow tab; solid diagram boxes drill down, dashed boxes are pointers. After any
+in-page jump a **back chip** (bottom-left) appears, labeled with the section it returns to —
+it's the browser's own history, surfaced: exact scroll, open drills, tab and timeline-filter
+state all restore; Alt+←/swipe-back work identically.
 
 ## Editing contract
 
-- Static HTML for sections 01–05; drill-panel bodies live in the `DRILL` object (raw HTML
-  allowed); timeline rows live in the `EVENTS` array (title/summary/detail are escaped text —
-  **no raw HTML**; backticks render mono; links go in each event's `links` array).
+- **Edit `src/`, never the artifact.** Then `make build` (regenerates the artifact) and
+  `make check` (fails on src↔artifact drift and on any href/numeric-token removal vs the
+  certified baseline). The migration into `src/` was proven lossless: the first rebuild was
+  byte-identical to the pre-split artifact.
+- Where things live: sections 01–05 are static HTML (`src/10`–`src/50`); drill-panel bodies
+  live in the `DRILL` object (`src/70-data-drills.js`, raw HTML allowed); timeline rows live
+  in the `EVENTS` array (`src/72-data-events.js` — title/summary/detail are escaped text,
+  **no raw HTML**; backticks render mono; links go in each event's `links` array); render
+  logic and the back-trail live in `src/71`/`src/73`; theme CSS in `src/02-theme.css`.
 - To extend the timeline, append to `EVENTS` — the UI renders from it.
 - House rules that kept this artifact honest: every claim links a receipt or is explicitly
   hedged; one canonical home per fact, pointers elsewhere; when a permalink gets recovered,
